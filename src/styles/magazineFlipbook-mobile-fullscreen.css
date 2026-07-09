@@ -1,0 +1,64 @@
+/* ========================================
+   MAGAZINE FLIPBOOK - MOBILE FULLSCREEN
+   Mobile & Tablet (≤768px) - Fullscreen Mode
+   ======================================== */
+
+/* ========================================
+   TABLET PORTRAIT (481px - 768px)
+   ======================================== */
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .book-fullscreen-mode {
+    padding: 15px !important;
+  }
+
+  .book-fullscreen-mode .magazine-flipbook {
+    width: 92vw !important;
+    max-height: 78vh !important;
+  }
+}
+
+/* ========================================
+   MOBILE LANDSCAPE (≤480px)
+   ======================================== */
+
+@media (max-width: 480px) and (orientation: landscape) {
+  .book-fullscreen-mode {
+    padding: 8px !important;
+  }
+
+  .book-fullscreen-mode .magazine-flipbook {
+    width: 96vw !important;
+    max-height: 85vh !important;
+  }
+}
+
+/* ========================================
+   MOBILE PORTRAIT (≤480px)
+   ======================================== */
+
+@media (max-width: 480px) and (orientation: portrait) {
+  .book-fullscreen-mode {
+    padding: 10px !important;
+  }
+
+  .book-fullscreen-mode .magazine-flipbook {
+    width: 98vw !important;
+    max-height: 70vh !important;
+  }
+}
+
+/* ========================================
+   SMALL MOBILE (≤360px)
+   ======================================== */
+
+@media (max-width: 360px) {
+  .book-fullscreen-mode {
+    padding: 5px !important;
+  }
+
+  .book-fullscreen-mode .magazine-flipbook {
+    width: 99vw !important;
+    max-height: 68vh !important;
+  }
+}

@@ -1,0 +1,354 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* =================== */
+/*   Animations       */
+/* =================== */
+
+/* Fade in up */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slow pulse (emojis, buttons) */
+@keyframes pulse-slow {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+/* Gentle bounce (tags, icons) */
+@keyframes bounce-slow {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Organic blob movement (background orbs) */
+@keyframes blob {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(10px, -10px) scale(1.1);
+  }
+
+  66% {
+    transform: translate(-10px, 10px) scale(0.9);
+  }
+
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+/* Fade in animation for popup */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Slide in animation for popup */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* =================== */
+/*   Animation Classes */
+/* =================== */
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2s ease-in-out infinite;
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 2s ease-in-out infinite;
+}
+
+.animate-blob {
+  animation: blob 8s infinite ease-in-out alternate;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-slideIn {
+  animation: slideIn 0.4s ease-out forwards;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* =================== */
+/*   Typography & Text */
+/* =================== */
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* =================== */
+/*   Form Controls     */
+/* =================== */
+
+/* Custom Range Slider - Matches Canva's smooth style */
+input[type="range"] {
+  @apply h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  @apply appearance-none w-4 h-4 rounded-full bg-purple-500 border-2 border-white shadow-md hover:bg-purple-400 transition-all;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+input[type="range"]::-moz-range-thumb {
+  @apply w-4 h-4 rounded-full bg-purple-500 border-2 border-white shadow-md hover:bg-purple-400 transition-all;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* =================== */
+/*   Focus & Hover States */
+/* =================== */
+
+/* Enhanced focus for inputs */
+input:focus,
+textarea:focus,
+select:focus {
+  @apply outline-none ring-2 ring-purple-500 shadow-md;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Soft hover glow for buttons */
+button:hover,
+label:hover,
+a:hover {
+  @apply scale-[1.01];
+  transition: all 0.15s ease-out;
+}
+
+/* =================== */
+/*   Custom Utility Classes */
+/* =================== */
+
+/* Pulsing CTA Button */
+.pulse-button {
+  box-shadow: 0 0 15px rgba(147, 51, 234, 0.3);
+  animation: pulse-slow 2s infinite;
+}
+
+/* Subtle Glassmorphism Card (optional) */
+.glass-card {
+  background: rgba(30, 10, 40, 0.6);
+  /* Dark magenta-transparent */
+  border: 1px solid rgba(88, 28, 135, 0.3);
+  border-radius: 1rem;
+}
+
+/* Smooth transition for filters and transforms */
+.transition-transform {
+  transition: transform 0.2s ease-out;
+}
+
+/* =================== */
+/*   Scrollbar Styling (Optional) */
+/* =================== */
+
+/* For WebKit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #6b21a8;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9333ea;
+}
+
+/* =================== */
+/*   Book Fullscreen Mode */
+/* =================== */
+
+/* Default magazine container */
+.magazine-container {
+  border-radius: 8px;
+  box-shadow: 
+    0 8px 20px rgba(0, 0, 0, 0.4),
+    0 4px 8px rgba(76, 29, 149, 0.2);
+}
+
+/* Book fullscreen mode styles */
+.magazine-container.book-fullscreen-mode {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) scale(1.4) !important;
+  z-index: 9999 !important;
+  width: 900px !important;
+  height: 650px !important;
+  background: linear-gradient(145deg, #2a1f3d, #1a0f2e) !important;
+  border: 4px solid #4c1d95 !important;
+  border-radius: 16px !important;
+  box-shadow: 
+    0 0 0 3000px rgba(11, 12, 16, 0.95),
+    0 30px 60px rgba(0, 0, 0, 0.8),
+    0 20px 40px rgba(76, 29, 149, 0.4),
+    inset 0 2px 6px rgba(255, 255, 255, 0.1),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.4) !important;
+  animation: bookFullscreenIn 0.6s ease-out forwards;
+}
+
+/* Book spine effect for fullscreen */
+.magazine-container.book-fullscreen-mode::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 0;
+  bottom: 0;
+  width: 16px;
+  background: linear-gradient(to right, 
+    #1a0f2e 0%, 
+    #3d2a4f 30%,
+    #4c1d95 50%,
+    #3d2a4f 70%, 
+    #1a0f2e 100%);
+  border-radius: 8px 0 0 8px;
+  box-shadow: 
+    -3px 0 12px rgba(0, 0, 0, 0.7),
+    inset 2px 0 4px rgba(255, 255, 255, 0.15);
+}
+
+/* Book pages stack effect */
+.magazine-container.book-fullscreen-mode::after {
+  content: '';
+  position: absolute;
+  right: -4px;
+  top: 12px;
+  bottom: 12px;
+  width: 8px;
+  background: repeating-linear-gradient(
+    to bottom,
+    #f8f9fa 0px,
+    #f8f9fa 1.5px,
+    #e9ecef 1.5px,
+    #e9ecef 3px
+  );
+  border-radius: 0 6px 6px 0;
+  box-shadow: 3px 0 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Animation for entering book fullscreen mode */
+@keyframes bookFullscreenIn {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.4);
+    opacity: 1;
+  }
+}
+
+/* Enhanced flipbook in fullscreen mode */
+.book-fullscreen-mode .magazine-flipbook {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.book-fullscreen-mode .magazine-flipbook .page-wrapper {
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  box-shadow: 
+    0 6px 16px rgba(0, 0, 0, 0.6),
+    inset 0 1px 3px rgba(255, 255, 255, 0.1) !important;
+  border: 2px solid rgba(76, 29, 149, 0.3) !important;
+}
+
+.book-fullscreen-mode .magazine-flipbook .page-wrapper img {
+  filter: brightness(1.1) contrast(1.15) !important;
+}
+
+/* Side-by-side page layout in fullscreen */
+.book-fullscreen-mode .magazine-flipbook .page {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Book binding line in center */
+.book-fullscreen-mode .magazine-flipbook::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, 
+    transparent 0%,
+    rgba(76, 29, 149, 0.3) 10%,
+    rgba(76, 29, 149, 0.6) 50%,
+    rgba(76, 29, 149, 0.3) 90%,
+    transparent 100%);
+  transform: translateX(-50%);
+  z-index: 1000;
+  box-shadow: 0 0 4px rgba(76, 29, 149, 0.4);
+}
