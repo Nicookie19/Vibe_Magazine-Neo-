@@ -5,9 +5,6 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as pdfjsLib from 'pdfjs-dist';
 
-// Import worker from node_modules
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.js?url';
-
 const UploadTab = ({
   formData,
   setFormData,
@@ -23,11 +20,12 @@ const UploadTab = ({
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [isProcessingPdf, setIsProcessingPdf] = useState(false);
-  
-  // Set up PDF.js worker on component mount
+
   useEffect(() => {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
   }, []);
+  
+
   
   // Convert PDF to images
   const handlePdfFile = async (file) => {
