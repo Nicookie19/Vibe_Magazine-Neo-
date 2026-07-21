@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Document, Page, pdfjs } from "react-pdf";
+import PageFlip from "react-pageflip";
 import { supabase } from "../supabaseClient";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
