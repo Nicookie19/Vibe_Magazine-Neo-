@@ -1,0 +1,52 @@
+/* ========================================
+   MAGAZINE FLIPBOOK - MOBILE
+   Mobile & Tablet (≤768px) - Normal Modal
+   ======================================== */
+
+@media (max-width: 768px) {
+  .magazine-container:not(.book-fullscreen-mode) {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    aspect-ratio: 480 / 700;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.25));
+    transition: all 0.3s ease;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .magazine-container:not(.book-fullscreen-mode) .magazine-flipbook {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .magazine-flipbook:not(.book-fullscreen-mode .magazine-flipbook):active {
+    transform: scale(0.98);
+  }
+
+  .magazine-flipbook {
+    touch-action: pan-y pinch-zoom;
+  }
+
+  .page-wrapper img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* ========================================
+   RESPONSIVE BREAKPOINTS
+   ======================================== */
+
+@media (max-width: 480px) {
+  .magazine-container:not(.book-fullscreen-mode) {
+    max-width: 340px;
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.2));
+  }
+}
+
+@media (max-width: 360px) {
+  .magazine-container:not(.book-fullscreen-mode) {
+    max-width: 300px;
+  }
+}

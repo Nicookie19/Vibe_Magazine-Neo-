@@ -1,0 +1,120 @@
+/* ========================================
+   MAGAZINE FLIPBOOK - DESKTOP
+   Desktop devices (769px+)
+   ======================================== */
+
+/* ========================================
+   NORMAL MODAL - DESKTOP
+   ======================================== */
+
+@media (min-width: 769px) {
+  .magazine-container:not(.book-fullscreen-mode) {
+    width: 480px;
+    height: 700px;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+    transition: all 0.3s ease;
+  }
+
+  .magazine-container:not(.book-fullscreen-mode):hover {
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.4));
+  }
+
+  .magazine-flipbook:not(.book-fullscreen-mode .magazine-flipbook) {
+    transition: transform 0.2s ease;
+  }
+
+  .magazine-flipbook:not(.book-fullscreen-mode .magazine-flipbook):active {
+    transform: scale(0.99);
+  }
+
+  .magazine-flipbook {
+    cursor: pointer;
+  }
+
+  .magazine-flipbook:active {
+    cursor: grabbing;
+  }
+
+  /* ========================================
+     FULLSCREEN - DESKTOP
+     ======================================== */
+
+  .book-fullscreen-mode .magazine-flipbook {
+    box-shadow: 
+      0 20px 60px rgba(0, 0, 0, 0.8),
+      0 0 40px rgba(139, 92, 246, 0.2) !important;
+    transition: all 0.3s ease !important;
+  }
+
+  /* Show fullscreen controls when in fullscreen mode */
+  .book-fullscreen-mode .fullscreen-close-btn,
+  .book-fullscreen-mode .fullscreen-instructions {
+    display: block !important;
+    opacity: 1 !important;
+  }
+
+  /* Hide fullscreen instructions after a few seconds */
+  .book-fullscreen-mode .fullscreen-instructions {
+    animation: fadeInOut 5s ease-in-out forwards;
+  }
+
+  @keyframes fadeInOut {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+}
+
+/* ========================================
+   DESKTOP FULLSCREEN BREAKPOINTS
+   ======================================== */
+
+/* 4K Screens (2560px+) */
+@media (min-width: 2560px) {
+  .book-fullscreen-mode .magazine-flipbook {
+    max-width: 1800px !important;
+    max-height: 95vh !important;
+  }
+}
+
+/* Large Desktop (1920px - 2559px) */
+@media (min-width: 1920px) and (max-width: 2559px) {
+  .book-fullscreen-mode .magazine-flipbook {
+    max-width: 1500px !important;
+    max-height: 92vh !important;
+  }
+}
+
+/* Standard Desktop (1440px - 1919px) */
+@media (min-width: 1440px) and (max-width: 1919px) {
+  .book-fullscreen-mode .magazine-flipbook {
+    max-width: 1300px !important;
+    max-height: 90vh !important;
+  }
+}
+
+/* Laptop (1024px - 1439px) */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .book-fullscreen-mode {
+    padding: 30px !important;
+  }
+
+  .book-fullscreen-mode .magazine-flipbook {
+    max-width: 1100px !important;
+    max-height: 88vh !important;
+  }
+}
+
+/* Tablet Landscape (769px - 1023px) */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .book-fullscreen-mode {
+    padding: 20px !important;
+  }
+
+  .book-fullscreen-mode .magazine-flipbook {
+    width: 90vw !important;
+    max-width: 950px !important;
+    max-height: 82vh !important;
+  }
+}

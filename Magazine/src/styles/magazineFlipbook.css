@@ -1,0 +1,153 @@
+/* ========================================
+   MAGAZINE FLIPBOOK - BASE STYLES
+   Shared foundation for all devices
+   ======================================== */
+
+/* Container Base */
+.magazine-container {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Page Wrapper */
+.page-wrapper {
+  overflow: hidden !important;
+}
+
+/* Background Cleanup */
+.magazine-flipbook,
+.magazine-flipbook *,
+.page-wrapper {
+  background-image: none !important;
+}
+
+/* ========================================
+   FULLSCREEN MODE - BASE
+   ======================================== */
+
+.book-fullscreen-mode {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9999 !important;
+  background: linear-gradient(to bottom right, #0b0c10 0%, #1b0b28 50%, #071030 100%) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 40px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+.book-fullscreen-mode::before {
+  display: none !important;
+}
+
+.book-fullscreen-mode .magazine-flipbook {
+  width: 100% !important;
+  height: auto !important;
+  max-width: 1400px !important;
+  max-height: 90vh !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8) !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  perspective: 2000px !important;
+}
+
+.book-fullscreen-mode .magazine-flipbook > div {
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+/* Hide all modal content except the magazine in fullscreen */
+.book-fullscreen-mode ~ * {
+  display: none !important;
+}
+
+/* Enhanced 3D effect for page flipping */
+.book-fullscreen-mode .stf__parent {
+  perspective: 2000px !important;
+  perspective-origin: center center !important;
+}
+
+.book-fullscreen-mode .stf__item {
+  transform-style: preserve-3d !important;
+  backface-visibility: hidden !important;
+}
+
+/* Smooth page shadows */
+.book-fullscreen-mode .stf__shadow {
+  background: linear-gradient(to right, rgba(0,0,0,0.5) 0%, transparent 100%) !important;
+  opacity: 0.6 !important;
+}
+
+/* Clean page appearance */
+.book-fullscreen-mode .page-wrapper {
+  border-width: 3px !important;
+  border-color: rgba(200, 200, 200, 0.25) !important;
+  box-shadow: 
+    0 0 30px rgba(200, 200, 200, 0.15),
+    inset 0 0 20px rgba(255, 255, 255, 0.08) !important;
+}
+
+.book-fullscreen-mode .magazine-flipbook *::after,
+.book-fullscreen-mode .magazine-flipbook *::before {
+  display: none !important;
+  content: none !important;
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(-50px);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05) translateY(-10px);
+  }
+  70% {
+    transform: scale(0.95) translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.6s ease-out forwards;
+}
+
+
+/* ========================================
+   RATING POPUP ANIMATION
+   ======================================== */
+
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(-50px);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05) translateY(-10px);
+  }
+  70% {
+    transform: scale(0.95) translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.6s ease-out forwards;
+}

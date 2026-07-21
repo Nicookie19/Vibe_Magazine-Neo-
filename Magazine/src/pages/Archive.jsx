@@ -1,13 +1,12 @@
 // src/pages/Archive.jsx
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Document, Page, pdfjs } from "react-pdf";
+import PageFlip from "react-pageflip";
 import { supabase } from "../supabaseClient";
-import "react-pdf/dist/Page/AnnotationLayer.css";
-import "react-pdf/dist/Page/TextLayer.css";
-
-// Setup PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = "/node_modules/pdfjs-dist/build/pdf.worker.min.js";
+import "../styles/magazineFlipbook.css";
+import "../styles/magazineFlipbook-desktop.css";
+import "../styles/magazineFlipbook-mobile.css";
+import "../styles/magazineFlipbook-mobile-fullscreen.css";
 
 const Archive = () => {
   const [magazines, setMagazines] = useState([]);
@@ -224,21 +223,8 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
   const [showRatingPopup, setShowRatingPopup] = useState(false);
   const [userRating, setUserRating] = useState(0);
   const [hasRated, setHasRated] = useState(false);
-  const [numPages, setNumPages] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const onDocumentLoadSuccess = ({ numPages }) => {
-    setNumPages(numPages);
-  };
-  
-  const goToPrevPage = () =>
-    setCurrentPage(currentPage - 1 <= 1 ? 1 : currentPage - 1);
-
-  const goToNextPage = () =>
-    setCurrentPage(
-      currentPage + 1 >= numPages ? numPages : currentPage + 1,
-    );
-  
+  const [currentPage, setCurrentPage] = useState(0);
+  const pageFlipRef = React.useRef(null);
   const [userId] = useState(() => {
     // Generate or get user ID from localStorage
     let id = localStorage.getItem('magazine_user_id');
@@ -271,7 +257,67 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
     }
   };
 
+  // Handle clicking outside the magazine to exit fullscreen mode
+  useEffect(() => {
+    const handleFullscreenClick = (e) => {
+      const flipBook = document.querySelector('.book-fullscreen-mode');
+      if (flipBook) {
+        // Check if click is outside the magazine flipbook area
+        const magazineFlipbook = document.querySelector('.book-fullscreen-mode .magazine-flipbook');
+        if (magazineFlipbook && !magazineFlipbook.contains(e.target)) {
+          // Exit fullscreen mode and return to normal modal view
+          flipBook.classList.remove('book-fullscreen-mode');
+          
+          console.log('Exited fullscreen - returning to normal modal view');
+          
+          // Update the flipbook after a short delay to allow CSS transition
+          setTimeout(() => {
+            if (pageFlipRef.current) {
+              try {
+                const pageFlip = pageFlipRef.current.pageFlip();
+                if (pageFlip && pageFlip.update) {
+                  pageFlip.update();
+                }
+              } catch (error) {
+                console.log('PageFlip update error:', error);
+              }
+            }
+          }, 350);
+        }
+      }
+    };
 
+    // Handle ESC key to exit fullscreen
+    const handleEscKey = (e) => {
+      if (e.key === 'Escape' || e.keyCode === 27) {
+        const flipBook = document.querySelector('.book-fullscreen-mode');
+        if (flipBook) {
+          flipBook.classList.remove('book-fullscreen-mode');
+          console.log('Exited fullscreen via ESC key');
+          setTimeout(() => {
+            if (pageFlipRef.current) {
+              try {
+                const pageFlip = pageFlipRef.current.pageFlip();
+                if (pageFlip && pageFlip.update) {
+                  pageFlip.update();
+                }
+              } catch (error) {
+                console.log('PageFlip update error:', error);
+              }
+            }
+          }, 350);
+        }
+      }
+    };
+
+    document.addEventListener('click', handleFullscreenClick);
+    document.addEventListener('keydown', handleEscKey);
+    
+    return () => {
+      document.removeEventListener('click', handleFullscreenClick);
+      document.removeEventListener('keydown', handleEscKey);
+    };
+  }, []);
 
   // Load user's likes, saves, and comments when modal opens
   useEffect(() => {

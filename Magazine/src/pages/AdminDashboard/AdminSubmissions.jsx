@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
-import { toast } from "react-toastify";
 
 const AdminSubmissions = () => {
   const [submissions, setSubmissions] = useState([]);
@@ -12,22 +11,21 @@ const AdminSubmissions = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
-  const fetchSubmissions = useCallback(async () => {
-    try {
-      const { data, error } = await supabase
-        .from("submissions")
-        .select("*")
-        .order("submitted_at", { ascending: false });
-      if (error) throw error;
-      setSubmissions(data || []);
-    } catch (err) {
-      setError("Could not load submissions: " + (err.message || err));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
+    const fetchSubmissions = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("submissions")
+          .select("*")
+          .order("submitted_at", { ascending: false });
+        if (error) throw error;
+        setSubmissions(data || []);
+      } catch (err) {
+        setError("Could not load submissions: " + (err.message || err));
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchSubmissions();
 
     // Setup real-time subscription
@@ -57,7 +55,7 @@ const AdminSubmissions = () => {
       // Properly remove subscription on unmount
       subscription.unsubscribe();
     };
-  }, [fetchSubmissions]);
+  }, []);
 
   // Filter submissions based on status and search term
   const filteredSubmissions = submissions.filter((submission) => {
@@ -219,27 +217,15 @@ The Vibe Magazine Editorial Team
       if (error) throw error;
 
       // Update local state
+      const updatedSubmission = { ...submission, status: "Accepted" };
       setSubmissions((subs) =>
-        subs.map((sub) => (sub.id === id ? { ...sub, status: 'Accepted' } : sub))
+        subs.map((sub) => (sub.id === id ? updatedSubmission : sub))
       );
 
       // Send notification email
       console.log(`🎉 Submission accepted! Sending notification to ${submission.student_email}...`);
       const emailSent = await sendNotificationEmail(submission, "Accepted");
 
-      if (emailSent) {
-        toast.success(`✅ Submission accepted and notification sent to ${submission.student_email}!`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-
-        // Publish the magazine
-        await publishMagazine(submission);
-      }
     } catch (err) {
       console.error("Accept submission error:", err);
       toast.error(`❌ Failed to accept submission: ${err.message || err}`, {
@@ -284,55 +270,19 @@ The Vibe Magazine Editorial Team
       if (error) throw error;
 
       // Update local state
+      const updatedSubmission = { ...submission, status: "Rejected" };
       setSubmissions((subs) =>
-        subs.map((sub) => (sub.id === id ? { ...sub, status: 'Rejected' } : sub))
+        subs.map((sub) => (sub.id === id ? updatedSubmission : sub))
       );
 
       // Send notification email
       console.log(`📝 Submission rejected. Sending notification to ${submission.student_email}...`);
       const emailSent = await sendNotificationEmail(submission, "Rejected");
 
-      if (emailSent) {
-        toast.success(`📝 Submission rejected and notification sent to ${submission.student_email}.`, {
-          position: "bottom-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-      }
     } catch (err) {
       console.error("Reject submission error:", err);
     } finally {
       setProcessingIds((ids) => ids.filter((pid) => pid !== id));
-    }
-  };
-
-  const publishMagazine = async (submission) => {
-    try {
-      console.log(`📚 Publishing submission "${submission.title_of_work}" to magazines...`);
-      
-      const { error } = await supabase.from('magazines').insert([
-        {
-          title: submission.title_of_work,
-                  subtitle: `By ${submission.full_name}`,
-                  cover: submission.file_url, // Assuming the file_url can be used as a cover
-                  pdfurl: submission.file_url, // Corrected column name
-                  published: true,
-        },
-      ]);
-
-      if (error) {
-        throw new Error(`Failed to publish magazine: ${error.message}`);
-      }
-
-      console.log(`✅ Magazine "${submission.title_of_work}" published successfully.`);
-      toast.success(`📚 Magazine "${submission.title_of_work}" published successfully!`);
-
-    } catch (err) {
-      console.error("Publish magazine error:", err);
-      toast.error(`❌ Failed to publish magazine: ${err.message}`);
     }
   };
 
@@ -547,7 +497,7 @@ The Vibe Magazine Editorial Team
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredSubmissions.map((submission) => (
+                  {filteredSubmissions.map((submission, index) => (
                     <tr key={submission.id} className="border-b border-purple-500/10 hover:bg-gradient-to-r hover:from-purple-600/10 hover:to-pink-600/10 transition-all duration-300 group">
                       <td className="px-6 py-6">
                         <div className="flex items-center space-x-4">

@@ -1,0 +1,12 @@
+# Supabase project configuration
+project_id = "rthdgwflkehqkjsnmbiu"
+
+[functions]
+  [functions."create-admin-user"]
+    entrypoint = "functions/create-admin-user/index.js"
+  [functions."delete-user"]
+    entrypoint = "functions/delete-user/index.js"
+  [functions."reset-user-password"]
+    entrypoint = "functions/reset-user-password/index.js"
+  [functions."send-notification"]
+    entrypoint = "functions/send-notification/index.js"
