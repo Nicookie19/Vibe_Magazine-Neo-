@@ -4,6 +4,7 @@ import { supabase } from "../../supabaseClient";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as pdfjsLib from 'pdfjs-dist';
+import pdfjsWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 
 const UploadTab = ({
   formData,
@@ -22,13 +23,18 @@ const UploadTab = ({
   const [isProcessingPdf, setIsProcessingPdf] = useState(false);
 
   useEffect(() => {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+    pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
   }, []);
   
 
   
   // Convert PDF to images
   const handlePdfFile = async (file) => {
+    if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
+      toast.error("❌ Please choose a PDF file.", { position: "bottom-right" });
+      return;
+    }
+
     setIsProcessingPdf(true);
     
     toast.info("📄 Processing PDF... This may take a moment.", {
@@ -46,7 +52,38 @@ const UploadTab = ({
       icon: "⏳",
     });
 
+    let pdfurl = "";
+
     try {
+      // Store the original document as well as its preview images. The reader
+      // uses this URL to render an actual page-flip version of the PDF.
+      const timestamp = Date.now();
+      const safeFileName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
+      const pdfPath = `pdfs/${timestamp}-${safeFileName}`;
+      const { error: pdfUploadError } = await supabase.storage
+        .from("magazines")
+        .upload(pdfPath, file, {
+          contentType: "application/pdf",
+          cacheControl: "3600",
+          upsert: false,
+        });
+
+      if (pdfUploadError) {
+        throw new Error(`Failed to upload the PDF: ${pdfUploadError.message}`);
+      }
+
+      const { data: pdfUrlData } = supabase.storage
+        .from("magazines")
+        .getPublicUrl(pdfPath);
+      pdfurl = pdfUrlData?.publicUrl;
+
+      if (!pdfurl) {
+        throw new Error("The PDF was uploaded, but its public URL could not be created.");
+      }
+
+      // Keep the document URL even if creating optional JPG previews fails.
+      setFormData((p) => ({ ...p, pdfurl }));
+
       // Read file as array buffer
       const arrayBuffer = await file.arrayBuffer();
       console.log("PDF file loaded, size:", arrayBuffer.byteLength);
@@ -127,14 +164,15 @@ const UploadTab = ({
       }
       
       // Update form data with cover and pages
-      setFormData((p) => ({ 
-        ...p, 
+      setFormData((p) => ({
+        ...p,
         cover: coverUrl || p.cover,
-        pages: [...p.pages, ...uploadedPages] 
+        pages: [...p.pages, ...uploadedPages],
+        pdfurl,
       }));
       
       toast.dismiss("pdf-processing");
-      toast.success(`✅ PDF processed! Cover set + ${uploadedPages.length} pages uploaded!`, {
+      toast.success(`✅ PDF uploaded! Cover set + ${uploadedPages.length} preview pages created.`, {
         position: "bottom-right",
         style: {
           background: "#1F2937",
@@ -151,7 +189,9 @@ const UploadTab = ({
       console.error("Error processing PDF:", error);
       toast.dismiss("pdf-processing");
       
-      let errorMessage = "Failed to process PDF. Please try again.";
+      let errorMessage = pdfurl
+        ? "The PDF was uploaded, but its preview pages could not be created. Upload a cover image and save the magazine; readers can still flip through the PDF."
+        : "Failed to process PDF. Please try again.";
       
       if (error.message) {
         if (error.message.includes('Invalid PDF')) {
@@ -279,6 +319,7 @@ const UploadTab = ({
       subtitle: "",
       cover: "",
       pages: [],
+      pdfurl: "",
       published: false,
     });
   };
@@ -343,6 +384,7 @@ const UploadTab = ({
           subtitle: formData.subtitle,
           cover: formData.cover,
           pages: formData.pages,
+          pdfurl: formData.pdfurl || null,
           published: formData.published,
           editor: editor,
           created_at: new Date(),

@@ -1,18 +1,28 @@
 // src/pages/MagazineReader.jsx
 import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import PageFlip from "react-pageflip";
+import * as pdfjsLib from "pdfjs-dist";
+import pdfjsWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 import { supabase } from "../supabaseClient";
 import "../styles/magazineReader.css";
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+
+const isPdfUrl = (url) => typeof url === "string" && /\.pdf(?:$|[?#])/i.test(url);
 
 const MagazineReader = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { magazine } = location.state || {};
-    console.log("Magazine data:", magazine);
-
+    const { id } = useParams();
+    const navigationMagazine = location.state?.magazine;
+    const [magazine, setMagazine] = useState(navigationMagazine || null);
+    const [isLoadingMagazine, setIsLoadingMagazine] = useState(!navigationMagazine);
+    const [magazineLoadError, setMagazineLoadError] = useState("");
     const [loadingImages, setLoadingImages] = useState({});
     const [isLoadingImages, setIsLoadingImages] = useState(true);
+    const [pdfPages, setPdfPages] = useState([]);
+    const [pdfLoadError, setPdfLoadError] = useState("");
     const [dimensions, setDimensions] = useState({ width: 480, height: 700 });
     const [isLandscape, setIsLandscape] = useState(false);
     const [showRatingModal, setShowRatingModal] = useState(false);
@@ -28,6 +38,54 @@ const MagazineReader = () => {
         // Check localStorage to see if user has already seen the guide
         return localStorage.getItem('magazine_gesture_guide_seen') === 'true';
     });
+
+    // Direct links and page refreshes do not include React Router state. Load
+    // the magazine by its URL id so the reader remains usable in both cases.
+    useEffect(() => {
+        let cancelled = false;
+
+        const loadMagazine = async () => {
+            if (navigationMagazine) {
+                setMagazine(navigationMagazine);
+                setIsLoadingMagazine(false);
+                return;
+            }
+
+            if (!id) {
+                setIsLoadingMagazine(false);
+                return;
+            }
+
+            setIsLoadingMagazine(true);
+            const { data, error } = await supabase
+                .from("magazines")
+                .select("*")
+                .eq("id", id)
+                .eq("published", true)
+                .maybeSingle();
+
+            if (cancelled) return;
+
+            if (error || !data) {
+                setMagazineLoadError(error?.message || "This magazine is no longer available.");
+                setMagazine(null);
+            } else {
+                setMagazine(data);
+            }
+            setIsLoadingMagazine(false);
+        };
+
+        loadMagazine();
+        return () => {
+            cancelled = true;
+        };
+    }, [id, navigationMagazine]);
+
+    const pdfSource = magazine?.pdfurl || (isPdfUrl(magazine?.cover) ? magazine.cover : "");
+    const isPdfMagazine = Boolean(pdfSource);
+    const readerCover = isPdfMagazine ? pdfPages[0] : magazine?.cover;
+    const readerPages = isPdfMagazine ? pdfPages.slice(1) : (magazine?.pages || []);
+    const hasFlipbookPages = readerPages.length > 0;
 
     // Generate or get user ID from localStorage
     const [userId] = useState(() => {
@@ -170,13 +228,6 @@ const MagazineReader = () => {
         };
     }, [isLandscape, isMobile, hasSeenGuide]);
 
-    // Redirect back if no magazine data
-    useEffect(() => {
-        if (!magazine) {
-            navigate('/archive');
-        }
-    }, [magazine, navigate]);
-
     // Check if user has already rated this magazine
     useEffect(() => {
         const checkExistingRating = async () => {
@@ -198,9 +249,73 @@ const MagazineReader = () => {
         checkExistingRating();
     }, [magazine?.id, userId]);
 
-    // Preload images
+    // Render PDFs into page images for the existing page-flip reader. This
+    // preserves drag and click-to-turn controls for approved submissions.
+    useEffect(() => {
+        if (!isPdfMagazine || !pdfSource) return;
+
+        let cancelled = false;
+        let loadingTask;
+
+        const renderPdfPages = async () => {
+            setIsLoadingImages(true);
+            setPdfLoadError("");
+            setPdfPages([]);
+
+            try {
+                loadingTask = pdfjsLib.getDocument(pdfSource);
+                const pdf = await loadingTask.promise;
+                const renderedPages = [];
+
+                for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
+                    const page = await pdf.getPage(pageNumber);
+                    const viewport = page.getViewport({ scale: 1.5 });
+                    const canvas = document.createElement("canvas");
+                    const context = canvas.getContext("2d");
+
+                    if (!context) throw new Error("Could not prepare a magazine page.");
+
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+                    await page.render({ canvasContext: context, viewport }).promise;
+                    renderedPages.push(canvas.toDataURL("image/jpeg", 0.92));
+                }
+
+                if (!cancelled) {
+                    setPdfPages(renderedPages);
+                    setLoadingImages(
+                        renderedPages.reduce(
+                            (images, _page, index) => ({
+                                ...images,
+                                [index === 0 ? "cover" : `page-${index - 1}`]: true,
+                            }),
+                            {}
+                        )
+                    );
+                    setIsLoadingImages(false);
+                }
+            } catch (error) {
+                if (!cancelled) {
+                    console.error("Unable to render magazine PDF:", error);
+                    setPdfLoadError("This PDF could not be prepared for the flipbook.");
+                    setIsLoadingImages(false);
+                }
+            }
+        };
+
+        renderPdfPages();
+
+        return () => {
+            cancelled = true;
+            loadingTask?.destroy();
+        };
+    }, [isPdfMagazine, pdfSource]);
+
+    // Preload image-based magazines.
     useEffect(() => {
         if (!magazine) return;
+
+        if (isPdfMagazine) return;
 
         const totalImages = 1 + (magazine.pages?.length || 0);
         let loadedCount = 0;
@@ -235,7 +350,7 @@ const MagazineReader = () => {
                 img.src = page;
             });
         }
-    }, [magazine]);
+    }, [magazine, isPdfMagazine]);
 
     // Handle back button
     const handleClose = () => {
@@ -308,7 +423,41 @@ const MagazineReader = () => {
         setRating(starValue);
     };
 
-    if (!magazine) return null;
+    if (isLoadingMagazine) {
+        return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0b0c10] text-white">
+                Loading magazine…
+            </div>
+        );
+    }
+
+    if (!magazine) {
+        return (
+            <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-[#0b0c10] p-6 text-center text-white">
+                <p>{magazineLoadError || "This magazine could not be loaded."}</p>
+                <button
+                    onClick={() => navigate("/archive")}
+                    className="rounded-lg bg-purple-600 px-4 py-2 font-semibold hover:bg-purple-500"
+                >
+                    Back to archive
+                </button>
+            </div>
+        );
+    }
+
+    if (pdfLoadError) {
+        return (
+            <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-[#0b0c10] p-6 text-center text-white">
+                <p>{pdfLoadError}</p>
+                <a href={pdfSource} target="_blank" rel="noreferrer" className="rounded-lg bg-purple-600 px-4 py-2 font-semibold hover:bg-purple-500">
+                    Open PDF instead
+                </a>
+                <button onClick={() => navigate("/archive")} className="text-purple-300 hover:text-purple-200">
+                    Back to archive
+                </button>
+            </div>
+        );
+    }
 
     return (
         <div className="fixed inset-0 bg-gradient-to-br from-[#0b0c10] via-[#1b0b28] to-[#071030] z-50 flex flex-col">
@@ -342,7 +491,15 @@ const MagazineReader = () => {
             </div>
 
             {/* Loading State */}
-            {isLoadingImages ? (
+            {!hasFlipbookPages && !isLoadingImages ? (
+                <div className="flex flex-1 items-center justify-center bg-[#0b0c10] p-4">
+                    <img
+                        src={readerCover}
+                        alt={`Cover of ${magazine.title}`}
+                        className="max-h-full max-w-full rounded-lg object-contain shadow-2xl"
+                    />
+                </div>
+            ) : isLoadingImages ? (
                 <div className="flex-1 flex flex-col items-center justify-center gap-6">
                     <div className="relative">
                         <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-purple-500 shadow-lg shadow-purple-500/50"></div>
@@ -447,7 +604,7 @@ const MagazineReader = () => {
                             maxHeight={1200}
                             style={{ margin: 'auto' }}
                             swipeDistance={50}
-                            disableFlipByClick={true}
+                            disableFlipByClick={false}
                             drawShadow={true}
                             mobileScrollSupport={isLandscape}
                         >
@@ -459,7 +616,7 @@ const MagazineReader = () => {
                                     </div>
                                 )}
                                 <img
-                                    src={magazine.cover}
+                                    src={readerCover}
                                     alt={`Cover of ${magazine.title}`}
                                     className={`w-full h-full object-cover transition-opacity duration-300 ${loadingImages.cover ? 'opacity-100' : 'opacity-0'}`}
                                     style={{ background: '#2c1052' }}
@@ -468,7 +625,7 @@ const MagazineReader = () => {
                             </div>
 
                             {/* Magazine Pages */}
-                            {magazine.pages?.map((page, index) => (
+                            {readerPages.map((page, index) => (
                                 <div key={index} className="page-wrapper relative border-4 border-gray-300 shadow-2xl" style={{ boxShadow: '0 0 20px rgba(200,200,200,0.3), inset 0 0 10px rgba(255,255,255,0.2)' }}>
                                     {!loadingImages[`page-${index}`] && (
                                         <div className="absolute inset-0 flex items-center justify-center bg-[#2c1052]">

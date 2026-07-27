@@ -48,6 +48,7 @@ const AdminDashboard = () => {
     cover: "",
     template: "default",
     pages: [],
+    pdfurl: "",
     published: false,
   });
 
@@ -255,6 +256,7 @@ const AdminDashboard = () => {
         subtitle: "",
         cover: "",
         pages: [],
+        pdfurl: "",
         published: false,
       }));
     }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
+import { toast } from "react-toastify";
 
 const AdminSubmissions = () => {
   const [submissions, setSubmissions] = useState([]);
@@ -35,14 +36,18 @@ const AdminSubmissions = () => {
         "postgres_changes",
         { event: "*", schema: "public", table: "submissions" },
         (payload) => {
-          // Use payload.event instead of payload.eventType
-          if (payload.event === "INSERT") {
+          // Supabase sends the event name in `eventType`. Keep `event` as a
+          // fallback for older payloads so a database change always wins over
+          // stale local state.
+          const eventType = payload.eventType || payload.event;
+
+          if (eventType === "INSERT") {
             setSubmissions((subs) => [payload.new, ...subs]);
-          } else if (payload.event === "UPDATE") {
+          } else if (eventType === "UPDATE") {
             setSubmissions((subs) =>
               subs.map((sub) => (sub.id === payload.new.id ? payload.new : sub))
             );
-          } else if (payload.event === "DELETE") {
+          } else if (eventType === "DELETE") {
             setSubmissions((subs) =>
               subs.filter((sub) => sub.id !== payload.old.id)
             );
@@ -209,15 +214,21 @@ The Vibe Magazine Editorial Team
       }
 
       // Update status in database
-      const { error } = await supabase
+      const { data: updatedSubmission, error } = await supabase
         .from("submissions")
         .update({ status: "Accepted" })
-        .eq("id", id);
-      
-      if (error) throw error;
+        .eq("id", id)
+        .select("*")
+        .maybeSingle();
 
-      // Update local state
-      const updatedSubmission = { ...submission, status: "Accepted" };
+      if (error) throw error;
+      if (!updatedSubmission) {
+        throw new Error("The submission could not be updated. Please check the Supabase update policy for the submissions table.");
+      }
+
+      // Use the record returned by Supabase instead of assuming the update
+      // succeeded. This prevents a temporary Accepted label that turns back
+      // into Pending after a refresh.
       setSubmissions((subs) =>
         subs.map((sub) => (sub.id === id ? updatedSubmission : sub))
       );
@@ -262,15 +273,19 @@ The Vibe Magazine Editorial Team
       }
 
       // Update status in database
-      const { error } = await supabase
+      const { data: updatedSubmission, error } = await supabase
         .from("submissions")
         .update({ status: "Rejected" })
-        .eq("id", id);
-      
-      if (error) throw error;
+        .eq("id", id)
+        .select("*")
+        .maybeSingle();
 
-      // Update local state
-      const updatedSubmission = { ...submission, status: "Rejected" };
+      if (error) throw error;
+      if (!updatedSubmission) {
+        throw new Error("The submission could not be updated. Please check the Supabase update policy for the submissions table.");
+      }
+
+      // Keep local state aligned with the database-confirmed record.
       setSubmissions((subs) =>
         subs.map((sub) => (sub.id === id ? updatedSubmission : sub))
       );
