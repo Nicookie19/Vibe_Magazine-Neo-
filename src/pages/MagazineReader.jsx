@@ -9,6 +9,7 @@ const MagazineReader = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { magazine } = location.state || {};
+    console.log("Magazine data:", magazine);
 
     const [loadingImages, setLoadingImages] = useState({});
     const [isLoadingImages, setIsLoadingImages] = useState(true);

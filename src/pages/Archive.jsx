@@ -137,7 +137,7 @@ const Archive = () => {
               return (
                 <article
                   key={mag.id}
-                  onClick={() => setSelectedMag(mag)}
+                  onClick={() => navigate(`/magazine/${mag.id}`, { state: { magazine: mag } })}
                   className="group overflow-hidden rounded-lg shadow-lg transform transition duration-500 hover:scale-105 hover:shadow-2xl cursor-pointer bg-black/20 border border-purple-500/20 relative"
                 >
                   <div className="aspect-[3/4] overflow-hidden bg-[#241231]">

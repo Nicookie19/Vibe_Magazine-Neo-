@@ -22,19 +22,9 @@ const LibraryTab = ({ magazines, removeMagazine, fetchMagazines }) => {
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
-  // Magazine reader modal state
-  const [showMagazineModal, setShowMagazineModal] = useState(false);
-  const [selectedMagazine, setSelectedMagazine] = useState(null);
-
   // Handle magazine click - navigate to archive with magazine selected
   const handleMagazineClick = (magazine) => {
     navigate(`/archive?magazineId=${magazine.id}`);
-  };
-
-  // Close magazine modal
-  const closeMagazineModal = () => {
-    setShowMagazineModal(false);
-    setSelectedMagazine(null);
   };
 
   // Fetch events from Supabase
@@ -49,17 +39,42 @@ const LibraryTab = ({ magazines, removeMagazine, fetchMagazines }) => {
     fetchEvents();
   }, []);
 
-  // Upload image to Supabase Storage
+  // Upload image to Supabase Storage (uses the existing 'magazines' bucket that's already working)
   const uploadImage = async (file) => {
-    const fileName = `${Date.now()}_${file.name}`;
-    const { data, error } = await supabase.storage
-      .from("event-images")
-      .upload(fileName, file);
-    if (error) return null;
-    const url = supabase.storage
-      .from("event-images")
-      .getPublicUrl(fileName).data.publicUrl;
-    return url;
+    try {
+      const fileName = `events/${Date.now()}_${file.name}`; // Store events in a subfolder within the magazines bucket
+      
+      const { error: uploadError } = await supabase.storage
+        .from("magazines") // Use the existing magazines bucket that's already working for your uploads
+        .upload(fileName, file, { upsert: false });
+      
+      if (uploadError) {
+        console.error("Error uploading image to storage:", uploadError);
+        // Provide more specific error message for common issues
+        if (uploadError.message.includes("bucket") || uploadError.message.includes("The resource was not found")) {
+          throw new Error("Storage bucket 'magazines' not found. Please check your Supabase configuration.");
+        } else if (uploadError.message.includes("permission")) {
+          throw new Error("Permission denied. Check your storage bucket policies to allow uploads.");
+        } else {
+          throw new Error(`Upload failed: ${uploadError.message}`);
+        }
+      }
+      
+      // getPublicUrl in supabase-js v2 is synchronous and doesn't return errors
+      // It constructs the URL from the bucket name and file path
+      const { data: urlData } = supabase.storage
+        .from("magazines")
+        .getPublicUrl(fileName);
+
+      if (!urlData || !urlData.publicUrl) {
+        throw new Error("Failed to get public URL for uploaded file");
+      }
+
+      return urlData.publicUrl;
+    } catch (error) {
+      console.error("Image upload error:", error);
+      throw error;
+    }
   };
 
   // Add new event
@@ -68,33 +83,57 @@ const LibraryTab = ({ magazines, removeMagazine, fetchMagazines }) => {
     setLoading(true);
     setSuccessMsg("");
     setErrorMsg("");
-    let imageUrl = form.image;
-    if (imageFile) {
-      imageUrl = await uploadImage(imageFile);
-      if (!imageUrl) {
-        setErrorMsg("Image upload failed. Please try again.");
+    
+    try {
+      // Validate required fields
+      if (!form.title || !form.date || !form.venue) {
+        setErrorMsg("Please fill in all required fields: title, date, and venue.");
         setLoading(false);
         return;
       }
+      
+      // Check if we have either an image URL or a file to upload
+      let imageUrl = form.image.trim();
+      if (imageFile) {
+        try {
+          imageUrl = await uploadImage(imageFile);
+        } catch (uploadError) {
+          setErrorMsg(uploadError.message || "Image upload failed. Please try again.");
+          setLoading(false);
+          return;
+        }
+      }
+      
+      // If no image URL is provided, set a default placeholder
+      if (!imageUrl) {
+        imageUrl = "https://picsum.photos/seed/event/400/300"; // Default placeholder image
+      }
+      
+      // Insert the event into the database
+      const { data, error } = await supabase
+        .from("events")
+        .insert([{ ...form, image: imageUrl }])
+        .select(); // Ensure the inserted row is returned
+      
+      if (error) {
+        setErrorMsg(error.message || "Event upload failed. Please try again.");
+        setSuccessMsg("");
+      } else if (data && data[0]) {
+        setEvents((prev) => [...prev, { ...form, image: imageUrl, id: data[0].id }]);
+        setForm({ title: "", date: "", venue: "", image: "" });
+        setImageFile(null);
+        setSuccessMsg("Event uploaded successfully!");
+        setErrorMsg("");
+      } else {
+        setErrorMsg("Event upload failed. No data returned.");
+        setSuccessMsg("");
+      }
+    } catch (error) {
+      console.error("Error adding event:", error);
+      setErrorMsg(error.message || "An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    const { data, error } = await supabase
-      .from("events")
-      .insert([{ ...form, image: imageUrl }])
-      .select(); // Ensure the inserted row is returned
-    if (error) {
-      setErrorMsg(error.message || "Event upload failed. Please try again.");
-      setSuccessMsg("");
-    } else if (data && data[0]) {
-      setEvents((prev) => [...prev, { ...form, image: imageUrl, id: data[0].id }]);
-      setForm({ title: "", date: "", venue: "", image: "" });
-      setImageFile(null);
-      setSuccessMsg("Event uploaded successfully!");
-      setErrorMsg("");
-    } else {
-      setErrorMsg("Event upload failed. No data returned.");
-      setSuccessMsg("");
-    }
-    setLoading(false);
   };
 
   // Show delete confirmation modal

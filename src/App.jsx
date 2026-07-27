@@ -21,6 +21,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import Login from "./pages/Login";
 import ResetPassword from "./pages/ResetPassword";
 import ConfirmSignup from "./pages/ConfirmSignup";
+import MagazineView from "./pages/MagazineView";
 import Notification from "./pages/Notification";
 import MagazineReader from "./pages/MagazineReader";
 
@@ -60,7 +61,7 @@ const Layout = ({ children }) => {
   const isResetPasswordPage = location.pathname === "/reset-password";
   const isConfirmSignupPage = location.pathname === "/confirm-signup";
   const isNotificationPage = location.pathname === "/notification";
-  const isMagazineReaderPage = location.pathname === "/magazine-reader";
+  const isMagazineReaderPage = location.pathname.startsWith("/magazine");
   const isAdminPage = location.pathname.startsWith("/admin");
   const isAccessDeniedPage = location.pathname === "/access-denied";
   const isAuthPage = isLoginPage || isResetPasswordPage || isConfirmSignupPage || isNotificationPage || isAccessDeniedPage;
@@ -123,6 +124,7 @@ function App() {
           <Route path="/archive" element={<Archive />} />
           <Route path="/about" element={<About />} />
           <Route path="/submit" element={<Submit />} />
+          <Route path="/magazine/:id" element={<MagazineReader />} />
           <Route path="/contact" element={<Contact />} />
 
           {/* Magazine Reader - Fullscreen dedicated page */}
