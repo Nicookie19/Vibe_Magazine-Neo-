@@ -40,7 +40,6 @@ const MagazineReader = () => {
     const [zoom, setZoom] = useState(1);
     const zoomRef = React.useRef(1);
     const pinchRef = React.useRef(null);
-    const zoomStageRef = React.useRef(null);
     const [bookSize, setBookSize] = useState(null);
     const [showGestureGuide, setShowGestureGuide] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
@@ -93,7 +92,7 @@ const MagazineReader = () => {
 
     const pdfSource = magazine?.pdfurl || (isPdfUrl(magazine?.cover) ? magazine.cover : "");
     const isPdfMagazine = Boolean(pdfSource);
-    const readerCover = isPdfMagazine ? pdfPages[0] : magazine?.cover;
+const readerCover = isPdfMagazine ? pdfPages[0] : magazine?.cover;
     const readerPages = isPdfMagazine ? pdfPages.slice(1) : (magazine?.pages || []);
     const hasFlipbookPages = readerPages.length > 0;
     const isZoomed = zoom > 1.005;
@@ -261,7 +260,7 @@ const MagazineReader = () => {
     }, [magazine?.id, userId]);
 
     // Keep a ref in sync with the current zoom so native (non-passive)
-    // touch/wheel handlers can read the latest value.
+    // touch/wheel handlers can always read the latest value.
     useEffect(() => {
         zoomRef.current = zoom;
     }, [zoom]);
@@ -419,7 +418,7 @@ const MagazineReader = () => {
             setPdfLoadError("");
             setPdfPages([]);
 
-            try {
+try {
                 loadingTask = pdfjsLib.getDocument({ url: pdfSource });
                 const pdf = await loadingTask.promise;
                 const renderedPages = [];
@@ -756,18 +755,15 @@ const MagazineReader = () => {
                         </div>
                     )}
 
-                    {/* Zoomable flipbook - the stage is scaled with CSS so the
-                        page-flip animation keeps working at every zoom level */}
                     <div className="magazine-zoom-inner">
                         <div
-                            className="magazine-zoom-holder relative flex-shrink-0"
+                            className="magazine-zoom-holder"
                             style={{
                                 width: bookSize ? bookSize.width * zoom : dimensions.width * zoom,
                                 height: bookSize ? bookSize.height * zoom : dimensions.height * zoom,
                             }}
                         >
                             <div
-                                ref={zoomStageRef}
                                 className="magazine-zoom-stage"
                                 style={{
                                     width: bookSize ? bookSize.width : dimensions.width,
@@ -776,34 +772,34 @@ const MagazineReader = () => {
                                     transformOrigin: 'center center',
                                 }}
                             >
-                                <div
-                                    className="reader-fullscreen-container"
-                                >
-                                    <PageFlip
-                                        ref={pageFlipRef}
-                                        width={dimensions.width}
-                                        height={dimensions.height}
-                                        uncutPages={false}
-                                        showCover={!isLandscape}
-                                        className="magazine-flipbook-reader"
-                                        flippingTime={800}
-                                        useMouseEvents={true}
-                                        maxShadowOpacity={0.7}
-                                        showSwipeHint={true}
-                                        autoSize={true}
-                                        clickEventForward={true}
-                                        usePortrait={!isLandscape}
-                                        startPage={0}
-                                        showPageCorners={true}
-                                        size="stretch"
-                                        renderOnlyPageLengths={false}
-                                        minWidth={300}
-                                        maxWidth={1800}
-                                        minHeight={400}
-                                        maxHeight={1200}
-                                        style={{ margin: 'auto' }}
-                                        swipeDistance={50}
-                                        disableFlipByClick={false}
+                    <div
+                        className="reader-fullscreen-container"
+                    >
+                        <PageFlip
+                            ref={pageFlipRef}
+                            width={dimensions.width}
+                            height={dimensions.height}
+                            uncutPages={false}
+                            showCover={!isLandscape}
+                            className="magazine-flipbook-reader"
+                            flippingTime={800}
+                            useMouseEvents={true}
+                            maxShadowOpacity={0.7}
+                            showSwipeHint={true}
+                            autoSize={true}
+                            clickEventForward={true}
+                            usePortrait={!isLandscape}
+                            startPage={0}
+                            showPageCorners={true}
+                            size="stretch"
+                            renderOnlyPageLengths={false}
+                            minWidth={300}
+                            maxWidth={1800}
+                            minHeight={400}
+                            maxHeight={1200}
+                            style={{ margin: 'auto' }}
+                            swipeDistance={50}
+                            disableFlipByClick={false}
                             drawShadow={true}
                             mobileScrollSupport={isLandscape}
                         >
@@ -843,7 +839,7 @@ const MagazineReader = () => {
                                 </div>
                             ))}
                         </PageFlip>
-                                </div>
+                    </div>
                             </div>
                         </div>
                     </div>

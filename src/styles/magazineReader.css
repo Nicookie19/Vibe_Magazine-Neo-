@@ -32,9 +32,9 @@
 
 /* ========================================
    ZOOM CONTROLS
-   Using `margin: auto` inside a flex parent centers the book when it fits
-   inside the viewport and automatically snaps to the top-left (reachable
-   scroll position) when the zoomed book is larger than the viewport.
+   The inner wrapper centers the book exactly like the original layout at
+   100% zoom. When zoomed in, the holder grows beyond the viewport so the
+   container scrolls; `margin: auto` keeps the start edge reachable.
    ======================================== */
 
 .magazine-zoom-inner {
