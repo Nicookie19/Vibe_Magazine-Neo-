@@ -448,7 +448,12 @@ try {
 
                 for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
                     const page = await pdf.getPage(pageNumber);
-                    const viewport = page.getViewport({ scale: 1.5 });
+                    // Render at 2x so pages stay sharp when zoomed in and on
+                    // high-DPI mobile screens. Capped so low-end phones are
+                    // not overloaded with multi-megapixel canvases.
+                    const deviceScale = window.devicePixelRatio || 1;
+                    const renderScale = Math.min(2, Math.max(1.5, deviceScale * 1.5));
+                    const viewport = page.getViewport({ scale: renderScale });
                     const canvas = document.createElement("canvas");
                     const context = canvas.getContext("2d");
 
