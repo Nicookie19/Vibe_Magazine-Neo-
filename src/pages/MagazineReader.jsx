@@ -104,7 +104,10 @@ const readerCover = isPdfMagazine ? pdfPages[0] : magazine?.cover;
         if (!contentBox) return null;
         const pageAspect = dimensions.width / dimensions.height;
         const bookAspect = pageAspect * (isLandscape ? 2 : 1);
-        const fitWidth = Math.min(contentBox.width, contentBox.height * bookAspect);
+        // Fill the full viewport width so the book touches the left and right
+        // edges. Height follows the aspect ratio (the book scrolls vertically
+        // in landscape if it is taller than the viewport).
+        const fitWidth = contentBox.width;
         return {
             width: fitWidth,
             height: fitWidth / bookAspect,
