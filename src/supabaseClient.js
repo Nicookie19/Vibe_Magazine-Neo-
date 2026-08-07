@@ -26,6 +26,16 @@ export const auth = {
     });
     return { data, error };
   },
+
+  // Start the hosted Google OAuth flow. Supabase redirects the browser to Google
+  // and then returns the user to the supplied URL with a completed session.
+  signInWithGoogle: async (redirectTo) => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo },
+    });
+    return { data, error };
+  },
   
   // Sign out
   signOut: async () => {

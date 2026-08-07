@@ -23,17 +23,18 @@ const supabaseAdmin = createClient(supabaseUrl, serviceKey, {
 
 const createAdminUser = async () => {
   // CHOOSE THE ROLE FOR THE NEW USER: 'admin' or 'superadmin'
-  const role = 'admin'; 
+  const role = 'superadmin'; 
 
   // --- User Details ---
-  const email = ''; // example: nmahipus_240000001368@uic.edu.ph
-  const password = ''; // example: superadmin1368
-  const username = ''; //super_admin
-  const displayName = ''; //Vibe Super Admin
+  const email = 'vibesuperadmin@uic.edu.ph'; // example: nmahipus_240000001368@uic.edu.ph
+  const password = 'superadmin22925'; // example: superadmin1368
+  const username = 'vibe_superadmin'; //super_admin
+  const displayName = 'Vibe Super Admin'; //Vibe Super Admin
+// Then run node createUser.js in terminal
 
   console.log(`Attempting to create user: ${email}`);
 
-  try {
+  try { 
     // 1. Create the user in Supabase Auth
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email: email,

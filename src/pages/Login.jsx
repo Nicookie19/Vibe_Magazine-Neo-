@@ -8,6 +8,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [resetLoading, setResetLoading] = useState(false);
@@ -17,7 +18,7 @@ const Login = () => {
   const location = useLocation();
   
   // Check if we have a return URL from a redirect
-  const returnUrl = location.state?.returnUrl || "/";
+  const returnUrl = location.state?.returnUrl || sessionStorage.getItem("vibeOAuthReturnUrl") || "/";
   
   // Check for success message from navigation state
   useEffect(() => {
@@ -29,7 +30,7 @@ const Login = () => {
   }, [location.state]);
 
   // Check if user is already logged in
-  useEffect(() => {
+  useEffect(() => { 
     const checkAuth = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
@@ -47,12 +48,24 @@ const Login = () => {
         
         if (session?.user) {
           // User is already logged in, get their role
-          const { data: profileData } = await supabase
+          const { data: profileData, error: profileError } = await supabase
             .from('user_profiles')
-            .select('role')
+            .select('role, is_active')
             .eq('id', session.user.id)
             .single();
-          
+
+          // OAuth can create an Auth user before it has an application profile.
+          // Never grant dashboard access unless an administrator has assigned one.
+          if (profileError || !profileData || !profileData.is_active) {
+            await auth.signOut();
+            setError(
+              !profileData || profileError
+                ? "This Google account is not authorized for the dashboard. Please contact an administrator."
+                : "Your account has been deactivated. Please contact an administrator."
+            );
+            return;
+          }
+
           if (profileData) {
             const role = profileData.role;
             
@@ -87,6 +100,7 @@ const Login = () => {
               }
               
               // Navigate to admin dashboard or return URL if coming from a redirect
+              sessionStorage.removeItem("vibeOAuthReturnUrl");
               navigate(returnUrl.startsWith('/admin') ? returnUrl : "/admin");
             } else {
               // For regular users
@@ -94,6 +108,7 @@ const Login = () => {
               localStorage.removeItem("vibeSuperAdmin");
               localStorage.removeItem("vibePrimarySuperAdmin");
               localStorage.removeItem("vibePrimaryAdmin");
+              sessionStorage.removeItem("vibeOAuthReturnUrl");
               navigate('/');
             }
           }
@@ -104,7 +119,26 @@ const Login = () => {
     };
     
     checkAuth();
-  }, [navigate]);
+  }, [navigate, returnUrl]);
+
+  const handleGoogleSignIn = async () => {
+    setError("");
+    setSuccess("");
+    setGoogleLoading(true);
+
+    try {
+      // React Router state is lost during the external OAuth redirect, so retain
+      // a safe in-app destination until the authenticated user returns.
+      sessionStorage.setItem("vibeOAuthReturnUrl", returnUrl);
+      const { error } = await auth.signInWithGoogle(`${window.location.origin}/vibelogin`);
+      if (error) throw error;
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+      sessionStorage.removeItem("vibeOAuthReturnUrl");
+      setError(error.message || "Google sign-in could not be started. Please try again.");
+      setGoogleLoading(false);
+    }
+  };
 
   // Handle forgot password
   const handleForgotPassword = async (e) => {
@@ -438,9 +472,39 @@ const Login = () => {
                     <span>Sign In to Dashboard</span>
                   </>
                 )}
-              </div>
+              </div> 
             </button>
           </form>
+
+          <div className="flex items-center gap-3 my-6" aria-hidden="true">
+            <div className="h-px flex-1 bg-purple-500/20" />
+            <span className="text-xs uppercase tracking-wider text-purple-300/70">or</span>
+            <div className="h-px flex-1 bg-purple-500/20" />
+          </div>
+
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            disabled={googleLoading || loading}
+            className="w-full flex items-center justify-center gap-3 rounded-lg border border-purple-400/40 bg-white px-4 py-3 text-sm font-semibold text-gray-800 transition-all duration-200 hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            {googleLoading ? (
+              <>
+                <div className="h-5 w-5 rounded-full border-2 border-gray-600 border-t-transparent animate-spin" />
+                <span>Connecting to Google...</span>
+              </>
+            ) : (
+              <>
+                <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="#4285F4" d="M21.35 12.23c0-.71-.06-1.4-.18-2.05H12v3.88h5.24a4.48 4.48 0 0 1-1.94 2.94v2.52h3.15c1.84-1.69 2.9-4.18 2.9-7.29Z" />
+                  <path fill="#34A853" d="M12 21.75c2.63 0 4.84-.87 6.45-2.37L15.3 16.9c-.87.58-1.98.92-3.3.92-2.54 0-4.69-1.71-5.46-4.01H3.29v2.6A9.75 9.75 0 0 0 12 21.75Z" />
+                  <path fill="#FBBC05" d="M6.54 13.81a5.87 5.87 0 0 1 0-3.62v-2.6H3.29a9.75 9.75 0 0 0 0 8.82l3.25-2.6Z" />
+                  <path fill="#EA4335" d="M12 6.18c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.84 3.29 14.63 2.25 12 2.25a9.75 9.75 0 0 0-8.71 5.34l3.25 2.6C7.31 7.89 9.46 6.18 12 6.18Z" />
+                </svg>
+                <span>Continue with Google</span>
+              </>
+            )}
+          </button>
 
           {/* Back Link */}
           <div className="mt-8 pt-6 border-t border-purple-500/20">
