@@ -1,5 +1,5 @@
 // src/pages/MagazineReader.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import PageFlip from "react-pageflip";
 import * as pdfjsLib from "pdfjs-dist";
@@ -40,7 +40,7 @@ const MagazineReader = () => {
     const [zoom, setZoom] = useState(1);
     const zoomRef = React.useRef(1);
     const pinchRef = React.useRef(null);
-    const [bookSize, setBookSize] = useState(null);
+    const [contentBox, setContentBox] = useState(null);
     const [showGestureGuide, setShowGestureGuide] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const [hasSeenGuide, setHasSeenGuide] = useState(() => {
@@ -96,6 +96,20 @@ const readerCover = isPdfMagazine ? pdfPages[0] : magazine?.cover;
     const readerPages = isPdfMagazine ? pdfPages.slice(1) : (magazine?.pages || []);
     const hasFlipbookPages = readerPages.length > 0;
     const isZoomed = zoom > 1.005;
+
+    // The book always fits the available viewport (like the original
+    // responsive scaling). In landscape it is a two-page spread, in portrait
+    // a single page. `fitBox` is the on-screen size of the book at 100%.
+    const fitBox = useMemo(() => {
+        if (!contentBox) return null;
+        const pageAspect = dimensions.width / dimensions.height;
+        const bookAspect = pageAspect * (isLandscape ? 2 : 1);
+        const fitWidth = Math.min(contentBox.width, contentBox.height * bookAspect);
+        return {
+            width: fitWidth,
+            height: fitWidth / bookAspect,
+        };
+    }, [contentBox, isLandscape, dimensions.width, dimensions.height]);
 
     // Generate or get user ID from localStorage
     const [userId] = useState(() => {
@@ -265,11 +279,13 @@ const readerCover = isPdfMagazine ? pdfPages[0] : magazine?.cover;
         zoomRef.current = zoom;
     }, [zoom]);
 
-    // Measure the rendered flipbook so the zoom wrapper can size itself to the
-    // scaled book (this makes the viewport scrollable when zoomed in).
+    // Measure the flipbook viewport's content box so the zoom wrapper can size
+    // itself to the scaled book (this makes the viewport scrollable when
+    // zoomed in). The box is stable - it never depends on the rendered book,
+    // so it cannot fight page-flip's auto-stretch sizing.
     useEffect(() => {
         if (isLoadingImages || !containerRef.current || !hasFlipbookPages) {
-            setBookSize(null);
+            setContentBox(null);
             return undefined;
         }
 
@@ -277,12 +293,17 @@ const readerCover = isPdfMagazine ? pdfPages[0] : magazine?.cover;
 
         const measure = () => {
             if (cancelled) return;
-            const el = containerRef.current?.querySelector(".magazine-flipbook-reader");
+            const el = containerRef.current;
             if (!el) return;
-            const width = el.offsetWidth;
-            const height = el.offsetHeight;
+            const cs = getComputedStyle(el);
+            const width = el.clientWidth
+                - (parseFloat(cs.paddingLeft) || 0)
+                - (parseFloat(cs.paddingRight) || 0);
+            const height = el.clientHeight
+                - (parseFloat(cs.paddingTop) || 0)
+                - (parseFloat(cs.paddingBottom) || 0);
             if (width > 0 && height > 0) {
-                setBookSize((prev) =>
+                setContentBox((prev) =>
                     prev && Math.abs(prev.width - width) < 2 && Math.abs(prev.height - height) < 2
                         ? prev
                         : { width, height }
@@ -291,11 +312,10 @@ const readerCover = isPdfMagazine ? pdfPages[0] : magazine?.cover;
         };
 
         measure();
-        const timer = window.setTimeout(measure, 400);
+        const timer = window.setTimeout(measure, 300);
 
         const observer = new ResizeObserver(measure);
-        const bookEl = containerRef.current.querySelector(".magazine-flipbook-reader");
-        if (bookEl) observer.observe(bookEl);
+        observer.observe(containerRef.current);
 
         window.addEventListener("resize", measure);
 
@@ -305,7 +325,7 @@ const readerCover = isPdfMagazine ? pdfPages[0] : magazine?.cover;
             observer.disconnect();
             window.removeEventListener("resize", measure);
         };
-    }, [isLoadingImages, hasFlipbookPages, dimensions.width, dimensions.height]);
+    }, [isLoadingImages, hasFlipbookPages]);
 
     // Zoom with Ctrl/Cmd + "+" / "-" / "0" keyboard shortcuts.
     useEffect(() => {
@@ -759,15 +779,15 @@ try {
                         <div
                             className="magazine-zoom-holder"
                             style={{
-                                width: bookSize ? bookSize.width * zoom : dimensions.width * zoom,
-                                height: bookSize ? bookSize.height * zoom : dimensions.height * zoom,
+                                width: fitBox ? fitBox.width * zoom : undefined,
+                                height: fitBox ? fitBox.height * zoom : undefined,
                             }}
                         >
                             <div
                                 className="magazine-zoom-stage"
                                 style={{
-                                    width: bookSize ? bookSize.width : dimensions.width,
-                                    height: bookSize ? bookSize.height : dimensions.height,
+                                    width: fitBox ? fitBox.width : undefined,
+                                    height: fitBox ? fitBox.height : undefined,
                                     transform: `scale(${zoom})`,
                                     transformOrigin: 'center center',
                                 }}
