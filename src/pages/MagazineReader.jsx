@@ -11,6 +11,11 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 const isPdfUrl = (url) => typeof url === "string" && /\.pdf(?:$|[?#])/i.test(url);
 
+const ZOOM_MIN = 0.5;
+const ZOOM_MAX = 3;
+const ZOOM_STEP = 1.25;
+const clampZoom = (value) => Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, value));
+
 const MagazineReader = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -32,6 +37,11 @@ const MagazineReader = () => {
     const [hasRated, setHasRated] = useState(false);
     const pageFlipRef = React.useRef(null);
     const containerRef = React.useRef(null);
+    const [zoom, setZoom] = useState(1);
+    const zoomRef = React.useRef(1);
+    const pinchRef = React.useRef(null);
+    const zoomStageRef = React.useRef(null);
+    const [bookSize, setBookSize] = useState(null);
     const [showGestureGuide, setShowGestureGuide] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const [hasSeenGuide, setHasSeenGuide] = useState(() => {
@@ -86,6 +96,7 @@ const MagazineReader = () => {
     const readerCover = isPdfMagazine ? pdfPages[0] : magazine?.cover;
     const readerPages = isPdfMagazine ? pdfPages.slice(1) : (magazine?.pages || []);
     const hasFlipbookPages = readerPages.length > 0;
+    const isZoomed = zoom > 1.005;
 
     // Generate or get user ID from localStorage
     const [userId] = useState(() => {
@@ -249,6 +260,152 @@ const MagazineReader = () => {
         checkExistingRating();
     }, [magazine?.id, userId]);
 
+    // Keep a ref in sync with the current zoom so native (non-passive)
+    // touch/wheel handlers can read the latest value.
+    useEffect(() => {
+        zoomRef.current = zoom;
+    }, [zoom]);
+
+    // Measure the rendered flipbook so the zoom wrapper can size itself to the
+    // scaled book (this makes the viewport scrollable when zoomed in).
+    useEffect(() => {
+        if (isLoadingImages || !containerRef.current || !hasFlipbookPages) {
+            setBookSize(null);
+            return undefined;
+        }
+
+        let cancelled = false;
+
+        const measure = () => {
+            if (cancelled) return;
+            const el = containerRef.current?.querySelector(".magazine-flipbook-reader");
+            if (!el) return;
+            const width = el.offsetWidth;
+            const height = el.offsetHeight;
+            if (width > 0 && height > 0) {
+                setBookSize((prev) =>
+                    prev && Math.abs(prev.width - width) < 2 && Math.abs(prev.height - height) < 2
+                        ? prev
+                        : { width, height }
+                );
+            }
+        };
+
+        measure();
+        const timer = window.setTimeout(measure, 400);
+
+        const observer = new ResizeObserver(measure);
+        const bookEl = containerRef.current.querySelector(".magazine-flipbook-reader");
+        if (bookEl) observer.observe(bookEl);
+
+        window.addEventListener("resize", measure);
+
+        return () => {
+            cancelled = true;
+            window.clearTimeout(timer);
+            observer.disconnect();
+            window.removeEventListener("resize", measure);
+        };
+    }, [isLoadingImages, hasFlipbookPages, dimensions.width, dimensions.height]);
+
+    // Zoom with Ctrl/Cmd + "+" / "-" / "0" keyboard shortcuts.
+    useEffect(() => {
+        const onKeyDown = (e) => {
+            if (!(e.ctrlKey || e.metaKey)) return;
+            const key = e.key.toLowerCase();
+            if (key === "+" || key === "=") {
+                e.preventDefault();
+                setZoom((prev) => clampZoom(prev * ZOOM_STEP));
+            } else if (key === "-" || key === "_") {
+                e.preventDefault();
+                setZoom((prev) => clampZoom(prev / ZOOM_STEP));
+            } else if (key === "0") {
+                e.preventDefault();
+                setZoom(1);
+            }
+        };
+
+        window.addEventListener("keydown", onKeyDown);
+        return () => window.removeEventListener("keydown", onKeyDown);
+    }, []);
+
+    // Zoom with Ctrl/Cmd + mouse wheel (also fires for trackpad pinch). Only
+    // attached once the flipbook viewport exists.
+    useEffect(() => {
+        const container = containerRef.current;
+        if (!container) return undefined;
+
+        const onWheel = (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                e.preventDefault();
+                const factor = Math.pow(1.01, -e.deltaY);
+                setZoom((prev) => clampZoom(prev * factor));
+            }
+        };
+
+        container.addEventListener("wheel", onWheel, { passive: false });
+        return () => container.removeEventListener("wheel", onWheel);
+    }, [isLoadingImages, hasFlipbookPages]);
+
+    // Pinch-to-zoom and two-finger pan on touch devices. The handlers run in
+    // the capture phase on the viewport so page-flip never sees the gesture
+    // while two fingers are down (single-finger flipping is untouched).
+    useEffect(() => {
+        const container = containerRef.current;
+        if (!container) return undefined;
+
+        const mid = (touches) => ({
+            x: (touches[0].clientX + touches[1].clientX) / 2,
+            y: (touches[0].clientY + touches[1].clientY) / 2,
+        });
+
+        const dist = (touches) =>
+            Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY);
+
+        const onTouchStart = (e) => {
+            if (e.touches.length === 2) {
+                pinchRef.current = {
+                    startDist: dist(e.touches),
+                    startZoom: zoomRef.current,
+                    startMid: mid(e.touches),
+                    startScrollLeft: container.scrollLeft,
+                    startScrollTop: container.scrollTop,
+                };
+            } else if (e.touches.length < 2) {
+                pinchRef.current = null;
+            }
+        };
+
+        const onTouchMove = (e) => {
+            const pinch = pinchRef.current;
+            if (!pinch || e.touches.length < 2) return;
+            e.preventDefault();
+            e.stopPropagation();
+
+            const currentDist = dist(e.touches);
+            const currentMid = mid(e.touches);
+            setZoom(clampZoom(pinch.startZoom * (currentDist / pinch.startDist)));
+            container.scrollLeft = pinch.startScrollLeft + (pinch.startMid.x - currentMid.x);
+            container.scrollTop = pinch.startScrollTop + (pinch.startMid.y - currentMid.y);
+        };
+
+        const onTouchEnd = () => {
+            pinchRef.current = null;
+        };
+
+        container.addEventListener("touchstart", onTouchStart, { passive: true, capture: true });
+        container.addEventListener("touchmove", onTouchMove, { passive: false, capture: true });
+        container.addEventListener("touchend", onTouchEnd, { passive: true, capture: true });
+        container.addEventListener("touchcancel", onTouchEnd, { passive: true, capture: true });
+
+        return () => {
+            container.removeEventListener("touchstart", onTouchStart, { capture: true });
+            container.removeEventListener("touchmove", onTouchMove, { capture: true });
+            container.removeEventListener("touchend", onTouchEnd, { capture: true });
+            container.removeEventListener("touchcancel", onTouchEnd, { capture: true });
+        };
+    }, [isLoadingImages, hasFlipbookPages]);
+
     // Render PDFs into page images for the existing page-flip reader. This
     // preserves drag and click-to-turn controls for approved submissions.
     useEffect(() => {
@@ -263,7 +420,7 @@ const MagazineReader = () => {
             setPdfPages([]);
 
             try {
-                loadingTask = pdfjsLib.getDocument(pdfSource);
+                loadingTask = pdfjsLib.getDocument({ url: pdfSource });
                 const pdf = await loadingTask.promise;
                 const renderedPages = [];
 
@@ -297,8 +454,25 @@ const MagazineReader = () => {
             } catch (error) {
                 if (!cancelled) {
                     console.error("Unable to render magazine PDF:", error);
-                    setPdfLoadError("This PDF could not be prepared for the flipbook.");
-                    setIsLoadingImages(false);
+                    // If this magazine already ships page images (created during
+                    // upload), fall back to those so the flipbook still works.
+                    const previewPages = magazine?.pages?.length ? magazine.pages : [];
+                    if (magazine?.cover && previewPages.length > 0) {
+                        setPdfPages([magazine.cover, ...previewPages]);
+                        setLoadingImages(
+                            previewPages.reduce(
+                                (images, _page, index) => ({
+                                    ...images,
+                                    [index === 0 ? "cover" : `page-${index - 1}`]: true,
+                                }),
+                                {}
+                            )
+                        );
+                        setIsLoadingImages(false);
+                    } else {
+                        setPdfLoadError("This PDF could not be prepared for the flipbook.");
+                        setIsLoadingImages(false);
+                    }
                 }
             }
         };
@@ -309,7 +483,7 @@ const MagazineReader = () => {
             cancelled = true;
             loadingTask?.destroy();
         };
-    }, [isPdfMagazine, pdfSource]);
+    }, [isPdfMagazine, pdfSource, magazine?.cover, magazine?.pages]);
 
     // Preload image-based magazines.
     useEffect(() => {
@@ -351,6 +525,11 @@ const MagazineReader = () => {
             });
         }
     }, [magazine, isPdfMagazine]);
+
+    // Zoom controls
+    const zoomIn = () => setZoom((prev) => clampZoom(prev * ZOOM_STEP));
+    const zoomOut = () => setZoom((prev) => clampZoom(prev / ZOOM_STEP));
+    const resetZoom = () => setZoom(1);
 
     // Handle back button
     const handleClose = () => {
@@ -518,9 +697,9 @@ const MagazineReader = () => {
                 /* Magazine Flipbook - Full Screen Side by Side */
                 <div
                     ref={containerRef}
-                    className={`flex-1 flex items-center justify-center p-2 md:p-4 relative ${isLandscape ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'}`}
+                    className={`flex-1 flex items-center justify-center p-2 md:p-4 relative ${isZoomed ? 'overflow-auto' : isLandscape ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'}`}
                     style={{
-                        touchAction: isLandscape ? 'pan-y' : 'auto',
+                        touchAction: isZoomed ? 'none' : isLandscape ? 'pan-y' : 'auto',
                         WebkitOverflowScrolling: 'touch'
                     }}
                 >
@@ -577,34 +756,54 @@ const MagazineReader = () => {
                         </div>
                     )}
 
-                    <div
-                        className="reader-fullscreen-container"
-                    >
-                        <PageFlip
-                            ref={pageFlipRef}
-                            width={dimensions.width}
-                            height={dimensions.height}
-                            uncutPages={false}
-                            showCover={!isLandscape}
-                            className="magazine-flipbook-reader"
-                            flippingTime={800}
-                            useMouseEvents={true}
-                            maxShadowOpacity={0.7}
-                            showSwipeHint={true}
-                            autoSize={true}
-                            clickEventForward={true}
-                            usePortrait={!isLandscape}
-                            startPage={0}
-                            showPageCorners={true}
-                            size="stretch"
-                            renderOnlyPageLengths={false}
-                            minWidth={300}
-                            maxWidth={1800}
-                            minHeight={400}
-                            maxHeight={1200}
-                            style={{ margin: 'auto' }}
-                            swipeDistance={50}
-                            disableFlipByClick={false}
+                    {/* Zoomable flipbook - the stage is scaled with CSS so the
+                        page-flip animation keeps working at every zoom level */}
+                    <div className="magazine-zoom-inner">
+                        <div
+                            className="magazine-zoom-holder relative flex-shrink-0"
+                            style={{
+                                width: bookSize ? bookSize.width * zoom : dimensions.width * zoom,
+                                height: bookSize ? bookSize.height * zoom : dimensions.height * zoom,
+                            }}
+                        >
+                            <div
+                                ref={zoomStageRef}
+                                className="magazine-zoom-stage"
+                                style={{
+                                    width: bookSize ? bookSize.width : dimensions.width,
+                                    height: bookSize ? bookSize.height : dimensions.height,
+                                    transform: `scale(${zoom})`,
+                                    transformOrigin: 'center center',
+                                }}
+                            >
+                                <div
+                                    className="reader-fullscreen-container"
+                                >
+                                    <PageFlip
+                                        ref={pageFlipRef}
+                                        width={dimensions.width}
+                                        height={dimensions.height}
+                                        uncutPages={false}
+                                        showCover={!isLandscape}
+                                        className="magazine-flipbook-reader"
+                                        flippingTime={800}
+                                        useMouseEvents={true}
+                                        maxShadowOpacity={0.7}
+                                        showSwipeHint={true}
+                                        autoSize={true}
+                                        clickEventForward={true}
+                                        usePortrait={!isLandscape}
+                                        startPage={0}
+                                        showPageCorners={true}
+                                        size="stretch"
+                                        renderOnlyPageLengths={false}
+                                        minWidth={300}
+                                        maxWidth={1800}
+                                        minHeight={400}
+                                        maxHeight={1200}
+                                        style={{ margin: 'auto' }}
+                                        swipeDistance={50}
+                                        disableFlipByClick={false}
                             drawShadow={true}
                             mobileScrollSupport={isLandscape}
                         >
@@ -644,6 +843,9 @@ const MagazineReader = () => {
                                 </div>
                             ))}
                         </PageFlip>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}
@@ -660,6 +862,34 @@ const MagazineReader = () => {
                                 <>📱 {isLandscape ? 'Side-by-side view • Scroll to navigate • Swipe to flip pages' : 'Swipe or tap corners to flip pages • Rotate device for side-by-side view'}</>
                             )}
                         </p>
+                        <div className="mt-2 flex items-center justify-center gap-2 select-none">
+                            <button
+                                onClick={zoomOut}
+                                disabled={zoom <= ZOOM_MIN}
+                                aria-label="Zoom out"
+                                title="Zoom out (Ctrl + -)"
+                                className="w-8 h-8 flex items-center justify-center rounded-full border border-purple-500/30 bg-white/10 text-white text-lg font-bold hover:bg-purple-500/40 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                            >
+                                −
+                            </button>
+                            <button
+                                onClick={resetZoom}
+                                aria-label="Reset zoom"
+                                title="Reset zoom (Ctrl + 0)"
+                                className="px-3 py-1 text-xs font-semibold text-purple-200 hover:text-white transition-colors"
+                            >
+                                {Math.round(zoom * 100)}%
+                            </button>
+                            <button
+                                onClick={zoomIn}
+                                disabled={zoom >= ZOOM_MAX}
+                                aria-label="Zoom in"
+                                title="Zoom in (Ctrl + +)"
+                                className="w-8 h-8 flex items-center justify-center rounded-full border border-purple-500/30 bg-white/10 text-white text-lg font-bold hover:bg-purple-500/40 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                            >
+                                +
+                            </button>
+                        </div>
                         {isMobile && (
                             <button
                                 onClick={() => setShowGestureGuide(true)}
