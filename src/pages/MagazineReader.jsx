@@ -12,7 +12,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 const isPdfUrl = (url) => typeof url === "string" && /\.pdf(?:$|[?#])/i.test(url);
 
 const ZOOM_MIN = 0.5;
-const ZOOM_MAX = 3;
+const ZOOM_MAX = 4; // Increased max zoom for better detail viewing
 const ZOOM_STEP = 1.25;
 const clampZoom = (value) => Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, value));
 
@@ -131,7 +131,7 @@ const readerCover = isPdfMagazine ? pdfPages[0] : magazine?.cover;
         const aspectRatio = 480 / 700; // Original aspect ratio (0.686)
         const isLandscape = viewportWidth > viewportHeight;
 
-        // Reserve space for header and footer
+        // Reserve space for header and footer - more precise for different devices
         const headerHeight = 80;
         const footerHeight = 60;
         const availableHeight = viewportHeight - headerHeight - footerHeight;
@@ -144,13 +144,13 @@ const readerCover = isPdfMagazine ? pdfPages[0] : magazine?.cover;
             let widthPercentage, heightPercentage;
 
             if (isLandscape) {
-                // Landscape mode - maximize horizontal space
-                widthPercentage = 0.99; // Use 99% of screen width in landscape (increased)
-                heightPercentage = 0.96; // Use 96% of available height (increased)
+                // Landscape mode - maximize horizontal space for two-page spread
+                widthPercentage = 0.99;
+                heightPercentage = 0.96;
             } else {
                 // Portrait mode - standard sizing
-                widthPercentage = 0.98; // Use 98% of screen width (increased from 95%)
-                heightPercentage = 0.90; // Use 90% of available height (increased from 85%)
+                widthPercentage = 0.98;
+                heightPercentage = 0.90;
             }
 
             const maxWidth = availableWidth * widthPercentage;
@@ -173,21 +173,34 @@ const readerCover = isPdfMagazine ? pdfPages[0] : magazine?.cover;
 
             if (isLandscape) {
                 // Desktop landscape - use more screen width
-                preferredWidth = availableWidth * 0.75; // Use 75% of screen (increased from 70%)
+                preferredWidth = availableWidth * 0.75;
             } else {
                 // Desktop portrait (rare) - more conservative
-                preferredWidth = availableWidth * 0.65; // Use 65% of screen (increased from 60%)
+                preferredWidth = availableWidth * 0.65;
             }
 
             width = Math.min(preferredWidth, maxDesktopWidth);
             height = width / aspectRatio;
 
             // Check if height exceeds available space
-            const maxHeightPercentage = isLandscape ? 0.97 : 0.92; // Increased
+            const maxHeightPercentage = isLandscape ? 0.97 : 0.92;
             if (height > availableHeight * maxHeightPercentage) {
                 height = availableHeight * maxHeightPercentage;
                 width = height * aspectRatio;
             }
+        }
+
+        // Ensure minimum dimensions for readability
+        const minWidth = viewportWidth <= 768 ? 280 : 300;
+        const minHeight = viewportWidth <= 768 ? 408 : 438;
+        
+        if (width < minWidth) {
+            width = minWidth;
+            height = width / aspectRatio;
+        }
+        if (height < minHeight) {
+            height = minHeight;
+            width = height * aspectRatio;
         }
 
         return {
@@ -436,23 +449,22 @@ const readerCover = isPdfMagazine ? pdfPages[0] : magazine?.cover;
         let cancelled = false;
         let loadingTask;
 
-        const renderPdfPages = async () => {
+const renderPdfPages = async () => {
             setIsLoadingImages(true);
             setPdfLoadError("");
             setPdfPages([]);
 
-try {
+            try {
                 loadingTask = pdfjsLib.getDocument({ url: pdfSource });
                 const pdf = await loadingTask.promise;
                 const renderedPages = [];
 
                 for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
                     const page = await pdf.getPage(pageNumber);
-                    // Render at 2x so pages stay sharp when zoomed in and on
-                    // high-DPI mobile screens. Capped so low-end phones are
-                    // not overloaded with multi-megapixel canvases.
+                    // Render at higher resolution for quality on all devices
+                    // Use device pixel ratio but cap at 3x for quality, minimum 2x for clarity
                     const deviceScale = window.devicePixelRatio || 1;
-                    const renderScale = Math.min(2, Math.max(1.5, deviceScale * 1.5));
+                    const renderScale = Math.min(3, Math.max(2, deviceScale * 2));
                     const viewport = page.getViewport({ scale: renderScale });
                     const canvas = document.createElement("canvas");
                     const context = canvas.getContext("2d");
@@ -461,8 +473,11 @@ try {
 
                     canvas.width = viewport.width;
                     canvas.height = viewport.height;
+                    // Enable high quality rendering
+                    context.imageSmoothingEnabled = true;
+                    context.imageSmoothingQuality = 'high';
                     await page.render({ canvasContext: context, viewport }).promise;
-                    renderedPages.push(canvas.toDataURL("image/jpeg", 0.92));
+                    renderedPages.push(canvas.toDataURL("image/jpeg", 0.95)); // Higher quality
                 }
 
                 if (!cancelled) {
@@ -821,9 +836,9 @@ try {
                             showPageCorners={true}
                             size="stretch"
                             renderOnlyPageLengths={false}
-                            minWidth={300}
+                            minWidth={280}
                             maxWidth={1800}
-                            minHeight={400}
+                            minHeight={408}
                             maxHeight={1200}
                             style={{ margin: 'auto' }}
                             swipeDistance={50}
@@ -842,7 +857,10 @@ try {
                                     src={readerCover}
                                     alt={`Cover of ${magazine.title}`}
                                     className={`w-full h-full object-cover transition-opacity duration-300 ${loadingImages.cover ? 'opacity-100' : 'opacity-0'}`}
-                                    style={{ background: '#2c1052' }}
+                                    style={{ 
+                                        background: '#2c1052',
+                                        imageRendering: 'auto',
+                                    }}
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none"></div>
                             </div>
@@ -859,7 +877,10 @@ try {
                                         src={page}
                                         alt={`Page ${index + 2} of ${magazine.title}`}
                                         className={`w-full h-full object-cover transition-opacity duration-300 ${loadingImages[`page-${index}`] ? 'opacity-100' : 'opacity-0'}`}
-                                        style={{ background: '#2c1052' }}
+                                        style={{ 
+                                            background: '#2c1052',
+                                            imageRendering: 'auto',
+                                        }}
                                     />
                                     <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
                                         {index + 2}

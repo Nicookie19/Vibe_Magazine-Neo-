@@ -1,20 +1,22 @@
 /* ========================================
-   MAGAZINE FLIPBOOK - BASE STYLES
-   Shared foundation for all devices
+   MAGAZINE FLIPBOOK - UNIFIED RESPONSIVE STYLES
+   Single source of truth for all flipbook styling
    ======================================== */
 
-/* Container Base */
+/* ========================================
+   CONTAINER BASE STYLES
+   ======================================== */
+
 .magazine-container {
   position: relative;
   overflow: hidden;
 }
 
-/* Page Wrapper */
 .page-wrapper {
   overflow: hidden !important;
 }
 
-/* Background Cleanup */
+/* Background cleanup */
 .magazine-flipbook,
 .magazine-flipbook *,
 .page-wrapper {
@@ -100,6 +102,304 @@
 }
 
 /* ========================================
+   FULLSCREEN MODE - RESPONSIVE BREAKPOINTS
+   ======================================== */
+
+/* 4K Screens (2560px+) */
+@media (min-width: 2560px) {
+  .book-fullscreen-mode .magazine-flipbook {
+    max-width: 1800px !important;
+    max-height: 95vh !important;
+  }
+}
+
+/* Large Desktop (1920px - 2559px) */
+@media (min-width: 1920px) and (max-width: 2559px) {
+  .book-fullscreen-mode .magazine-flipbook {
+    max-width: 1500px !important;
+    max-height: 92vh !important;
+  }
+}
+
+/* Standard Desktop (1440px - 1919px) */
+@media (min-width: 1440px) and (max-width: 1919px) {
+  .book-fullscreen-mode .magazine-flipbook {
+    max-width: 1300px !important;
+    max-height: 90vh !important;
+  }
+}
+
+/* Laptop (1024px - 1439px) */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .book-fullscreen-mode {
+    padding: 30px !important;
+  }
+
+  .book-fullscreen-mode .magazine-flipbook {
+    max-width: 1100px !important;
+    max-height: 88vh !important;
+  }
+}
+
+/* Tablet Landscape (769px - 1023px) */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .book-fullscreen-mode {
+    padding: 20px !important;
+  }
+
+  .book-fullscreen-mode .magazine-flipbook {
+    width: 90vw !important;
+    max-width: 950px !important;
+    max-height: 82vh !important;
+  }
+}
+
+/* Tablet Portrait (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  .book-fullscreen-mode {
+    padding: 15px !important;
+  }
+
+  .book-fullscreen-mode .magazine-flipbook {
+    width: 92vw !important;
+    max-height: 78vh !important;
+  }
+}
+
+/* Mobile Landscape (≤480px) */
+@media (max-width: 480px) and (orientation: landscape) {
+  .book-fullscreen-mode {
+    padding: 8px !important;
+  }
+
+  .book-fullscreen-mode .magazine-flipbook {
+    width: 96vw !important;
+    max-height: 85vh !important;
+  }
+}
+
+/* Mobile Portrait (≤480px) */
+@media (max-width: 480px) and (orientation: portrait) {
+  .book-fullscreen-mode {
+    padding: 10px !important;
+  }
+
+  .book-fullscreen-mode .magazine-flipbook {
+    width: 98vw !important;
+    max-height: 70vh !important;
+  }
+}
+
+/* Small Mobile (≤360px) */
+@media (max-width: 360px) {
+  .book-fullscreen-mode {
+    padding: 5px !important;
+  }
+
+  .book-fullscreen-mode .magazine-flipbook {
+    width: 99vw !important;
+    max-height: 68vh !important;
+  }
+}
+
+/* ========================================
+   NORMAL MODAL - MOBILE (≤768px)
+   ======================================== */
+
+@media (max-width: 768px) {
+  .magazine-container:not(.book-fullscreen-mode) {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    aspect-ratio: 480 / 700;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.25));
+    transition: all 0.3s ease;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .magazine-container:not(.book-fullscreen-mode) .magazine-flipbook {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .magazine-flipbook:not(.book-fullscreen-mode .magazine-flipbook):active {
+    transform: scale(0.98);
+  }
+
+  .magazine-flipbook {
+    touch-action: pan-y pinch-zoom;
+  }
+
+  .page-wrapper img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+@media (max-width: 480px) {
+  .magazine-container:not(.book-fullscreen-mode) {
+    max-width: 340px;
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.2));
+  }
+}
+
+@media (max-width: 360px) {
+  .magazine-container:not(.book-fullscreen-mode) {
+    max-width: 300px;
+  }
+}
+
+/* ========================================
+   NORMAL MODAL - DESKTOP (769px+)
+   ======================================== */
+
+@media (min-width: 769px) {
+  .magazine-container:not(.book-fullscreen-mode) {
+    width: 480px;
+    height: 700px;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+    transition: all 0.3s ease;
+  }
+
+  .magazine-container:not(.book-fullscreen-mode):hover {
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.4));
+  }
+
+  .magazine-flipbook:not(.book-fullscreen-mode .magazine-flipbook) {
+    transition: transform 0.2s ease;
+  }
+
+  .magazine-flipbook:not(.book-fullscreen-mode .magazine-flipbook):active {
+    transform: scale(0.99);
+  }
+
+  .magazine-flipbook {
+    cursor: pointer;
+  }
+
+  .magazine-flipbook:active {
+    cursor: grabbing;
+  }
+
+  /* Fullscreen controls visibility */
+  .book-fullscreen-mode .fullscreen-close-btn,
+  .book-fullscreen-mode .fullscreen-instructions {
+    display: block !important;
+    opacity: 1 !important;
+  }
+
+  /* Hide fullscreen instructions after a few seconds */
+  .book-fullscreen-mode .fullscreen-instructions {
+    animation: fadeInOut 5s ease-in-out forwards;
+  }
+
+  @keyframes fadeInOut {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+}
+
+/* ========================================
+   READER PAGE SPECIFIC STYLES
+   ======================================== */
+
+.reader-fullscreen-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px;
+  transition: all 0.3s ease;
+}
+
+.magazine-flipbook-reader {
+  margin: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+/* ZOOM CONTROLS */
+.magazine-zoom-inner {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.magazine-zoom-holder {
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: width, height;
+}
+
+.magazine-zoom-stage {
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+
+/* RESPONSIVE SCALING FOR READER PAGE */
+
+/* Mobile devices - Scale dynamically */
+@media (max-width: 768px) {
+  .reader-fullscreen-container {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .magazine-flipbook-reader {
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Tablet and above - Enhanced shadows */
+@media (min-width: 769px) {
+  .magazine-flipbook-reader {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* Orientation-specific optimizations */
+@media (orientation: landscape) {
+  .reader-fullscreen-container {
+    padding: 0.125rem;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .magazine-flipbook-reader {
+    box-shadow: 0 10px 36px rgba(0, 0, 0, 0.6);
+  }
+}
+
+@media (orientation: portrait) {
+  .reader-fullscreen-container {
+    padding: 0.5rem;
+  }
+}
+
+/* Mobile landscape - maximize space */
+@media (max-width: 768px) and (orientation: landscape) {
+  .reader-fullscreen-container {
+    padding: 0.0625rem;
+  }
+  
+  .reader-fullscreen-container + div {
+    padding: 0.5rem;
+  }
+}
+
+/* ========================================
    ANIMATIONS
    ======================================== */
 
@@ -125,29 +425,9 @@
   animation: bounce-in 0.6s ease-out forwards;
 }
 
-
-/* ========================================
-   RATING POPUP ANIMATION
-   ======================================== */
-
-@keyframes bounce-in {
-  0% {
-    opacity: 0;
-    transform: scale(0.3) translateY(-50px);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.05) translateY(-10px);
-  }
-  70% {
-    transform: scale(0.95) translateY(0);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-.animate-bounce-in {
-  animation: bounce-in 0.6s ease-out forwards;
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; }
 }

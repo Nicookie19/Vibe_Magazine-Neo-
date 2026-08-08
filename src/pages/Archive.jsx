@@ -1,11 +1,12 @@
 // src/pages/Archive.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Document, Page, pdfjs } from "react-pdf";
 import PageFlip from "react-pageflip";
 import { supabase } from "../supabaseClient";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
+import "../styles/magazineFlipbook.css";
 
 // Setup PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = "/node_modules/pdfjs-dist/build/pdf.worker.min.js";
@@ -15,6 +16,9 @@ const Archive = () => {
   const [selectedMag, setSelectedMag] = useState(null);
   const [magazineRatings, setMagazineRatings] = useState({});
   const navigate = useNavigate();
+  const pageFlipRef = useRef(null);
+  const [modalDimensions, setModalDimensions] = useState({ width: 480, height: 700 });
+  const [isMobile, setIsMobile] = useState(false);
 
   // Fetch magazines from Supabase (only published ones)
   const fetchMagazines = async () => {
@@ -227,6 +231,81 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
   const [hasRated, setHasRated] = useState(false);
   const [numPages, setNumPages] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [modalDimensions, setModalDimensions] = useState({ width: 480, height: 700 });
+  const [isMobile, setIsMobile] = useState(false);
+  const pageFlipRef = useRef(null);
+
+  // Calculate responsive dimensions for the modal flipbook
+  const calculateModalDimensions = () => {
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const aspectRatio = 480 / 700;
+    const isMobileDevice = viewportWidth <= 768;
+    const isLandscape = viewportWidth > viewportHeight;
+    
+    setIsMobile(isMobileDevice);
+
+    // Modal max dimensions with padding
+    const modalPadding = 32; // 16px on each side
+    const headerFooterSpace = 80; // Space for header and footer in modal
+    const availableWidth = viewportWidth - modalPadding;
+    const availableHeight = viewportHeight - headerFooterSpace - modalPadding;
+
+    let width, height;
+
+    if (isMobileDevice) {
+      // Mobile - use most of the screen
+      const widthPercentage = isLandscape ? 0.95 : 0.98;
+      const heightPercentage = isLandscape ? 0.85 : 0.75;
+      
+      const maxWidth = availableWidth * widthPercentage;
+      const maxHeight = availableHeight * heightPercentage;
+
+      if (maxWidth / aspectRatio <= maxHeight) {
+        width = maxWidth;
+        height = width / aspectRatio;
+      } else {
+        height = maxHeight;
+        width = height * aspectRatio;
+      }
+    } else {
+      // Desktop - fixed size but responsive to screen
+      width = Math.min(480, availableWidth * 0.8);
+      height = width / aspectRatio;
+      
+      // Cap height
+      if (height > availableHeight * 0.9) {
+        height = availableHeight * 0.9;
+        width = height * aspectRatio;
+      }
+    }
+
+    // Ensure minimums
+    const minWidth = isMobileDevice ? 280 : 300;
+    const minHeight = isMobileDevice ? 408 : 438;
+    
+    if (width < minWidth) {
+      width = minWidth;
+      height = width / aspectRatio;
+    }
+    if (height < minHeight) {
+      height = minHeight;
+      width = height * aspectRatio;
+    }
+
+    setModalDimensions({ width: Math.floor(width), height: Math.floor(height) });
+  };
+
+  // Update dimensions on mount and resize
+  useEffect(() => {
+    calculateModalDimensions();
+    window.addEventListener('resize', calculateModalDimensions);
+    window.addEventListener('orientationchange', calculateModalDimensions);
+    return () => {
+      window.removeEventListener('resize', calculateModalDimensions);
+      window.removeEventListener('orientationchange', calculateModalDimensions);
+    };
+  }, []);
 
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
@@ -239,16 +318,6 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
     setCurrentPage(
       currentPage + 1 >= numPages ? numPages : currentPage + 1,
     );
-  
-  const [userId] = useState(() => {
-    // Generate or get user ID from localStorage
-    let id = localStorage.getItem('magazine_user_id');
-    if (!id) {
-      id = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-      localStorage.setItem('magazine_user_id', id);
-    }
-    return id;
-  });
 
   // Track if user has spent enough time to warrant a rating request
   const [timeSpent, setTimeSpent] = useState(0);
@@ -824,8 +893,8 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
             <div className="w-full max-w-[300px] sm:max-w-[350px] md:max-w-[400px] lg:max-w-[480px] perspective-1000 relative magazine-container pointer-events-none" style={{ aspectRatio: '480/700' }}>
               <PageFlip
                 ref={pageFlipRef}
-                width={window.innerWidth < 640 ? 300 : window.innerWidth < 768 ? 350 : window.innerWidth < 1024 ? 400 : 480}
-                height={window.innerWidth < 640 ? 437 : window.innerWidth < 768 ? 510 : window.innerWidth < 1024 ? 583 : 700}
+                width={modalDimensions.width}
+                height={modalDimensions.height}
                 uncutPages={false}
                 showCover={true}
                 className="magazine-flipbook pointer-events-auto"
@@ -840,9 +909,9 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
                 showPageCorners={true}
                 size="stretch"
                 renderOnlyPageLengths={false}
-                minWidth={300}
+                minWidth={280}
                 maxWidth={1800}
-                minHeight={400}
+                minHeight={408}
                 maxHeight={1200}
                 style={{ margin: 'auto' }}
                 swipeDistance={50}
