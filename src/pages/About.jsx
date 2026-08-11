@@ -5,7 +5,7 @@ const About = () => {
   const features = [
     {
       title: "Digital Skills Training",
-      description: "Expert-led sessions in SEO, photography, videography, and content creation",
+      description: "Expert led sessions in SEO, photography, videography, and content creation",
       icon: (
         <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
@@ -93,7 +93,7 @@ const About = () => {
 
           <div className="bg-black/30 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-purple-500/30 shadow-xl sm:shadow-2xl p-6 sm:p-8 md:p-12 hover:border-purple-500/50 transition-all duration-500">
             <p className="text-gray-300 leading-relaxed text-base sm:text-lg md:text-xl">
-              To support growth and innovation, The VIBE Club offers expert-led trainings each semester in areas like SEO, digital and mobile photography, videography, content creation, article writing, and AI prompting. These sessions aim to equip members with essential digital communication skills. Beyond personal development, we are committed to promoting entrepreneurship, innovation, and social impact in line with the TBI.
+              To support growth and innovation, The VIBE Club offers expert led workshops each semester in areas like SEO, digital and mobile photography, videography, content creation, article writing, and AI prompting. These sessions aim to equip members with essential digital communication skills. Beyond personal development, we are committed to promoting entrepreneurship, innovation, and social impact in line with the TBI.
             </p>
           </div>
         </div>
@@ -145,7 +145,7 @@ const About = () => {
             <div className="group bg-black/30 backdrop-blur-sm rounded-2xl border border-purple-500/30 hover:border-purple-500/50 transition-all duration-500 p-6 text-center hover:shadow-2xl hover:shadow-purple-500/20 hover:scale-105">
               <div className="relative mb-5 inline-block">
                 <img
-                  src="https://ui-avatars.com/api/?name=Alan+Reyes&size=128&background=6366f1&color=fff&rounded=true&bold=true"
+                  src="https://ui-avatars.com/api/?name=Franzen+Perin&size=128&background=6366f1&color=fff&rounded=true&bold=true"
                   alt="N/A"
                   className="w-24 h-24 rounded-full object-cover mx-auto border-4 border-purple-500 group-hover:border-purple-400 transition-all duration-300 shadow-xl"
                 />
@@ -156,16 +156,16 @@ const About = () => {
                   </svg>
                 </div>
               </div>
-              <h3 className="text-white font-bold text-lg mb-2 group-hover:text-purple-300 transition-colors duration-300">N/A</h3>
-              <p className="text-purple-400 text-sm font-semibold mb-1">Faculty Advisor</p>
-              <p className="text-gray-500 text-xs">Computer Science</p>
+              <h3 className="text-white font-bold text-lg mb-2 group-hover:text-purple-300 transition-colors duration-300">Franzen Kristel Perin</h3>
+              <p className="text-purple-400 text-sm font-semibold mb-1">Editor in Chief</p>
+              <p className="text-gray-500 text-xs">BS in Psycology</p>
             </div>
 
             {/* Sophia Kim */}
             <div className="group bg-black/30 backdrop-blur-sm rounded-2xl border border-purple-500/30 hover:border-purple-500/50 transition-all duration-500 p-6 text-center hover:shadow-2xl hover:shadow-pink-500/20 hover:scale-105">
               <div className="relative mb-5 inline-block">
                 <img
-                  src="https://ui-avatars.com/api/?name=Sophia+Kim&size=128&background=ec4899&color=fff&rounded=true&bold=true"
+                  src="https://ui-avatars.com/api/?name=Francis+Pantonial&size=128&background=ec4899&color=fff&rounded=true&bold=true"
                   alt="N/A"
                   className="w-24 h-24 rounded-full object-cover mx-auto border-4 border-pink-500 group-hover:border-pink-400 transition-all duration-300 shadow-xl"
                 />
@@ -175,16 +175,16 @@ const About = () => {
                   </svg>
                 </div>
               </div>
-              <h3 className="text-white font-bold text-lg mb-2 group-hover:text-pink-300 transition-colors duration-300">N/A</h3>
-              <p className="text-pink-400 text-sm font-semibold mb-1">Editor-in-Chief</p>
-              <p className="text-gray-500 text-xs">Class of 2025</p>
+              <h3 className="text-white font-bold text-lg mb-2 group-hover:text-pink-300 transition-colors duration-300">Francis Patonial</h3>
+              <p className="text-pink-400 text-sm font-semibold mb-1">Creative Director</p>
+              <p className="text-gray-500 text-xs">BS in Information Technology</p>
             </div>
 
             {/* Jamal Wright */}
             <div className="group bg-black/30 backdrop-blur-sm rounded-2xl border border-purple-500/30 hover:border-purple-500/50 transition-all duration-500 p-6 text-center hover:shadow-2xl hover:shadow-green-500/20 hover:scale-105">
               <div className="relative mb-5 inline-block">
                 <img
-                  src="https://ui-avatars.com/api/?name=Jamal+Wright&size=128&background=10b981&color=fff&rounded=true&bold=true"
+                  src="https://ui-avatars.com/api/?name=Nico+Mahipust&size=128&background=10b981&color=fff&rounded=true&bold=true"
                   alt="Jamal Wright"
                   className="w-24 h-24 rounded-full object-cover mx-auto border-4 border-green-500 group-hover:border-green-400 transition-all duration-300 shadow-xl"
                 />
@@ -194,16 +194,16 @@ const About = () => {
                   </svg>
                 </div>
               </div>
-              <h3 className="text-white font-bold text-lg mb-2 group-hover:text-green-300 transition-colors duration-300">N/A</h3>
-              <p className="text-green-400 text-sm font-semibold mb-1">Design Lead</p>
-              <p className="text-gray-500 text-xs">Digital Media</p>
+              <h3 className="text-white font-bold text-lg mb-2 group-hover:text-green-300 transition-colors duration-300">Nico Mahipus</h3>
+              <p className="text-green-400 text-sm font-semibold mb-1">Digital Director</p>
+              <p className="text-gray-500 text-xs">BS in Information Technology</p>
             </div>
 
             {/* Prof. Elena Torres */}
             <div className="group bg-black/30 backdrop-blur-sm rounded-2xl border border-purple-500/30 hover:border-purple-500/50 transition-all duration-500 p-6 text-center hover:shadow-2xl hover:shadow-yellow-500/20 hover:scale-105">
               <div className="relative mb-5 inline-block">
                 <img
-                  src="https://ui-avatars.com/api/?name=Elena+Torres&size=128&background=f59e0b&color=fff&rounded=true&bold=true"
+                  src="https://ui-avatars.com/api/?name=T+Writer&size=128&background=f59e0b&color=fff&rounded=true&bold=true"
                   alt="Prof. Elena Torres"
                   className="w-24 h-24 rounded-full object-cover mx-auto border-4 border-yellow-500 group-hover:border-yellow-400 transition-all duration-300 shadow-xl"
                 />
@@ -213,9 +213,9 @@ const About = () => {
                   </svg>
                 </div>
               </div>
-              <h3 className="text-white font-bold text-lg mb-2 group-hover:text-yellow-300 transition-colors duration-300">Prof. Elena Torres</h3>
-              <p className="text-yellow-400 text-sm font-semibold mb-1">N/A</p>
-              <p className="text-gray-500 text-xs">Social Sciences</p>
+              <h3 className="text-white font-bold text-lg mb-2 group-hover:text-yellow-300 transition-colors duration-300">TCI Writer</h3>
+              <p className="text-yellow-400 text-sm font-semibold mb-1">Production Manager</p>
+              <p className="text-gray-500 text-xs">Teacher Education</p>
             </div>
           </div>
         </div>

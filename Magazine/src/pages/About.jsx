@@ -156,9 +156,9 @@ const About = () => {
                   </svg>
                 </div>
               </div>
-              <h3 className="text-white font-bold text-lg mb-2 group-hover:text-purple-300 transition-colors duration-300">N/A</h3>
-              <p className="text-purple-400 text-sm font-semibold mb-1">Faculty Advisor</p>
-              <p className="text-gray-500 text-xs">Computer Science</p>
+              <h3 className="text-white font-bold text-lg mb-2 group-hover:text-purple-300 transition-colors duration-300">Cris John David Manero</h3>
+              <p className="text-purple-400 text-sm font-semibold mb-1">Club Moderator</p>
+              <p className="text-gray-500 text-xs">Information Technology</p>
             </div>
 
             {/* Sophia Kim */}
@@ -175,9 +175,9 @@ const About = () => {
                   </svg>
                 </div>
               </div>
-              <h3 className="text-white font-bold text-lg mb-2 group-hover:text-pink-300 transition-colors duration-300">N/A</h3>
-              <p className="text-pink-400 text-sm font-semibold mb-1">Editor-in-Chief</p>
-              <p className="text-gray-500 text-xs">Class of 2025</p>
+              <h3 className="text-white font-bold text-lg mb-2 group-hover:text-pink-300 transition-colors duration-300">Francis Pantonial</h3>
+              <p className="text-pink-400 text-sm font-semibold mb-1">Editor in Chief</p>
+              <p className="text-gray-500 text-xs">Information Technology</p>
             </div>
 
             {/* Jamal Wright */}

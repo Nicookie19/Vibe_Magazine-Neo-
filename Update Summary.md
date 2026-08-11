@@ -2,7 +2,22 @@
 
 ## 📋 Complete Project History
 
-### **Latest Release: August 8, 2026**
+### **Latest Release: August 11, 2026**
+| Commit | Date | Description |
+|--------|------|-------------|
+| `TBD` | 2026-08-11 | **🎉 MAJOR: Comments System, Zoom Bubble, Auth Cleanup** |
+| | | • **Anonymous Commenting**: Users can comment without login — fills Name, ID Number, Email, Course, Year, Comment |
+| | | • **Comment RLS Fixed**: Migration `20260811000002_fix_comment_rls.sql` allows public insert/select on `magazine_comments` |
+| | | • **Real-time Comments**: Supabase real-time subscription updates UI instantly across MagazineReader & Archive |
+| | | • **Zoom Bubble (Top-Right)**: Collapsible zoom controls (−/100%/+) via `ReactDOM.createPortal` rendered to `document.body` for z-index independence |
+| | | • **Zoom Adaptation**: `useEffect([zoom])` calls `pageFlip.update()` on zoom change, fixes right-side cutoff |
+| | | • **Removed Auth Requirement**: Reverted SignUp/Login pages — no account needed for comments/ratings |
+| | | • **Collapsible Sections**: Both Zoom Controls & Comments section in MagazineReader footer are collapsible |
+| | | • **Click-outside Handler**: Smart detection excludes both trigger button and portal content |
+| | | • **Editorial Board Updates**: Updated About.jsx with new sector head positions |
+| | | • **Files Modified**: MagazineReader.jsx (both src/ and Magazine/src/), Archive.jsx, About.jsx, App.jsx, Login.jsx, + 3 new migrations |
+
+### **Release: August 8, 2026**
 | Commit | Date | Description |
 |--------|------|-------------|
 | `52432ea` | 2026-08-08 | **🎉 MAJOR: Full Responsive Redesign** |

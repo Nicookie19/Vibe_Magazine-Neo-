@@ -1,5 +1,6 @@
 // src/pages/MagazineReader.jsx
 import React, { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import PageFlip from "react-pageflip";
 import * as pdfjsLib from "pdfjs-dist";
@@ -47,6 +48,24 @@ const MagazineReader = () => {
         // Check localStorage to see if user has already seen the guide
         return localStorage.getItem('magazine_gesture_guide_seen') === 'true';
     });
+
+    // Collapsible sections state
+    const [showZoomControls, setShowZoomControls] = useState(true);
+    const [showComments, setShowComments] = useState(true);
+
+    // Comment state - no auth required
+    const [comments, setComments] = useState([]);
+    const [newComment, setNewComment] = useState("");
+    const [commentForm, setCommentForm] = useState({
+        name: "",
+        idNumber: "",
+        email: "",
+        course: "",
+        year: "",
+        text: ""
+    });
+    const [isLoadingComments, setIsLoadingComments] = useState(true);
+    const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
     // Direct links and page refreshes do not include React Router state. Load
     // the magazine by its URL id so the reader remains usable in both cases.
@@ -288,6 +307,47 @@ const readerCover = isPdfMagazine ? pdfPages[0] : magazine?.cover;
 
         checkExistingRating();
     }, [magazine?.id, userId]);
+
+    // Fetch comments for this magazine
+    useEffect(() => {
+        const fetchComments = async () => {
+            if (!magazine?.id) return;
+
+            setIsLoadingComments(true);
+            try {
+                const { data, error } = await supabase
+                    .from("magazine_comments")
+                    .select("*")
+                    .eq("magazine_id", magazine.id)
+                    .order("created_at", { ascending: false });
+
+                if (error) throw error;
+                setComments(data || []);
+            } catch (err) {
+                console.error("Failed to load comments:", err);
+            } finally {
+                setIsLoadingComments(false);
+            }
+        };
+
+        fetchComments();
+
+        // Real-time subscription for new comments
+        const subscription = supabase
+            .channel("magazine-comments-changes")
+            .on(
+                "postgres_changes",
+                { event: "INSERT", schema: "public", table: "magazine_comments", filter: `magazine_id=eq.${magazine.id}` },
+                (payload) => {
+                    setComments((prevComments) => [payload.new, ...prevComments]);
+                }
+            )
+            .subscribe();
+
+        return () => {
+            subscription.unsubscribe();
+        };
+    }, [magazine?.id]);
 
     // Keep a ref in sync with the current zoom so native (non-passive)
     // touch/wheel handlers can always read the latest value.
@@ -573,6 +633,35 @@ const renderPdfPages = async () => {
     const zoomOut = () => setZoom((prev) => clampZoom(prev / ZOOM_STEP));
     const resetZoom = () => setZoom(1);
 
+    const zoomPortalRef = React.useRef(null);
+
+    // Close zoom controls when clicking outside
+    useEffect(() => {
+        if (!showZoomControls) return;
+        const handleClickOutside = (e) => {
+            const trigger = document.querySelector('[aria-label="Zoom Controls"]');
+            if (trigger?.contains(e.target)) return;
+            if (zoomPortalRef.current?.contains(e.target)) return;
+            setShowZoomControls(false);
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [showZoomControls]);
+
+    // Force PageFlip to update on zoom change
+    useEffect(() => {
+        if (pageFlipRef.current) {
+            try {
+                const pageFlip = pageFlipRef.current.pageFlip();
+                if (pageFlip && pageFlip.update) {
+                    pageFlip.update();
+                }
+            } catch (error) {
+                console.log('PageFlip update error:', error);
+            }
+        }
+    }, [zoom]);
+
     // Handle back button
     const handleClose = () => {
         // Only show rating modal if user hasn't rated yet
@@ -644,6 +733,69 @@ const renderPdfPages = async () => {
         setRating(starValue);
     };
 
+    const handleAddComment = async (e) => {
+        e.preventDefault();
+        if (!commentForm.text.trim() || isSubmittingComment) return;
+
+        // Validate required fields
+        if (!commentForm.name.trim()) {
+            alert("Please enter your name");
+            return;
+        }
+        if (!commentForm.idNumber.trim()) {
+            alert("Please enter your ID number");
+            return;
+        }
+        if (!commentForm.email.trim()) {
+            alert("Please enter your email");
+            return;
+        }
+        if (!commentForm.course.trim()) {
+            alert("Please enter your course");
+            return;
+        }
+        if (!commentForm.year.trim()) {
+            alert("Please enter your year");
+            return;
+        }
+
+        setIsSubmittingComment(true);
+
+        try {
+            const newCommentData = {
+                magazine_id: magazine.id,
+                user_id: userId,
+                user_name: commentForm.name.trim(),
+                id_number: commentForm.idNumber.trim(),
+                email: commentForm.email.trim(),
+                course: commentForm.course.trim(),
+                year: commentForm.year.trim(),
+                text: commentForm.text.trim()
+            };
+
+            const { data, error } = await supabase
+                .from("magazine_comments")
+                .insert([newCommentData])
+                .select()
+                .single();
+
+            if (!error && data) {
+                setComments([data, ...comments]);
+                setCommentForm({ name: "", idNumber: "", email: "", course: "", year: "", text: "" });
+
+                // Record comment analytics event
+                await supabase.from("magazine_analytics").insert([
+                    { magazine_id: magazine.id, event_type: "comment" }
+                ]);
+            }
+        } catch (err) {
+            console.error("Failed to post comment:", err);
+            alert("Failed to post comment. Please try again.");
+        } finally {
+            setIsSubmittingComment(false);
+        }
+    };
+
     if (isLoadingMagazine) {
         return (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0b0c10] text-white">
@@ -697,6 +849,64 @@ const renderPdfPages = async () => {
                         <h1 className="text-base md:text-xl font-bold text-white truncate">{magazine.title}</h1>
                         <p className="text-xs md:text-sm text-gray-400 truncate">{magazine.author}</p>
                     </div>
+                </div>
+
+                {/* Zoom Bubble - Top Right Collapsible */}
+                <div className="relative ml-2 flex-shrink-0">
+                    <button
+                        onClick={() => setShowZoomControls(!showZoomControls)}
+                        className="flex items-center gap-2 px-3 py-2 bg-purple-600/50 hover:bg-purple-600 border border-purple-500/30 rounded-full text-white text-sm font-medium transition-all duration-200 shadow-lg"
+                        title="Zoom Controls"
+                        aria-label="Zoom Controls"
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <span className="hidden sm:inline">{Math.round(zoom * 100)}%</span>
+                    </button>
+                    
+                    {/* Zoom Popup */}
+                    {showZoomControls && createPortal(
+                        <div ref={zoomPortalRef} className="fixed right-4 top-20 w-56 bg-gradient-to-br from-[#241231] to-[#1a0d28] border border-purple-500/30 rounded-xl shadow-2xl p-4 z-[99999] animate-in fade-in-0 zoom-in-95">
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between text-gray-300 text-sm">
+                                    <span>Zoom Level</span>
+                                    <span className="font-bold text-purple-300">{Math.round(zoom * 100)}%</span>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <button
+                                        onClick={zoomOut}
+                                        disabled={zoom <= ZOOM_MIN}
+                                        className="flex-1 w-10 h-10 flex items-center justify-center bg-gray-700 hover:bg-gray-600 disabled:opacity-30 disabled:cursor-not-allowed rounded-lg text-white text-xl font-bold transition-colors"
+                                        aria-label="Zoom out"
+                                    >
+                                        −
+                                    </button>
+                                    <button
+                                        onClick={resetZoom}
+                                        className="flex-1 w-10 h-10 flex items-center justify-center bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-bold transition-colors"
+                                        aria-label="Reset zoom"
+                                    >
+                                        100%
+                                    </button>
+                                    <button
+                                        onClick={zoomIn}
+                                        disabled={zoom >= ZOOM_MAX}
+                                        className="flex-1 w-10 h-10 flex items-center justify-center bg-gray-700 hover:bg-gray-600 disabled:opacity-30 disabled:cursor-not-allowed rounded-lg text-white text-xl font-bold transition-colors"
+                                        aria-label="Zoom in"
+                                    >
+                                        +
+                                    </button>
+                                </div>
+                                <div className="pt-2 border-t border-purple-500/20">
+                                    <p className="text-xs text-gray-400 text-center">
+                                        {isMobile ? 'Pinch to zoom' : 'Scroll + Ctrl to zoom'}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>,
+                        document.body
+                    )}
                 </div>
 
                 {/* Close Button */}
@@ -907,34 +1117,6 @@ const renderPdfPages = async () => {
                                 <>📱 {isLandscape ? 'Side-by-side view • Scroll to navigate • Swipe to flip pages' : 'Swipe or tap corners to flip pages • Rotate device for side-by-side view'}</>
                             )}
                         </p>
-                        <div className="mt-2 flex items-center justify-center gap-2 select-none">
-                            <button
-                                onClick={zoomOut}
-                                disabled={zoom <= ZOOM_MIN}
-                                aria-label="Zoom out"
-                                title="Zoom out (Ctrl + -)"
-                                className="w-8 h-8 flex items-center justify-center rounded-full border border-purple-500/30 bg-white/10 text-white text-lg font-bold hover:bg-purple-500/40 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                            >
-                                −
-                            </button>
-                            <button
-                                onClick={resetZoom}
-                                aria-label="Reset zoom"
-                                title="Reset zoom (Ctrl + 0)"
-                                className="px-3 py-1 text-xs font-semibold text-purple-200 hover:text-white transition-colors"
-                            >
-                                {Math.round(zoom * 100)}%
-                            </button>
-                            <button
-                                onClick={zoomIn}
-                                disabled={zoom >= ZOOM_MAX}
-                                aria-label="Zoom in"
-                                title="Zoom in (Ctrl + +)"
-                                className="w-8 h-8 flex items-center justify-center rounded-full border border-purple-500/30 bg-white/10 text-white text-lg font-bold hover:bg-purple-500/40 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                            >
-                                +
-                            </button>
-                        </div>
                         {isMobile && (
                             <button
                                 onClick={() => setShowGestureGuide(true)}
@@ -953,6 +1135,141 @@ const renderPdfPages = async () => {
                         )}
                     </div>
 
+                    {/* Comments Section - Collapsible */}
+                    <div className="border-t border-purple-500/20">
+                        <button
+                            onClick={() => setShowComments(!showComments)}
+                            className="w-full p-3 text-left flex items-center justify-between text-gray-300 hover:text-white transition-colors"
+                        >
+                            <span className="flex items-center gap-2 text-sm font-medium">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                </svg>
+                                Comments ({comments.length})
+                            </span>
+                            <svg
+                                className={`w-5 h-5 text-gray-400 transition-transform ${showComments ? 'rotate-180' : ''}`}
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div className={`overflow-hidden transition-all duration-300 ${showComments ? 'max-h-[40vh] opacity-100' : 'max-h-0 opacity-0'}`}>
+                            <div className="px-4 py-4 max-h-[40vh] flex flex-col">
+                                <div className="space-y-3 overflow-y-auto flex-grow pr-2 max-h-64">
+                                    {isLoadingComments ? (
+                                        <div className="text-center py-4">
+                                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto"></div>
+                                            <p className="text-gray-400 text-sm mt-2">Loading comments...</p>
+                                        </div>
+                                    ) : comments.length === 0 ? (
+                                        <p className="text-gray-400 text-sm text-center py-4">No comments yet. Be the first!</p>
+                                    ) : (
+                                        comments.map((c) => (
+                                            <div
+                                                key={c.id}
+                                                className="bg-black/20 p-3 rounded-lg border border-purple-500/20"
+                                            >
+                                                <div className="flex justify-between">
+                                                    <div>
+                                                        <strong className="text-gray-100">{c.user_name || "Anonymous User"}</strong>
+                                                        {c.id_number && <span className="text-xs text-gray-400 ml-2">ID: {c.id_number}</span>}
+                                                        {c.course && <span className="text-xs text-gray-400 ml-2">{c.course}</span>}
+                                                        {c.year && <span className="text-xs text-gray-400 ml-2">Year {c.year}</span>}
+                                                    </div>
+                                                    <span className="text-xs text-gray-400">
+                                                        {new Date(c.created_at).toLocaleDateString()}
+                                                    </span>
+                                                </div>
+                                                <p className="text-gray-300 text-sm mt-1">{c.text}</p>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+
+                                {/* Add Comment Form */}
+                                <form onSubmit={handleAddComment} className="space-y-3 mt-4 w-full">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="block text-xs text-gray-400 mb-1">Name *</label>
+                                            <input
+                                                type="text"
+                                                value={commentForm.name}
+                                                onChange={(e) => setCommentForm({...commentForm, name: e.target.value})}
+                                                placeholder="Your name"
+                                                className="w-full bg-black/20 border border-purple-500/20 rounded-lg px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-600"
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs text-gray-400 mb-1">ID Number *</label>
+                                            <input
+                                                type="text"
+                                                value={commentForm.idNumber}
+                                                onChange={(e) => setCommentForm({...commentForm, idNumber: e.target.value})}
+                                                placeholder="Student/Employee ID"
+                                                className="w-full bg-black/20 border border-purple-500/20 rounded-lg px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-600"
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs text-gray-400 mb-1">Email *</label>
+                                            <input
+                                                type="email"
+                                                value={commentForm.email}
+                                                onChange={(e) => setCommentForm({...commentForm, email: e.target.value})}
+                                                placeholder="your@email.com"
+                                                className="w-full bg-black/20 border border-purple-500/20 rounded-lg px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-600"
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs text-gray-400 mb-1">Course *</label>
+                                            <input
+                                                type="text"
+                                                value={commentForm.course}
+                                                onChange={(e) => setCommentForm({...commentForm, course: e.target.value})}
+                                                placeholder="e.g., BSIT, BSCS, etc."
+                                                className="w-full bg-black/20 border border-purple-500/20 rounded-lg px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-600"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="sm:col-span-2">
+                                            <label className="block text-xs text-gray-400 mb-1">Year *</label>
+                                            <input
+                                                type="text"
+                                                value={commentForm.year}
+                                                onChange={(e) => setCommentForm({...commentForm, year: e.target.value})}
+                                                placeholder="e.g., 1st Year, 2nd Year, etc."
+                                                className="w-full bg-black/20 border border-purple-500/20 rounded-lg px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-600"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs text-gray-400 mb-1">Comment *</label>
+                                        <textarea
+                                            value={commentForm.text}
+                                            onChange={(e) => setCommentForm({...commentForm, text: e.target.value})}
+                                            placeholder="Share your thoughts..."
+                                            rows={3}
+                                            className="w-full bg-black/20 border border-purple-500/20 rounded-lg px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-600 resize-none"
+                                            required
+                                        />
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        disabled={isSubmittingComment}
+                                        className="w-full bg-violet-600 hover:bg-violet-700 text-white py-2.5 rounded-lg text-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {isSubmittingComment ? "Posting..." : "Post Comment"}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
 
