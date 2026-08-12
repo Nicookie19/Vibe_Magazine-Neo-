@@ -55,7 +55,6 @@ const MagazineReader = () => {
 
     // Comment state - no auth required
     const [comments, setComments] = useState([]);
-    const [newComment, setNewComment] = useState("");
     const [commentForm, setCommentForm] = useState({
         name: "",
         idNumber: "",
@@ -770,7 +769,7 @@ const renderPdfPages = async () => {
                 email: commentForm.email.trim(),
                 course: commentForm.course.trim(),
                 year: commentForm.year.trim(),
-                text: commentForm.text.trim()
+                comment_text: commentForm.text.trim()
             };
 
             const { data, error } = await supabase
@@ -779,15 +778,25 @@ const renderPdfPages = async () => {
                 .select()
                 .single();
 
-            if (!error && data) {
-                setComments([data, ...comments]);
-                setCommentForm({ name: "", idNumber: "", email: "", course: "", year: "", text: "" });
-
-                // Record comment analytics event
-                await supabase.from("magazine_analytics").insert([
-                    { magazine_id: magazine.id, event_type: "comment" }
-                ]);
+            if (error) {
+                console.error("Failed to post comment:", error);
+                alert("Failed to post comment: " + error.message);
+                return;
             }
+
+            if (!data) {
+                console.error("Failed to post comment: no data returned");
+                alert("Failed to post comment. Please try again.");
+                return;
+            }
+
+            setComments((prevComments) => [data, ...prevComments]);
+            setCommentForm({ name: "", idNumber: "", email: "", course: "", year: "", text: "" });
+
+            // Record comment analytics event
+            await supabase.from("magazine_analytics").insert([
+                { magazine_id: magazine.id, event_type: "comment" }
+            ]);
         } catch (err) {
             console.error("Failed to post comment:", err);
             alert("Failed to post comment. Please try again.");
@@ -1183,7 +1192,7 @@ const renderPdfPages = async () => {
                                                         {new Date(c.created_at).toLocaleDateString()}
                                                     </span>
                                                 </div>
-                                                <p className="text-gray-300 text-sm mt-1">{c.text}</p>
+                                                <p className="text-gray-300 text-sm mt-1">{c.comment_text || c.text}</p>
                                             </div>
                                         ))
                                     )}

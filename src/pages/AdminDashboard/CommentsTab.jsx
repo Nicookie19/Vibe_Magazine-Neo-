@@ -506,7 +506,7 @@ const CommentsTab = () => {
                                         <label className="text-xs text-gray-400 uppercase tracking-wide mb-2 block">Message</label>
                                         <div className="bg-gray-800/50 border-l-4 border-purple-500 rounded-r-lg p-4">
                                             <p className="text-gray-200 leading-relaxed whitespace-pre-wrap">
-                                                {comment.text || "No comment content"}
+                                                {comment.comment_text || comment.text || "No comment content"}
                                             </p>
                                         </div>
 
@@ -589,11 +589,11 @@ const CommentsTab = () => {
                                             <span className="text-gray-400">Posted:</span>
                                             <span className="text-gray-300">{deleteTarget?.created_at ? new Date(deleteTarget.created_at).toLocaleDateString() : "Unknown date"}</span>
                                         </div>
-                                        {deleteTarget?.text && (
+                                        {(deleteTarget?.comment_text || deleteTarget?.text) && (
                                             <div className="mt-2 pt-2 border-t border-gray-600/50">
                                                 <span className="text-gray-400 text-xs mb-1 block">Comment:</span>
                                                 <p className="text-gray-200 text-sm italic">
-                                                    "{deleteTarget.text.substring(0, 100)}{deleteTarget.text.length > 100 ? '...' : ''}"
+                                                    "{(deleteTarget.comment_text || deleteTarget.text).substring(0, 100)}{(deleteTarget.comment_text || deleteTarget.text).length > 100 ? '...' : ''}"
                                                 </p>
                                             </div>
                                         )}

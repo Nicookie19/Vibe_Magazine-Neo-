@@ -2,7 +2,17 @@
 
 ## 📋 Complete Project History
 
-### **Latest Release: August 11, 2026**
+### **Latest Release: August 12, 2026**
+| Commit | Date | Description |
+|--------|------|-------------|
+| `TBD` | 2026-08-12 | **🎉 MAJOR: Anonymous Comment System Fix & Project Cleanup** |
+| | | • **Fixed MagazineView Comments**: Added credentials form (Name, School ID, Email, Course, Year) for anonymous commenting — users no longer need to login |
+| | | • **Fixed MagazineReader Comments**: Corrected database field mapping (`comment_text` vs `text`), improved error handling with user-friendly alerts |
+| | | • **Fixed Admin CommentsTab**: Updated to display both `comment_text` and `text` fields for backward compatibility |
+| | | • **Removed Redundant Magazine Folder**: Deleted duplicate project copy (`/Magazine/`) that was causing bloat and confusion |
+| | | • **Clean Build**: Verified production build succeeds without errors |
+
+### **Release: August 11, 2026**
 | Commit | Date | Description |
 |--------|------|-------------|
 | `TBD` | 2026-08-11 | **🎉 MAJOR: Comments System, Zoom Bubble, Auth Cleanup** |
@@ -84,11 +94,12 @@
 
 | Metric | Value |
 |--------|-------|
-| **Total Commits** | 20 |
-| **Development Period** | July 9, 2026 → August 8, 2026 (30 days) |
-| **Major Releases** | 3 (Initial upload, Archive fixes, Full Responsive Redesign) |
-| **Files Modified in Latest Release** | 13 files changed, 855 insertions, 799 deletions |
+| **Total Commits** | 21 |
+| **Development Period** | July 9, 2026 → August 12, 2026 (34 days) |
+| **Major Releases** | 4 (Initial upload, Archive fixes, Full Responsive Redesign, Anonymous Comments Fix) |
+| **Files Modified in Latest Release** | 3 core files + removed redundant folder |
 | **CSS Files Consolidated** | 5 → 1 |
+| **Redundant Code Removed** | Entire duplicate `/Magazine/` folder (100+ files) |
 
 ---
 
@@ -102,10 +113,11 @@
 | Viewport-width fit implemented | `7aad59a` | Aug 8 |
 | Mobile-quality PDF rendering | `40e2833` | Aug 8 |
 | **Full responsive redesign** | `52432ea` | **Aug 8** |
+| **Anonymous comment system fixed** | `TBD` | **Aug 12** |
 
 ---
 
 ## 🌐 Current Live Version
 **Repository:** https://github.com/Nicookie19/Vibe_Magazine-Neo-
 **Latest Commit:** `52432ea` - "feat: Make website fully responsive across all devices"
-**Deployed:** August 8, 2026
+**Deployed:** August 12, 2026
