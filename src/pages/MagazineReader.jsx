@@ -53,6 +53,12 @@ const MagazineReader = () => {
     const [showZoomControls, setShowZoomControls] = useState(true);
     const [showComments, setShowComments] = useState(true);
 
+    // Like/Save state
+    const [likes, setLikes] = useState(0);
+    const [hasLiked, setHasLiked] = useState(false);
+    const [hasSaved, setHasSaved] = useState(false);
+    const [isLoadingUserData, setIsLoadingUserData] = useState(true);
+
     // Comment state - no auth required
     const [comments, setComments] = useState([]);
     const [commentForm, setCommentForm] = useState({
@@ -141,6 +147,56 @@ const readerCover = isPdfMagazine ? pdfPages[0] : magazine?.cover;
         }
         return id;
     });
+
+    // Load user's likes, saves, comments, and record visit when magazine loads
+    useEffect(() => {
+        const loadUserData = async () => {
+            if (!magazine) return;
+
+            setIsLoadingUserData(true);
+
+            // Record visit event for analytics
+            await supabase.from("magazine_analytics").insert([
+                { magazine_id: magazine.id, event_type: "visit" }
+            ]);
+
+            // Check if user has liked this magazine
+            const { data: likeData } = await supabase
+                .from("magazine_likes")
+                .select("*")
+                .eq("magazine_id", magazine.id)
+                .eq("user_id", userId)
+                .single();
+
+            if (likeData) {
+                setHasLiked(true);
+            }
+
+            // Check if user has saved this magazine
+            const { data: saveData } = await supabase
+                .from("magazine_saves")
+                .select("*")
+                .eq("magazine_id", magazine.id)
+                .eq("user_id", userId)
+                .single();
+
+            if (saveData) {
+                setHasSaved(true);
+            }
+
+            // Load total likes count
+            const { data: likesCount } = await supabase
+                .from("magazine_likes")
+                .select("*", { count: "exact" })
+                .eq("magazine_id", magazine.id);
+
+            setLikes(likesCount?.length || 0);
+
+            setIsLoadingUserData(false);
+        };
+
+        loadUserData();
+    }, [magazine?.id, userId]);
 
     // Calculate responsive dimensions based on screen size
     const calculateDimensions = () => {
@@ -306,6 +362,44 @@ const readerCover = isPdfMagazine ? pdfPages[0] : magazine?.cover;
 
         checkExistingRating();
     }, [magazine?.id, userId]);
+
+    // Fetch overall magazine ratings (average and count)
+    const [magazineRating, setMagazineRating] = useState({ average: 0, count: 0 });
+
+    useEffect(() => {
+        const fetchMagazineRatings = async () => {
+            if (!magazine?.id) return;
+
+            const { data, error } = await supabase
+                .from("magazine_ratings")
+                .select("rating")
+                .eq("magazine_id", magazine.id);
+
+            if (!error && data && data.length > 0) {
+                const total = data.reduce((sum, item) => sum + item.rating, 0);
+                const average = total / data.length;
+                setMagazineRating({ average, count: data.length });
+            } else {
+                setMagazineRating({ average: 0, count: 0 });
+            }
+        };
+
+        fetchMagazineRatings();
+
+        // Real-time subscription for ratings
+        const subscription = supabase
+            .channel("magazine-ratings-changes")
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "magazine_ratings", filter: `magazine_id=eq.${magazine.id}` },
+                () => fetchMagazineRatings()
+            )
+            .subscribe();
+
+        return () => {
+            subscription.unsubscribe();
+        };
+    }, [magazine?.id]);
 
     // Fetch comments for this magazine
     useEffect(() => {
@@ -732,6 +826,62 @@ const renderPdfPages = async () => {
         setRating(starValue);
     };
 
+    const handleLike = async () => {
+        if (!magazine) return;
+        
+        if (hasLiked) {
+            // Unlike: remove from database
+            await supabase
+                .from("magazine_likes")
+                .delete()
+                .eq("magazine_id", magazine.id)
+                .eq("user_id", userId);
+
+            setLikes(likes - 1);
+            setHasLiked(false);
+        } else {
+            // Like: add to database
+            await supabase.from("magazine_likes").insert([
+                { magazine_id: magazine.id, user_id: userId }
+            ]);
+
+            // Record like event for analytics
+            await supabase.from("magazine_analytics").insert([
+                { magazine_id: magazine.id, event_type: "like" }
+            ]);
+
+            setLikes(likes + 1);
+            setHasLiked(true);
+        }
+    };
+
+    const handleSave = async () => {
+        if (!magazine) return;
+
+        if (hasSaved) {
+            // Unsave: remove from database
+            await supabase
+                .from("magazine_saves")
+                .delete()
+                .eq("magazine_id", magazine.id)
+                .eq("user_id", userId);
+
+            setHasSaved(false);
+        } else {
+            // Save: add to database
+            await supabase.from("magazine_saves").insert([
+                { magazine_id: magazine.id, user_id: userId }
+            ]);
+
+            // Record save event for analytics
+            await supabase.from("magazine_analytics").insert([
+                { magazine_id: magazine.id, event_type: "save" }
+            ]);
+
+            setHasSaved(true);
+        }
+    };
+
     const handleAddComment = async (e) => {
         e.preventDefault();
         if (!commentForm.text.trim() || isSubmittingComment) return;
@@ -856,8 +1006,55 @@ const renderPdfPages = async () => {
                     </div>
                     <div className="min-w-0 flex-1">
                         <h1 className="text-base md:text-xl font-bold text-white truncate">{magazine.title}</h1>
-                        <p className="text-xs md:text-sm text-gray-400 truncate">{magazine.author}</p>
+                        <div className="flex items-center gap-3 mt-1 flex-wrap">
+                            <p className="text-xs md:text-sm text-gray-400 truncate">{magazine.author}</p>
+                            {magazineRating.count > 0 && (
+                                <div className="flex items-center gap-1 text-xs md:text-sm text-yellow-400">
+                                    <svg className="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                    </svg>
+                                    <span>{magazineRating.average.toFixed(1)}</span>
+                                    <span className="text-gray-500">({magazineRating.count} {magazineRating.count === 1 ? 'rating' : 'ratings'})</span>
+                                </div>
+                            )}
+                        </div>
                     </div>
+                </div>
+
+                {/* Like/Save Buttons */}
+                <div className="flex items-center gap-2 ml-2 md:ml-4 flex-shrink-0">
+                    <button
+                        onClick={handleLike}
+                        disabled={isLoadingUserData}
+                        className={`flex items-center gap-1 px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 shadow-lg ${
+                            hasLiked
+                                ? 'bg-red-500/80 hover:bg-red-500 text-white border border-red-500/50'
+                                : 'bg-gray-700/50 hover:bg-gray-700 text-gray-300 border border-gray-600/50'
+                        } disabled:opacity-50 disabled:cursor-not-allowed`}
+                        title={hasLiked ? "Unlike" : "Like"}
+                        aria-label={hasLiked ? "Unlike" : "Like"}
+                    >
+                        <svg className="w-5 h-5" fill={hasLiked ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={hasLiked ? "0" : "2"} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                        <span className="hidden sm:inline">{likes}</span>
+                    </button>
+                    <button
+                        onClick={handleSave}
+                        disabled={isLoadingUserData}
+                        className={`flex items-center gap-1 px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 shadow-lg ${
+                            hasSaved
+                                ? 'bg-yellow-500/80 hover:bg-yellow-500 text-black border border-yellow-500/50'
+                                : 'bg-gray-700/50 hover:bg-gray-700 text-gray-300 border border-gray-600/50'
+                        } disabled:opacity-50 disabled:cursor-not-allowed`}
+                        title={hasSaved ? "Unsave" : "Save for later"}
+                        aria-label={hasSaved ? "Unsave" : "Save for later"}
+                    >
+                        <svg className="w-5 h-5" fill={hasSaved ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={hasSaved ? "0" : "2"} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                        </svg>
+                        <span className="hidden sm:inline">Save</span>
+                    </button>
                 </div>
 
                 {/* Zoom Bubble - Top Right Collapsible */}

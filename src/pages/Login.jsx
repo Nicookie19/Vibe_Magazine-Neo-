@@ -205,9 +205,11 @@ const Login = () => {
           .eq('id', data.user.id)
           .single();
         
+        console.log("Profile query result:", { profileData, profileError });
+        
         // Handle missing profile by creating one if necessary
         if (profileError || !profileData) {
-          console.warn("User profile not found, creating one...", profileError);
+          console.warn("User profile not found or error, creating one...", profileError);
           
           // Get user metadata from auth to help create profile
           const metadata = data.user.user_metadata || {};
@@ -231,7 +233,54 @@ const Login = () => {
             
           if (insertError) {
             console.error("Failed to create user profile:", insertError);
-            throw new Error("Login successful, but we couldn't set up your profile. Please contact an administrator.");
+            // If duplicate key, try to fetch again
+            if (insertError.code === '23505') {
+              console.log("Profile already exists, fetching...");
+              const { data: existingProfile, error: fetchError } = await supabase
+                .from('user_profiles')
+                .select('role, is_active, username, display_name')
+                .eq('id', data.user.id)
+                .single();
+              if (!fetchError && existingProfile) {
+                console.log("Found existing profile:", existingProfile);
+                // Continue with existing profile
+                const role = existingProfile.role;
+                localStorage.setItem("vibeUser", email);
+                localStorage.setItem("vibeRole", role);
+                
+                if (role === "admin" || role === "superadmin") {
+                  localStorage.setItem("vibeAdmin", "true");
+                  if (role === "superadmin") {
+                    localStorage.setItem("vibeSuperAdmin", "true");
+                    if (data.user.id === SUPER_ADMIN_UUID) {
+                      localStorage.setItem("vibePrimarySuperAdmin", "true");
+                    } else {
+                      localStorage.removeItem("vibePrimarySuperAdmin");
+                    }
+                  } else {
+                    localStorage.removeItem("vibeSuperAdmin");
+                    localStorage.removeItem("vibePrimarySuperAdmin");
+                    if (data.user.id === ADMIN_UUID) {
+                      localStorage.setItem("vibePrimaryAdmin", "true");
+                    } else {
+                      localStorage.removeItem("vibePrimaryAdmin");
+                    }
+                  }
+                  navigate(returnUrl.startsWith('/admin') ? returnUrl : "/admin");
+                  return;
+                } else {
+                  localStorage.removeItem("vibeAdmin");
+                  localStorage.removeItem("vibeSuperAdmin");
+                  localStorage.removeItem("vibePrimarySuperAdmin");
+                  localStorage.removeItem("vibePrimaryAdmin");
+                  navigate("/");
+                  return;
+                }
+              }
+              // If fetch also fails, include both errors in message
+              throw new Error(`Profile exists but couldn't read it: ${fetchError?.message || 'RLS may be blocking'}`);
+            }
+            throw new Error(`Profile insert failed: ${insertError.message} (code: ${insertError.code})`);
           }
           
           // Use the values we just created
@@ -334,6 +383,10 @@ const Login = () => {
       
     } catch (error) {
       console.error("Login error:", error);
+      console.error("Error message:", error.message);
+      console.error("Error code:", error.code);
+      console.error("Error details:", error.details);
+      console.error("Error hint:", error.hint);
       
       // Provide more specific error messages
       if (error.message.includes('email')) {
@@ -344,8 +397,12 @@ const Login = () => {
         setError("Your account has been deactivated. Please contact an administrator.");
       } else if (error.message.includes('Email not confirmed')) {
         setError("Please confirm your email address before logging in. Check your inbox for a confirmation link.");
+      } else if (error.message.includes('Invalid login credentials')) {
+        setError("Incorrect email or password. Please try again.");
+      } else if (error.message.includes('User not found')) {
+        setError("No account found with this email. Please sign up first.");
       } else {
-        setError("Login failed. Please check your credentials and try again.");
+        setError(`Login failed: ${error.message || "Unknown error"}`);
       }
     } finally {
       setLoading(false);

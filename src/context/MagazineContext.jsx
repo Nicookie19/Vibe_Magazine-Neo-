@@ -1,14 +1,11 @@
 // src/context/MagazineContext.js
 import React, { createContext, useState, useContext } from "react";
 
-// Initial magazine data
-const initialMagazines = [ /* paste your magazine data array here */ ];
-
 const MagazineContext = createContext();
 
 export const useMagazines = () => useContext(MagazineContext);
 
-export const MagazineProvider = ({ children }) => {
+export const MagazineProvider = ({ children, initialMagazines = [] }) => {
   const [magazines, setMagazines] = useState(initialMagazines);
 
   const removeMagazine = (id) => {
