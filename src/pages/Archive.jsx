@@ -224,6 +224,7 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [isLoadingComments, setIsLoadingComments] = useState(true);
+  const [commentsError, setCommentsError] = useState("");
   const [isLoadingImages, setIsLoadingImages] = useState(true);
   const [loadingImages, setLoadingImages] = useState({});
   const [showRatingPopup, setShowRatingPopup] = useState(false);
@@ -234,6 +235,16 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
   const [modalDimensions, setModalDimensions] = useState({ width: 480, height: 700 });
   const [isMobile, setIsMobile] = useState(false);
   const pageFlipRef = useRef(null);
+
+  // Generate or get user ID from localStorage
+  const [userId] = useState(() => {
+    let id = localStorage.getItem('magazine_user_id');
+    if (!id) {
+      id = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('magazine_user_id', id);
+    }
+    return id;
+  });
 
   // Calculate responsive dimensions for the modal flipbook
   const calculateModalDimensions = () => {
@@ -399,13 +410,16 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
       setLikes(likesCount?.length || 0);
 
       // Load comments
-      const { data: commentsData } = await supabase
+      const { data: commentsData, error: commentsError } = await supabase
         .from("magazine_comments")
         .select("*")
         .eq("magazine_id", mag.id)
         .order("created_at", { ascending: false });
 
-      if (commentsData) {
+      if (commentsError) {
+        console.error("Failed to load comments:", commentsError);
+        setCommentsError(commentsError.message || "Failed to load comments");
+      } else if (commentsData) {
         setComments(commentsData);
       }
       
@@ -414,6 +428,23 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
     };
 
     loadUserData();
+
+    // Real-time subscription for new comments (unique channel per magazine)
+    const channelName = `magazine-modal-comments-${mag.id}`;
+    const subscription = supabase
+      .channel(channelName)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "magazine_comments", filter: `magazine_id=eq.${mag.id}` },
+        (payload) => {
+          setComments((prevComments) => [payload.new, ...prevComments]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [mag.id, userId]);
 
   const handleLike = async () => {
@@ -1057,7 +1088,25 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
               </h3>
 
               <ul className="space-y-3 overflow-y-auto flex-grow pr-2">
-                {comments.length === 0 ? (
+                {isLoadingComments ? (
+                  <div className="text-center py-4">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto"></div>
+                    <p className="text-gray-400 text-sm mt-2">Loading comments...</p>
+                  </div>
+                ) : commentsError ? (
+                  <div className="text-center py-4 text-red-400">
+                    <p className="text-sm mb-2">Failed to load comments: {commentsError}</p>
+                    <button
+                      onClick={() => {
+                        setIsLoadingComments(true);
+                        setCommentsError("");
+                      }}
+                      className="text-purple-400 hover:text-purple-300 text-sm underline"
+                    >
+                      Retry
+                    </button>
+                  </div>
+                ) : comments.length === 0 ? (
                   <p className="text-gray-400 text-sm">
                     No comments yet. Be the first!
                   </p>
