@@ -22,7 +22,10 @@ const CommentsTab = () => {
     // Read status tracking
     const [readComments, setReadComments] = useState(() => {
         const saved = localStorage.getItem('vibe-admin-read-comments');
-        return saved ? JSON.parse(saved) : [];
+        try {
+            const ids = saved ? JSON.parse(saved) : [];
+            return Array.isArray(ids) ? ids : [];
+        } catch { return []; }
     });
 
 
@@ -55,14 +58,6 @@ const CommentsTab = () => {
     // Save selected magazine filter to localStorage
     useEffect(() => {
         localStorage.setItem('vibe-admin-selected-magazine', selectedMagazine);
-    }, [selectedMagazine]);
-
-    // Refresh data when magazine filter changes to get latest comments
-    useEffect(() => {
-        if (!loading) {
-            console.log("Magazine filter changed, refreshing data...");
-            fetchData();
-        }
     }, [selectedMagazine]);
 
     // Mark comment as read
@@ -262,7 +257,7 @@ const CommentsTab = () => {
                                 setSelectedMagazine(e.target.value);
                                 console.log("Filter changed to:", e.target.value);
                             }}
-                            className="bg-gray-800/50 border border-gray-600 text-gray-100 px-4 py-2 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-colors duration-200"
+                            className="bg-gray-800/50 border border-gray-600 text-gray-100 px-4 py-2 rounded-lg focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-colors duration-200"
                         >
                             <option value="all">All Magazines</option>
                             {magazines.map(mag => (
@@ -300,17 +295,17 @@ const CommentsTab = () => {
             </section>
 
             {/* Comments List */}
-            <section className="bg-gradient-to-br from-[#241231] to-[#1a0d28] border border-purple-500/20 rounded-xl shadow-lg overflow-hidden">
+            <section className="vibe-panel bg-gradient-to-br from-[#112326] to-[#0e1c20] border border-brand-500/20 rounded-xl shadow-lg overflow-hidden">
                 {/* Header Bar */}
                 {filteredComments.length > 0 && (
-                    <div className="bg-gray-800/30 px-6 py-4 border-b border-purple-500/20">
+                    <div className="bg-gray-800/30 px-6 py-4 border-b border-brand-500/20">
                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                             <div className="flex items-center gap-4">
                                 <h3 className="text-gray-100 font-semibold text-lg">
                                     {filteredComments.length} Comment{filteredComments.length !== 1 ? 's' : ''}
                                 </h3>
                                 {selectedMagazine !== "all" && (
-                                    <span className="bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                                    <span className="bg-brand-600 text-white px-3 py-1 rounded-full text-sm font-medium">
                                         {magazines.find(m => String(m.id) === String(selectedMagazine))?.title || 'Filtered'}
                                     </span>
                                 )}
@@ -329,7 +324,7 @@ const CommentsTab = () => {
                                                 setSelectedComments([]);
                                             }
                                         }}
-                                        className="w-4 h-4 text-purple-600 bg-gray-600 border-gray-500 rounded focus:ring-purple-500 focus:ring-2"
+                                        className="w-4 h-4 text-brand-600 bg-gray-600 border-gray-500 rounded focus:ring-brand-500 focus:ring-2"
                                     />
                                     Select All
                                 </label>
@@ -347,7 +342,7 @@ const CommentsTab = () => {
                 <div className="p-6">
                     {/* Bulk Action Bar - Shows when comments are selected */}
                     {selectedComments.length > 0 && (
-                        <div className="mb-6 bg-gradient-to-r from-blue-900/50 to-purple-900/50 border border-blue-500/30 rounded-xl p-4">
+                        <div className="mb-6 bg-gradient-to-r from-blue-900/50 to-brand-900/50 border border-blue-500/30 rounded-xl p-4">
                             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                                 <div className="text-gray-100">
                                     <span className="font-semibold text-blue-300">{selectedComments.length}</span> comment{selectedComments.length !== 1 ? 's' : ''} selected
@@ -399,7 +394,7 @@ const CommentsTab = () => {
                                     className={`rounded-xl border transition-all duration-200 overflow-hidden ${selectedComments.includes(comment.id)
                                         ? 'border-blue-500 bg-blue-900/20 shadow-lg shadow-blue-500/10'
                                         : isRead
-                                            ? 'border-gray-600/50 bg-gray-800/30 hover:border-purple-500/50 hover:bg-gray-800/50'
+                                            ? 'border-gray-600/50 bg-gray-800/30 hover:border-brand-500/50 hover:bg-gray-800/50'
                                             : 'border-blue-400/50 bg-blue-900/10 hover:border-blue-500/70 hover:bg-blue-900/20 shadow-md shadow-blue-500/5'
                                         }`}
                                 >
@@ -419,7 +414,7 @@ const CommentsTab = () => {
                                                                 setSelectedComments(selectedComments.filter(id => id !== comment.id));
                                                             }
                                                         }}
-                                                        className="w-5 h-5 text-purple-600 bg-gray-700 border-gray-500 rounded focus:ring-purple-500 focus:ring-2 cursor-pointer"
+                                                        className="w-5 h-5 text-brand-600 bg-gray-700 border-gray-500 rounded focus:ring-brand-500 focus:ring-2 cursor-pointer"
                                                     />
                                                     
                                                     {/* Read Status Badge */}
@@ -504,7 +499,7 @@ const CommentsTab = () => {
                                     {/* Message Content */}
                                     <div className="px-6 py-4">
                                         <label className="text-xs text-gray-400 uppercase tracking-wide mb-2 block">Message</label>
-                                        <div className="bg-gray-800/50 border-l-4 border-purple-500 rounded-r-lg p-4">
+                                        <div className="bg-gray-800/50 border-l-4 border-brand-500 rounded-r-lg p-4">
                                             <p className="text-gray-200 leading-relaxed whitespace-pre-wrap">
                                                 {comment.comment_text || comment.text || "No comment content"}
                                             </p>
@@ -531,15 +526,15 @@ const CommentsTab = () => {
             {/* Delete Confirmation Modal */}
             {showDeleteModal && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-300">
-                    <div className="bg-gradient-to-br from-[#2a1b3d] via-[#1e1332] to-[#0f0f23] rounded-3xl border border-purple-500/40 shadow-2xl max-w-md w-full overflow-hidden transform transition-all duration-300 animate-in zoom-in-95">
+                    <div className="vibe-panel bg-gradient-to-br from-[#193237] via-[#102126] to-[#0b1619] rounded-3xl border border-brand-500/40 shadow-2xl max-w-md w-full overflow-hidden transform transition-all duration-300 animate-in zoom-in-95">
                         {/* Animated Background Elements */}
                         <div className="absolute inset-0 overflow-hidden">
                             <div className="absolute -top-4 -right-4 w-24 h-24 bg-red-500/10 rounded-full blur-xl animate-pulse"></div>
-                            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-purple-500/10 rounded-full blur-xl animate-pulse delay-1000"></div>
+                            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-brand-500/10 rounded-full blur-xl animate-pulse delay-1000"></div>
                         </div>
                         
                         {/* Header */}
-                        <div className="relative px-6 py-6 border-b border-purple-500/30">
+                        <div className="relative px-6 py-6 border-b border-brand-500/30">
                             <div className="flex items-center gap-4">
                                 <div className="relative">
                                     <div className="w-14 h-14 bg-gradient-to-br from-red-500/30 to-red-600/20 rounded-full flex items-center justify-center border border-red-500/40 shadow-lg">
@@ -570,7 +565,7 @@ const CommentsTab = () => {
                                 
                                 <p className="text-gray-300 text-center mb-4 leading-relaxed">
                                     You're about to permanently delete this{" "}
-                                    <span className="font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
+                                    <span className="font-bold text-transparent bg-gradient-to-r from-brand-400 to-pink-400 bg-clip-text">
                                         comment
                                     </span>
                                 </p>
@@ -640,15 +635,15 @@ const CommentsTab = () => {
             {/* Bulk Delete Confirmation Modal */}
             {showBulkDeleteModal && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-300">
-                    <div className="bg-gradient-to-br from-[#2a1b3d] via-[#1e1332] to-[#0f0f23] rounded-3xl border border-purple-500/40 shadow-2xl max-w-md w-full overflow-hidden transform transition-all duration-300 animate-in zoom-in-95">
+                    <div className="vibe-panel bg-gradient-to-br from-[#193237] via-[#102126] to-[#0b1619] rounded-3xl border border-brand-500/40 shadow-2xl max-w-md w-full overflow-hidden transform transition-all duration-300 animate-in zoom-in-95">
                         {/* Animated Background Elements */}
                         <div className="absolute inset-0 overflow-hidden">
                             <div className="absolute -top-4 -right-4 w-24 h-24 bg-red-500/10 rounded-full blur-xl animate-pulse"></div>
-                            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-purple-500/10 rounded-full blur-xl animate-pulse delay-1000"></div>
+                            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-brand-500/10 rounded-full blur-xl animate-pulse delay-1000"></div>
                         </div>
                         
                         {/* Header */}
-                        <div className="relative px-6 py-6 border-b border-purple-500/30">
+                        <div className="relative px-6 py-6 border-b border-brand-500/30">
                             <div className="flex items-center gap-4">
                                 <div className="relative">
                                     <div className="w-14 h-14 bg-gradient-to-br from-red-500/30 to-red-600/20 rounded-full flex items-center justify-center border border-red-500/40 shadow-lg">
@@ -679,7 +674,7 @@ const CommentsTab = () => {
                                 
                                 <p className="text-gray-300 text-center mb-4 leading-relaxed">
                                     You're about to permanently delete{" "}
-                                    <span className="font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
+                                    <span className="font-bold text-transparent bg-gradient-to-r from-brand-400 to-pink-400 bg-clip-text">
                                         {selectedComments.length} comment{selectedComments.length !== 1 ? 's' : ''}
                                     </span>
                                 </p>

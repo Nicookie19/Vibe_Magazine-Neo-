@@ -16,13 +16,13 @@ const AdminPanel = () => {
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("adminLoggedIn");
     if (!isLoggedIn) {
-      navigate("/admin");
+      navigate("/vibelogin");
     }
   }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem("adminLoggedIn");
-    navigate("/admin");
+    navigate("/vibelogin");
   };
 
   const handleChange = (e) => {
@@ -56,7 +56,7 @@ const AdminPanel = () => {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-3xl font-bold text-center">📥 Admin Panel</h2>
         <button
-    onClick={() => navigate("/adminLogin")}
+    onClick={handleLogout}
     className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
   >
     🔒 Logout

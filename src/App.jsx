@@ -45,12 +45,6 @@ const ScrollToTop = () => {
   return null;
 };
 
-// Guest Route: Only allow access if NOT logged in (e.g. login page)
-const GuestRoute = ({ children }) => {
-  const isAdmin = localStorage.getItem("vibeAdmin") === "true";
-  return !isAdmin ? children : <Navigate to="/admin" replace />;
-};
-
 // ────────────────────────────────
 // Layout Wrapper
 // ────────────────────────────────
@@ -81,14 +75,14 @@ const Layout = ({ children }) => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 via-black to-purple-900 text-gray-100">
+    <div className="vibe-app min-h-screen flex flex-col bg-gradient-to-br from-[#090d0f] via-[#0e1b1e] to-[#0b1417] text-gray-100">
       <ScrollToTop />
 
       {/* Navbar - show only on public pages */}
       {!isAuthPage && !isAdminPage && !isMagazineReaderPage && <Navbar />}
 
       {/* Main */}
-      <main className={`flex-grow ${!isAuthPage && !isAdminPage && !isMagazineReaderPage ? "pt-16" : ""}`}>
+      <main className={`flex-grow ${!isAuthPage && !isAdminPage && !isMagazineReaderPage ? "pt-20" : ""}`}>
         {children}
       </main>
 
@@ -134,9 +128,7 @@ function App() {
           <Route
             path="/vibelogin"
             element={
-              <GuestRoute>
-                <Login />
-              </GuestRoute>
+              <Login />
             }
           />
 

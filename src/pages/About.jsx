@@ -21,7 +21,7 @@ const About = () => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
         </svg>
       ),
-      color: "from-purple-500 to-pink-500"
+      color: "from-brand-500 to-pink-500"
     },
     {
       title: "Campus Engagement",
@@ -46,34 +46,34 @@ const About = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0b0c10] via-[#1b0b28] to-[#071030] text-gray-200">
+    <div className="min-h-screen bg-gradient-to-br from-[#090d0f] via-[#0e1b1e] to-[#0b1417] text-gray-200">
       {/* Background Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-brand-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-500/5 rounded-full blur-3xl"></div>
       </div>
 
 <div className="relative z-10 px-4 sm:px-6 py-16 sm:py-24 max-w-7xl mx-auto">
         {/* Hero Header */}
         <div className="text-center mb-12 sm:mb-16 lg:mb-20">
-          <div className="inline-flex items-center justify-center w-16 sm:w-20 h-16 sm:w-20 bg-gradient-to-br from-purple-600 to-violet-600 rounded-xl sm:rounded-2xl mb-4 sm:mb-6 shadow-xl sm:shadow-2xl shadow-purple-500/30">
+          <div className="inline-flex items-center justify-center w-16 sm:w-20 h-16 sm:w-20 bg-gradient-to-br from-brand-600 to-brand-600 rounded-xl sm:rounded-2xl mb-4 sm:mb-6 shadow-xl sm:shadow-2xl shadow-brand-500/30">
             <svg className="w-8 sm:w-10 h-8 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
             </svg>
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white mb-3 sm:mb-4">
-            About <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-violet-400 to-pink-400">Campus Insights</span>
+            About <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 via-brand-400 to-pink-400">Campus Insights</span>
           </h1>
           <p className="text-lg sm:text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto">
             The VIBE Club Information Hub
           </p>
-          <div className="w-20 sm:w-24 h-1 bg-gradient-to-r from-purple-500 to-violet-600 mx-auto mt-4 sm:mt-6 rounded-full"></div>
+          <div className="w-20 sm:w-24 h-1 bg-gradient-to-r from-brand-500 to-brand-600 mx-auto mt-4 sm:mt-6 rounded-full"></div>
         </div>
 
         {/* Main Description Card */}
         <div className="mb-12 sm:mb-16">
-          <div className="bg-black/30 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-purple-500/30 shadow-xl sm:shadow-2xl p-6 sm:p-8 md:p-12 hover:border-purple-500/50 transition-all duration-500">
+          <div className="vibe-panel bg-black/30 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-brand-500/30 shadow-xl sm:shadow-2xl p-6 sm:p-8 md:p-12 hover:border-brand-500/50 transition-all duration-500">
             <p className="text-gray-300 leading-relaxed text-base sm:text-lg md:text-xl">
               <strong className="text-white font-semibold">Campus Insights</strong> highlights the role of emerging digital technologies in shaping how The VIBE Club connects with its audience. As a content creation group at the University of the Immaculate Conception (UIC), The VIBE Club faces challenges in maintaining a consistent online presence and staying current with digital trends.
             </p>
@@ -91,7 +91,7 @@ const About = () => {
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">Our Mission</h2>
           </div>
 
-          <div className="bg-black/30 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-purple-500/30 shadow-xl sm:shadow-2xl p-6 sm:p-8 md:p-12 hover:border-purple-500/50 transition-all duration-500">
+          <div className="vibe-panel bg-black/30 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-brand-500/30 shadow-xl sm:shadow-2xl p-6 sm:p-8 md:p-12 hover:border-brand-500/50 transition-all duration-500">
             <p className="text-gray-300 leading-relaxed text-base sm:text-lg md:text-xl">
               To support growth and innovation, The VIBE Club offers expert led workshops each semester in areas like SEO, digital and mobile photography, videography, content creation, article writing, and AI prompting. These sessions aim to equip members with essential digital communication skills. Beyond personal development, we are committed to promoting entrepreneurship, innovation, and social impact in line with the TBI.
             </p>
@@ -102,18 +102,18 @@ const About = () => {
         <div className="mb-12 sm:mb-16">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3">What We Do</h2>
-            <div className="w-12 sm:w-16 h-1 bg-gradient-to-r from-purple-500 to-violet-600 mx-auto rounded-full"></div>
+            <div className="w-12 sm:w-16 h-1 bg-gradient-to-r from-brand-500 to-brand-600 mx-auto rounded-full"></div>
           </div>
 
 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
             {features.map((feature, index) => (
-              <div key={index} className="group bg-black/30 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-purple-500/30 hover:border-purple-500/50 transition-all duration-500 p-6 sm:p-8 hover:shadow-2xl hover:shadow-purple-500/20 hover:scale-[1.01]">
+              <div key={index} className="group bg-black/30 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-brand-500/30 hover:border-brand-500/50 transition-all duration-500 p-6 sm:p-8 hover:shadow-2xl hover:shadow-brand-500/20 hover:scale-[1.01]">
                 <div className="flex items-start gap-4 sm:gap-5">
                   <div className={`w-12 sm:w-14 h-12 sm:h-14 bg-gradient-to-br ${feature.color} rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`}>
                     {feature.icon}
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-2 sm:mb-3 group-hover:text-purple-300 transition-colors duration-300">
+                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-2 sm:mb-3 group-hover:text-brand-300 transition-colors duration-300">
                       {feature.title}
                     </h3>
                     <p className="text-gray-400 leading-relaxed text-sm sm:text-base md:text-lg">
@@ -130,39 +130,39 @@ const About = () => {
         <div>
           <div className="text-center mb-8 sm:mb-12">
             <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-              <div className="w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center shadow-lg shadow-purple-500/30">
+              <div className="w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-br from-brand-500 to-pink-500 rounded-lg flex items-center justify-center shadow-lg shadow-brand-500/30">
                 <svg className="w-5 sm:w-6 h-5 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                 </svg>
               </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">Editorial Board</h2>
             </div>
-            <div className="w-12 sm:w-16 h-1 bg-gradient-to-r from-purple-500 to-violet-600 mx-auto rounded-full"></div>
+            <div className="w-12 sm:w-16 h-1 bg-gradient-to-r from-brand-500 to-brand-600 mx-auto rounded-full"></div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {/* Dr. Alan Reyes */}
-            <div className="group bg-black/30 backdrop-blur-sm rounded-2xl border border-purple-500/30 hover:border-purple-500/50 transition-all duration-500 p-6 text-center hover:shadow-2xl hover:shadow-purple-500/20 hover:scale-105">
+            <div className="vibe-panel group bg-black/30 backdrop-blur-sm rounded-2xl border border-brand-500/30 hover:border-brand-500/50 transition-all duration-500 p-6 text-center hover:shadow-2xl hover:shadow-brand-500/20 hover:scale-105">
               <div className="relative mb-5 inline-block">
                 <img
                   src="https://ui-avatars.com/api/?name=Franzen+Perin&size=128&background=6366f1&color=fff&rounded=true&bold=true"
                   alt="N/A"
-                  className="w-24 h-24 rounded-full object-cover mx-auto border-4 border-purple-500 group-hover:border-purple-400 transition-all duration-300 shadow-xl"
+                  className="w-24 h-24 rounded-full object-cover mx-auto border-4 border-brand-500 group-hover:border-brand-400 transition-all duration-300 shadow-xl"
                 />
-                <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-gradient-to-br from-purple-500 to-violet-600 rounded-full flex items-center justify-center shadow-lg">
+                <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-gradient-to-br from-brand-500 to-brand-600 rounded-full flex items-center justify-center shadow-lg">
                   <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l9-5-9-5-9 5 9 5z"/>
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
                   </svg>
                 </div>
               </div>
-              <h3 className="text-white font-bold text-lg mb-2 group-hover:text-purple-300 transition-colors duration-300">Franzen Kristel Perin</h3>
-              <p className="text-purple-400 text-sm font-semibold mb-1">Editor in Chief</p>
+              <h3 className="text-white font-bold text-lg mb-2 group-hover:text-brand-300 transition-colors duration-300">Franzen Kristel Perin</h3>
+              <p className="text-brand-400 text-sm font-semibold mb-1">Editor in Chief</p>
               <p className="text-gray-500 text-xs">BS in Psycology</p>
             </div>
 
             {/* Sophia Kim */}
-            <div className="group bg-black/30 backdrop-blur-sm rounded-2xl border border-purple-500/30 hover:border-purple-500/50 transition-all duration-500 p-6 text-center hover:shadow-2xl hover:shadow-pink-500/20 hover:scale-105">
+            <div className="vibe-panel group bg-black/30 backdrop-blur-sm rounded-2xl border border-brand-500/30 hover:border-brand-500/50 transition-all duration-500 p-6 text-center hover:shadow-2xl hover:shadow-pink-500/20 hover:scale-105">
               <div className="relative mb-5 inline-block">
                 <img
                   src="https://ui-avatars.com/api/?name=Francis+Pantonial&size=128&background=ec4899&color=fff&rounded=true&bold=true"
@@ -181,7 +181,7 @@ const About = () => {
             </div>
 
             {/* Jamal Wright */}
-            <div className="group bg-black/30 backdrop-blur-sm rounded-2xl border border-purple-500/30 hover:border-purple-500/50 transition-all duration-500 p-6 text-center hover:shadow-2xl hover:shadow-green-500/20 hover:scale-105">
+            <div className="vibe-panel group bg-black/30 backdrop-blur-sm rounded-2xl border border-brand-500/30 hover:border-brand-500/50 transition-all duration-500 p-6 text-center hover:shadow-2xl hover:shadow-green-500/20 hover:scale-105">
               <div className="relative mb-5 inline-block">
                 <img
                   src="https://ui-avatars.com/api/?name=Nico+Mahipust&size=128&background=10b981&color=fff&rounded=true&bold=true"
@@ -200,7 +200,7 @@ const About = () => {
             </div>
 
             {/* Prof. Elena Torres */}
-            <div className="group bg-black/30 backdrop-blur-sm rounded-2xl border border-purple-500/30 hover:border-purple-500/50 transition-all duration-500 p-6 text-center hover:shadow-2xl hover:shadow-yellow-500/20 hover:scale-105">
+            <div className="vibe-panel group bg-black/30 backdrop-blur-sm rounded-2xl border border-brand-500/30 hover:border-brand-500/50 transition-all duration-500 p-6 text-center hover:shadow-2xl hover:shadow-yellow-500/20 hover:scale-105">
               <div className="relative mb-5 inline-block">
                 <img
                   src="https://ui-avatars.com/api/?name=T+Writer&size=128&background=f59e0b&color=fff&rounded=true&bold=true"

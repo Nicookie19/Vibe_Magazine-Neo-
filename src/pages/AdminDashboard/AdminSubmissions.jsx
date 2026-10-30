@@ -89,7 +89,7 @@ const AdminSubmissions = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-400"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-400"></div>
       </div>
     );
   }
@@ -180,8 +180,7 @@ The Vibe Magazine Editorial Team
 
           if (response.ok) {
             const result = await response.json();
-            console.log(`✅ Email notification sent via Edge Function:`, result);
-            return true;
+            return result.success === true && result.delivery_status === "sent";
           } else {
             const errorText = await response.text();
             console.warn(`⚠️ Edge Function failed: ${response.status} - ${errorText}`);
@@ -191,12 +190,7 @@ The Vibe Magazine Editorial Team
         console.warn(`⚠️ Edge Function error: ${edgeError.message}`);
       }
 
-      // Method 2: Fallback - Log email details (for testing)
-      console.log(`📧 Email notification simulated for ${submission.student_email}`);
-      console.log(`Subject: ${emailSubject}`);
-      console.log(`Body: ${emailBody}`);
-      
-      return true; // Return true for fallback success
+      return false;
     } catch (error) {
       console.error(`❌ Failed to send notification email:`, error);
       return false;
@@ -248,9 +242,11 @@ The Vibe Magazine Editorial Team
           draggable: true,
         });
 
-        // Publish the magazine
-        await publishMagazine(updatedSubmission);
+      } else {
+        toast.warn("Submission accepted, but the notification email was not sent.");
       }
+      // Publication must not depend on email delivery being configured.
+      await publishMagazine(updatedSubmission);
     } catch (err) {
       console.error("Accept submission error:", err);
       toast.error(`❌ Failed to accept submission: ${err.message || err}`, {
@@ -317,6 +313,8 @@ The Vibe Magazine Editorial Team
           pauseOnHover: true,
           draggable: true,
         });
+      } else {
+        toast.warn("Submission rejected, but the notification email was not sent.");
       }
     } catch (err) {
       console.error("Reject submission error:", err);
@@ -400,9 +398,9 @@ The Vibe Magazine Editorial Team
 
           {/* Statistics Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-gradient-to-br from-purple-600/20 to-purple-800/20 rounded-xl border border-purple-500/30 p-4 text-center">
+            <div className="vibe-panel bg-gradient-to-br from-brand-600/20 to-brand-800/20 rounded-xl border border-brand-500/30 p-4 text-center">
               <div className="text-2xl font-bold text-white mb-1">{submissions.length}</div>
-              <div className="text-sm text-purple-300 font-medium">Total Submissions</div>
+              <div className="text-sm text-brand-300 font-medium">Total Submissions</div>
             </div>
             <div className="bg-gradient-to-br from-green-600/20 to-green-800/20 rounded-xl border border-green-500/30 p-4 text-center">
               <div className="text-2xl font-bold text-green-400 mb-1">
@@ -431,10 +429,10 @@ The Vibe Magazine Editorial Team
             {/* Left side - Status Filter */}
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
-                <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z" />
                 </svg>
-                <label htmlFor="status-filter" className="text-sm font-semibold text-purple-300 whitespace-nowrap">
+                <label htmlFor="status-filter" className="text-sm font-semibold text-brand-300 whitespace-nowrap">
                   Filter Status:
                 </label>
               </div>
@@ -442,22 +440,22 @@ The Vibe Magazine Editorial Team
                 id="status-filter"
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="border border-purple-500/50 rounded-lg px-4 py-2.5 bg-[#241231]/80 text-purple-100 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 min-w-[160px]"
+                className="border border-brand-500/50 rounded-lg px-4 py-2.5 bg-[#112326]/80 text-brand-100 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-brand-400 min-w-[160px]"
               >
-                <option value="all" className="bg-[#241231]">All Submissions</option>
-                <option value="Pending" className="bg-[#241231]">Pending</option>
-                <option value="Accepted" className="bg-[#241231]">Accepted</option>
-                <option value="Rejected" className="bg-[#241231]">Rejected</option>
+                <option value="all" className="bg-[#112326]">All Submissions</option>
+                <option value="Pending" className="bg-[#112326]">Pending</option>
+                <option value="Accepted" className="bg-[#112326]">Accepted</option>
+                <option value="Rejected" className="bg-[#112326]">Rejected</option>
               </select>
             </div>
 
             {/* Right side - Search */}
             <div className="flex items-center space-x-3 max-w-md w-full lg:w-auto">
               <div className="flex items-center space-x-3">
-                <svg className="w-5 h-5 text-purple-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-brand-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
-                <label htmlFor="search" className="text-sm font-semibold text-purple-300 whitespace-nowrap">
+                <label htmlFor="search" className="text-sm font-semibold text-brand-300 whitespace-nowrap">
                   Search:
                 </label>
               </div>
@@ -468,7 +466,7 @@ The Vibe Magazine Editorial Team
                   placeholder="Name, email, title, category..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="block w-full px-4 py-2.5 border border-purple-500/50 rounded-lg text-sm bg-[#241231]/80 text-purple-100 placeholder-purple-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400"
+                  className="block w-full px-4 py-2.5 border border-brand-500/50 rounded-lg text-sm bg-[#112326]/80 text-brand-100 placeholder-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-brand-400"
                 />
               </div>
             </div>
@@ -479,7 +477,7 @@ The Vibe Magazine Editorial Team
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <h2 className="text-xl font-semibold text-white">Submissions</h2>
-            <span className="bg-purple-800/40 text-purple-200 px-3 py-1 rounded-full text-sm font-medium">
+            <span className="bg-brand-800/40 text-brand-200 px-3 py-1 rounded-full text-sm font-medium">
               {filteredSubmissions.length} {filteredSubmissions.length === 1 ? 'result' : 'results'}
             </span>
           </div>
@@ -489,7 +487,7 @@ The Vibe Magazine Editorial Team
                 setSearchTerm("");
                 setFilterStatus("all");
               }}
-              className="text-sm text-purple-400 hover:text-purple-300 transition-colors duration-200 flex items-center space-x-2"
+              className="text-sm text-brand-400 hover:text-brand-300 transition-colors duration-200 flex items-center space-x-2"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -504,13 +502,13 @@ The Vibe Magazine Editorial Team
           {filteredSubmissions.length === 0 ? (
             <div className="p-16 text-center">
               <div className="max-w-md mx-auto">
-                <div className="w-20 h-20 bg-purple-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <svg className="w-10 h-10 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="w-20 h-20 bg-brand-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <svg className="w-10 h-10 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                 </div>
                 <h3 className="text-2xl font-semibold text-white mb-3">No submissions found</h3>
-                <p className="text-purple-300 text-center">
+                <p className="text-brand-300 text-center">
                   {searchTerm || filterStatus !== "all"
                     ? "Try adjusting your search criteria or filters to find more submissions."
                     : "There are no submissions to display yet. New submissions will appear here when students submit their work."}
@@ -521,65 +519,65 @@ The Vibe Magazine Editorial Team
             <div className="overflow-x-auto">
               <table className="min-w-full">
                 <thead>
-                  <tr className="border-b border-purple-500/20">
+                  <tr className="border-b border-brand-500/20">
                     <th className="px-6 py-5 text-left">
                       <div className="flex items-center space-x-2">
-                        <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>
-                        <span className="text-sm font-semibold text-purple-300 uppercase tracking-wider">Student</span>
+                        <span className="text-sm font-semibold text-brand-300 uppercase tracking-wider">Student</span>
                       </div>
                     </th>
                     <th className="px-6 py-5 text-left">
                       <div className="flex items-center space-x-2">
-                        <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        <span className="text-sm font-semibold text-purple-300 uppercase tracking-wider">Submission</span>
+                        <span className="text-sm font-semibold text-brand-300 uppercase tracking-wider">Submission</span>
                       </div>
                     </th>
                     <th className="px-6 py-5 text-left">
                       <div className="flex items-center space-x-2">
-                        <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                         </svg>
-                        <span className="text-sm font-semibold text-purple-300 uppercase tracking-wider">File</span>
+                        <span className="text-sm font-semibold text-brand-300 uppercase tracking-wider">File</span>
                       </div>
                     </th>
                     <th className="px-6 py-5 text-left">
                       <div className="flex items-center space-x-2">
-                        <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <span className="text-sm font-semibold text-purple-300 uppercase tracking-wider">Date</span>
+                        <span className="text-sm font-semibold text-brand-300 uppercase tracking-wider">Date</span>
                       </div>
                     </th>
                     <th className="px-6 py-5 text-center">
-                      <span className="text-sm font-semibold text-purple-300 uppercase tracking-wider">Status</span>
+                      <span className="text-sm font-semibold text-brand-300 uppercase tracking-wider">Status</span>
                     </th>
                     <th className="px-6 py-5 text-center">
-                      <span className="text-sm font-semibold text-purple-300 uppercase tracking-wider">Actions</span>
+                      <span className="text-sm font-semibold text-brand-300 uppercase tracking-wider">Actions</span>
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredSubmissions.map((submission) => (
-                    <tr key={submission.id} className="border-b border-purple-500/10 hover:bg-gradient-to-r hover:from-purple-600/10 hover:to-pink-600/10 transition-all duration-300 group">
+                    <tr key={submission.id} className="border-b border-brand-500/10 hover:bg-gradient-to-r hover:from-brand-600/10 hover:to-pink-600/10 transition-all duration-300 group">
                       <td className="px-6 py-6">
                         <div className="flex items-center space-x-4">
-                          <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center font-semibold text-white text-sm">
+                          <div className="w-10 h-10 bg-gradient-to-br from-brand-600 to-brand-700 rounded-full flex items-center justify-center font-semibold text-white text-sm">
                             {submission.full_name?.charAt(0).toUpperCase() || 'U'}
                           </div>
                           <div>
                             <div className="text-sm font-semibold text-white mb-1">{submission.full_name}</div>
-                            <div className="text-xs text-purple-300">{submission.student_email}</div>
+                            <div className="text-xs text-brand-300">{submission.student_email}</div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-6">
                         <div>
                           <div className="text-sm font-semibold text-white mb-2">{submission.title_of_work}</div>
-                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-purple-600/20 to-pink-600/20 text-purple-200 border border-purple-500/30">
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-brand-600/20 to-pink-600/20 text-brand-200 border border-brand-500/30">
                             {submission.category}
                           </span>
                         </div>
@@ -592,13 +590,13 @@ The Vibe Magazine Editorial Team
                                 <img
                                   src={submission.file_url}
                                   alt={submission.title_of_work}
-                                  className="h-12 w-12 rounded-lg object-cover border-2 border-purple-500/30 shadow-lg"
+                                  className="h-12 w-12 rounded-lg object-cover border-2 border-brand-500/30 shadow-lg"
                                 />
                                 <a
                                   href={submission.file_url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors duration-200 flex items-center space-x-1"
+                                  className="text-brand-400 hover:text-brand-300 text-sm font-medium transition-colors duration-200 flex items-center space-x-1"
                                 >
                                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -612,7 +610,7 @@ The Vibe Magazine Editorial Team
                                 href={submission.file_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center px-3 py-2 border border-purple-500/50 text-sm font-medium rounded-lg text-purple-200 bg-[#241231]/60 hover:bg-[#241231]/80 transition-all duration-200"
+                                className="inline-flex items-center px-3 py-2 border border-brand-500/50 text-sm font-medium rounded-lg text-brand-200 bg-[#112326]/60 hover:bg-[#112326]/80 transition-all duration-200"
                               >
                                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -621,7 +619,7 @@ The Vibe Magazine Editorial Team
                               </a>
                             )
                           ) : (
-                            <div className="flex items-center space-x-2 text-purple-400 text-sm">
+                            <div className="flex items-center space-x-2 text-brand-400 text-sm">
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                               </svg>
@@ -634,12 +632,12 @@ The Vibe Magazine Editorial Team
                         {submission.submitted_at ? (
                           <div>
                             <div className="text-white font-medium text-sm">{new Date(submission.submitted_at).toLocaleDateString()}</div>
-                            <div className="text-xs text-purple-400 mt-1">
+                            <div className="text-xs text-brand-400 mt-1">
                               {new Date(submission.submitted_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </div>
                           </div>
                         ) : (
-                          <span className="text-purple-400">-</span>
+                          <span className="text-brand-400">-</span>
                         )}
                       </td>
                       <td className="px-6 py-6 text-center">
@@ -688,7 +686,7 @@ The Vibe Magazine Editorial Team
                           <button
                             onClick={() => showDeleteConfirmation(submission)}
                             disabled={processingIds.includes(submission.id)}
-                            className="inline-flex items-center px-3 py-2 text-xs font-semibold rounded-lg text-purple-200 bg-[#241231]/60 hover:bg-[#241231]/80 border border-purple-500/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 group-hover:border-purple-400/70"
+                            className="inline-flex items-center px-3 py-2 text-xs font-semibold rounded-lg text-brand-200 bg-[#112326]/60 hover:bg-[#112326]/80 border border-brand-500/50 focus:outline-none focus:ring-2 focus:ring-brand-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 group-hover:border-brand-400/70"
                             title="Delete submission"
                           >
                             {processingIds.includes(submission.id) ? (
@@ -716,7 +714,7 @@ The Vibe Magazine Editorial Team
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-[#2a1f3d] to-[#1a1625] rounded-xl border border-red-500/30 shadow-2xl max-w-md w-full overflow-hidden">
+          <div className="bg-gradient-to-br from-[#193237] to-[#1a1625] rounded-xl border border-red-500/30 shadow-2xl max-w-md w-full overflow-hidden">
             {/* Header */}
             <div className="px-6 py-5 border-b border-red-500/20">
               <div className="flex items-center gap-3">
@@ -732,7 +730,7 @@ The Vibe Magazine Editorial Team
             {/* Content */}
             <div className="px-6 py-6">
               <p className="text-gray-300 text-base mb-6">
-                Are you sure you want to delete this <span className="font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">submission</span>?
+                Are you sure you want to delete this <span className="font-bold text-transparent bg-gradient-to-r from-brand-400 to-pink-400 bg-clip-text">submission</span>?
               </p>
 
               {deleteTarget && (

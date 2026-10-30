@@ -410,29 +410,29 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0b0c10] via-[#1b0b28] to-[#071030] flex items-center justify-center px-6">
+    <div className="min-h-screen bg-gradient-to-br from-[#090d0f] via-[#0e1b1e] to-[#0b1417] flex items-center justify-center px-6">
       {/* Background Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-brand-500/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-500/5 rounded-full blur-3xl"></div>
       </div>
 
       <div className="relative z-10 w-full max-w-lg">
-        <div className="bg-gradient-to-br from-[#241536]/80 via-[#1b0b28]/70 to-[#0f0f23]/80 backdrop-blur-xl rounded-2xl border border-purple-500/30 shadow-2xl p-8">
+        <div className="vibe-panel bg-gradient-to-br from-[#14282c]/80 via-[#0e1b1e]/70 to-[#0b1619]/80 backdrop-blur-xl rounded-2xl border border-brand-500/30 shadow-2xl p-8">
           {/* Logo and Title Section */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-full border-2 border-purple-400/50 flex items-center justify-center shadow-lg overflow-hidden bg-white mx-auto mb-4">
+            <div className="w-28 h-24 flex items-center justify-center mx-auto mb-4">
               <img 
-                src="https://raw.githubusercontent.com/JayDee15999/pic/refs/heads/main/1.png" 
+                src="/brand/vibe-tv.png"
                 alt="Vibe Magazine Logo" 
-                className="w-12 h-12 object-cover rounded-full"
+                className="w-full h-full object-contain"
               />
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent mb-2">
+            <h1 className="text-3xl font-bold mb-2 text-[#faf9ef]">
               Vibe Magazine
             </h1>
-            <p className="text-purple-300 text-sm font-medium">Admin Dashboard Access</p>
+            <p className="text-brand-300 text-sm font-medium">Admin Dashboard Access</p>
           </div>
 
           {/* Success Message */}
@@ -462,10 +462,10 @@ const Login = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Field */}
             <div>
-              <label className="block text-sm font-medium text-purple-300 mb-2">Email Address</label>
+              <label className="block text-sm font-medium text-brand-300 mb-2">Email Address</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 </div>
@@ -474,7 +474,7 @@ const Login = () => {
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-black/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-400 transition-all duration-200"
+                  className="w-full pl-10 pr-4 py-3 bg-black/20 border border-brand-500/30 rounded-lg text-white placeholder-brand-300/50 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-400 transition-all duration-200"
                   required
                 />
               </div>
@@ -483,18 +483,18 @@ const Login = () => {
             {/* Password Field */}
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="block text-sm font-medium text-purple-300">Password</label>
+                <label className="block text-sm font-medium text-brand-300">Password</label>
                 <button
                   type="button"
                   onClick={() => setShowForgotPassword(true)}
-                  className="text-xs text-purple-400 hover:text-purple-300 transition-colors duration-200"
+                  className="text-xs text-brand-400 hover:text-brand-300 transition-colors duration-200"
                 >
                   Forgot Password?
                 </button>
               </div>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
                 </div>
@@ -503,7 +503,7 @@ const Login = () => {
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-black/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-400 transition-all duration-200"
+                  className="w-full pl-10 pr-4 py-3 bg-black/20 border border-brand-500/30 rounded-lg text-white placeholder-brand-300/50 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-400 transition-all duration-200"
                   required
                 />
               </div>
@@ -513,7 +513,7 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3.5 rounded-lg hover:from-purple-500 hover:to-pink-500 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 transform hover:scale-[1.02] disabled:opacity-70"
+              className="w-full bg-gradient-to-r from-brand-600 to-brand-700 text-white py-3.5 rounded-lg hover:from-brand-600 hover:to-brand-600 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-brand-500/50 transform hover:scale-[1.02] disabled:opacity-70"
             >
               <div className="flex items-center justify-center space-x-2">
                 {loading ? (
@@ -534,16 +534,16 @@ const Login = () => {
           </form>
 
           <div className="flex items-center gap-3 my-6" aria-hidden="true">
-            <div className="h-px flex-1 bg-purple-500/20" />
-            <span className="text-xs uppercase tracking-wider text-purple-300/70">or</span>
-            <div className="h-px flex-1 bg-purple-500/20" />
+            <div className="h-px flex-1 bg-brand-500/20" />
+            <span className="text-xs uppercase tracking-wider text-brand-300/70">or</span>
+            <div className="h-px flex-1 bg-brand-500/20" />
           </div>
 
           <button
             type="button"
             onClick={handleGoogleSignIn}
             disabled={googleLoading || loading}
-            className="w-full flex items-center justify-center gap-3 rounded-lg border border-purple-400/40 bg-white px-4 py-3 text-sm font-semibold text-gray-800 transition-all duration-200 hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 disabled:cursor-not-allowed disabled:opacity-70"
+            className="w-full flex items-center justify-center gap-3 rounded-lg border border-brand-400/40 bg-white px-4 py-3 text-sm font-semibold text-gray-800 transition-all duration-200 hover:bg-brand-50 focus:outline-none focus:ring-2 focus:ring-brand-500/50 disabled:cursor-not-allowed disabled:opacity-70"
           >
             {googleLoading ? (
               <>
@@ -564,11 +564,11 @@ const Login = () => {
           </button>
 
           {/* Back Link */}
-          <div className="mt-8 pt-6 border-t border-purple-500/20">
+          <div className="mt-8 pt-6 border-t border-brand-500/20">
             <div className="text-center">
               <Link 
                 to="/" 
-                className="inline-flex items-center space-x-2 text-purple-300 hover:text-purple-200 transition-colors duration-200 text-sm font-medium"
+                className="inline-flex items-center space-x-2 text-brand-300 hover:text-brand-200 transition-colors duration-200 text-sm font-medium"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -582,9 +582,9 @@ const Login = () => {
         {/* Forgot Password Modal */}
         {showForgotPassword && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-            <div className="bg-gradient-to-br from-[#241536]/90 via-[#1b0b28]/90 to-[#0f0f23]/90 backdrop-blur-sm rounded-xl border border-purple-500/40 p-6 max-w-md w-full shadow-xl">
-              <div className="flex items-center text-purple-400 mb-4">
-                <div className="bg-purple-500/20 p-2 rounded-full">
+            <div className="vibe-panel bg-gradient-to-br from-[#14282c]/90 via-[#0e1b1e]/90 to-[#0b1619]/90 backdrop-blur-sm rounded-xl border border-brand-500/40 p-6 max-w-md w-full shadow-xl">
+              <div className="flex items-center text-brand-400 mb-4">
+                <div className="bg-brand-500/20 p-2 rounded-full">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
@@ -620,13 +620,13 @@ const Login = () => {
 
               <form onSubmit={handleForgotPassword} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-purple-300 mb-2">Email Address</label>
+                  <label className="block text-sm font-medium text-brand-300 mb-2">Email Address</label>
                   <input
                     type="email"
                     placeholder="Enter your email"
                     value={resetEmail}
                     onChange={(e) => setResetEmail(e.target.value)}
-                    className="w-full px-4 py-3 bg-black/30 border border-purple-500/30 rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-400 transition-all duration-200"
+                    className="w-full px-4 py-3 bg-black/30 border border-brand-500/30 rounded-lg text-white placeholder-brand-300/50 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-400 transition-all duration-200"
                     required
                   />
                 </div>
@@ -640,14 +640,14 @@ const Login = () => {
                       setResetSuccess("");
                       setResetEmail("");
                     }}
-                    className="flex-1 px-4 py-2 bg-transparent border border-purple-500/30 text-purple-300 rounded-lg hover:bg-purple-500/10 transition-all duration-200 font-medium"
+                    className="flex-1 px-4 py-2 bg-transparent border border-brand-500/30 text-brand-300 rounded-lg hover:bg-brand-500/10 transition-all duration-200 font-medium"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={resetLoading}
-                    className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-500 hover:to-pink-500 transition-all duration-200 font-medium disabled:opacity-50"
+                    className="flex-1 px-4 py-2 bg-gradient-to-r from-brand-600 to-brand-700 text-white rounded-lg hover:from-brand-600 hover:to-brand-600 transition-all duration-200 font-medium disabled:opacity-50"
                   >
                     {resetLoading ? (
                       <div className="flex items-center justify-center">

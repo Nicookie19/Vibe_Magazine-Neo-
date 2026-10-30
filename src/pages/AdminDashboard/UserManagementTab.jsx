@@ -1,5 +1,5 @@
 // src/pages/AdminDashboard/UserManagementTab.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { supabase, ADMIN_UUID, SUPER_ADMIN_UUID } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
@@ -37,7 +37,7 @@ const UserManagementTab = () => {
   };
 
   // Helper to fetch a specific user by email - useful for ensuring new users appear in the list
-  const fetchUserByEmail = async (email) => {
+  const fetchUserByEmail = useCallback(async (email) => {
     try {
       console.log(`Fetching specific user with email: ${email}`);
 
@@ -90,10 +90,10 @@ const UserManagementTab = () => {
       console.warn(`Error fetching specific user ${email}:`, error);
       return null;
     }
-  };
+  }, []);
 
   // Fetch all users
-  const fetchUsers = async (newUserEmail = null) => {
+  const fetchUsers = useCallback(async (newUserEmail = null) => {
     if (!isSuperAdmin) return;
 
     setLoading(true);
@@ -180,7 +180,7 @@ const UserManagementTab = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [fetchUserByEmail, isSuperAdmin]);
 
   // Create new user
   const handleCreateUser = async (e) => {
@@ -277,7 +277,7 @@ const UserManagementTab = () => {
           let errorData;
           try {
             errorData = await response.json();
-          } catch (e) {
+          } catch {
             errorData = { error: `Server returned ${response.status}: ${response.statusText}` };
           }
           console.warn("Edge Function failed:", errorData);
@@ -443,7 +443,7 @@ const UserManagementTab = () => {
 
     try {
       // Call our secure function to update the user role
-      const { data, error } = await supabase
+      const { error } = await supabase
         .rpc('update_user_role', {
           p_user_id: userId,
           p_new_role: newRole
@@ -547,7 +547,7 @@ const UserManagementTab = () => {
         try {
           await supabase.auth.admin.deleteUser(selectedUser.id);
           await new Promise(resolve => setTimeout(resolve, 1000));
-        } catch (deleteError) {
+        } catch {
           console.log("Could not delete existing user, continuing...");
         }
 
@@ -688,7 +688,7 @@ const UserManagementTab = () => {
       // Method 1: Try using RPC function as primary approach (if available)
       try {
         console.log("Trying RPC function for user deletion...");
-        const { data: rpcData, error: rpcError } = await supabase.rpc('admin_delete_user', {
+        const { error: rpcError } = await supabase.rpc('admin_delete_user', {
           user_id: selectedUser.id
         });
 
@@ -832,7 +832,7 @@ const UserManagementTab = () => {
 
       // If not logged in, redirect to login
       if (!session) {
-        navigate('/login', { state: { returnUrl: '/admin' } });
+        navigate('/vibelogin', { state: { returnUrl: '/admin' } });
         return;
       }
 
@@ -847,7 +847,7 @@ const UserManagementTab = () => {
         console.error("Error fetching user profile:", error);
         localStorage.removeItem("vibeAdmin");
         localStorage.removeItem("vibeSuperAdmin");
-        navigate('/login');
+        navigate('/vibelogin');
         return;
       }
 
@@ -896,7 +896,7 @@ const UserManagementTab = () => {
 
       return () => clearInterval(refreshInterval);
     }
-  }, [isSuperAdmin]); // fetchUsers is defined inside the component, so it's stable
+  }, [isSuperAdmin, fetchUsers]);
 
   if (!isSuperAdmin) {
     return (
@@ -917,10 +917,10 @@ const UserManagementTab = () => {
   return (
     <div id="user-management-tab" className="space-y-8">
       {/* Header */}
-      <div className="border-b border-purple-500/20 pb-5">
+      <div className="border-b border-brand-500/20 pb-5">
         <div>
           <h2 className="text-2xl font-bold text-white">User Management</h2>
-          <p className="text-purple-300 mt-1">
+          <p className="text-brand-300 mt-1">
             Create and manage admin users for Vibe Magazine
           </p>
         </div>
@@ -954,25 +954,25 @@ const UserManagementTab = () => {
       {/* Loading Screen for Creating User */}
       {isCreatingUser && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm">
-          <div className="bg-gradient-to-br from-[#241536]/90 via-[#1b0b28]/90 to-[#0f0f23]/90 backdrop-blur-sm rounded-xl border border-purple-500/40 p-8 max-w-md w-full shadow-2xl">
+          <div className="vibe-panel bg-gradient-to-br from-[#14282c]/90 via-[#0e1b1e]/90 to-[#0b1619]/90 backdrop-blur-sm rounded-xl border border-brand-500/40 p-8 max-w-md w-full shadow-2xl">
             <div className="flex flex-col items-center space-y-4">
               {/* Spinner */}
               <div className="relative">
-                <div className="w-16 h-16 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin"></div>
+                <div className="w-16 h-16 border-4 border-brand-500/30 border-t-brand-500 rounded-full animate-spin"></div>
                 <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-pink-500 rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1s' }}></div>
               </div>
               
               {/* Text */}
               <div className="text-center">
                 <h3 className="text-xl font-semibold text-white mb-2">Creating User...</h3>
-                <p className="text-purple-300">Please wait while we set up the new admin account</p>
+                <p className="text-brand-300">Please wait while we set up the new admin account</p>
               </div>
 
               {/* Progress dots */}
               <div className="flex space-x-2">
-                <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
-                <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                <div className="w-2 h-2 bg-brand-500 rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-brand-500 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                <div className="w-2 h-2 bg-brand-500 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
               </div>
             </div>
           </div>
@@ -982,7 +982,7 @@ const UserManagementTab = () => {
       {/* Loading Screen for Resetting Password */}
       {isResettingPassword && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm">
-          <div className="bg-gradient-to-br from-[#241536]/90 via-[#1b0b28]/90 to-[#0f0f23]/90 backdrop-blur-sm rounded-xl border border-purple-500/40 p-8 max-w-md w-full shadow-2xl">
+          <div className="vibe-panel bg-gradient-to-br from-[#14282c]/90 via-[#0e1b1e]/90 to-[#0b1619]/90 backdrop-blur-sm rounded-xl border border-brand-500/40 p-8 max-w-md w-full shadow-2xl">
             <div className="flex flex-col items-center space-y-4">
               {/* Spinner with lock icon */}
               <div className="relative">
@@ -1012,7 +1012,7 @@ const UserManagementTab = () => {
       )}
 
       {/* Create New User Form */}
-      <div className="bg-gradient-to-br from-[#241536]/50 via-[#1b0b28]/40 to-[#0f0f23]/50 backdrop-blur-sm rounded-xl border border-purple-500/20 p-6 shadow-lg">
+      <div className="vibe-panel bg-gradient-to-br from-[#14282c]/50 via-[#0e1b1e]/40 to-[#0b1619]/50 backdrop-blur-sm rounded-xl border border-brand-500/20 p-6 shadow-lg">
         <h3 className="text-xl font-semibold text-white mb-4">Create New Admin User</h3>
 
 
@@ -1020,68 +1020,68 @@ const UserManagementTab = () => {
         <form onSubmit={handleCreateUser} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-purple-300 mb-1">Email Address</label>
+              <label className="block text-sm font-medium text-brand-300 mb-1">Email Address</label>
               <input
                 type="email"
                 value={newUser.email}
                 onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                className="w-full px-4 py-2 bg-black/30 border border-purple-500/30 rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-400"
+                className="w-full px-4 py-2 bg-black/30 border border-brand-500/30 rounded-lg text-white placeholder-brand-300/50 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-400"
                 placeholder="email@example.com"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-purple-300 mb-1">Username</label>
+              <label className="block text-sm font-medium text-brand-300 mb-1">Username</label>
               <input
                 type="text"
                 value={newUser.username}
                 onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
-                className="w-full px-4 py-2 bg-black/30 border border-purple-500/30 rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-400"
+                className="w-full px-4 py-2 bg-black/30 border border-brand-500/30 rounded-lg text-white placeholder-brand-300/50 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-400"
                 placeholder="username"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-purple-300 mb-1">Display Name (Optional)</label>
+              <label className="block text-sm font-medium text-brand-300 mb-1">Display Name (Optional)</label>
               <input
                 type="text"
                 value={newUser.displayName}
                 onChange={(e) => setNewUser({ ...newUser, displayName: e.target.value })}
-                className="w-full px-4 py-2 bg-black/30 border border-purple-500/30 rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-400"
+                className="w-full px-4 py-2 bg-black/30 border border-brand-500/30 rounded-lg text-white placeholder-brand-300/50 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-400"
                 placeholder="Full Name"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-purple-300 mb-1">Password</label>
+              <label className="block text-sm font-medium text-brand-300 mb-1">Password</label>
               <input
                 type="password"
                 value={newUser.password}
                 onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                className="w-full px-4 py-2 bg-black/30 border border-purple-500/30 rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-400"
+                className="w-full px-4 py-2 bg-black/30 border border-brand-500/30 rounded-lg text-white placeholder-brand-300/50 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-400"
                 placeholder="••••••••"
                 required
                 minLength={6}
               />
-              <p className="mt-1 text-xs text-purple-400">
+              <p className="mt-1 text-xs text-brand-400">
                 Password must be at least 6 characters long
               </p>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-purple-300 mb-1">Role</label>
+            <label className="block text-sm font-medium text-brand-300 mb-1">Role</label>
             <select
               value={newUser.role}
               onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-              className="w-full px-4 py-2 bg-black/30 border border-purple-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-400"
+              className="w-full px-4 py-2 bg-black/30 border border-brand-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-400"
             >
               <option value="admin">Admin</option>
               {isSuperAdmin && <option value="superadmin">Super Admin</option>}
             </select>
-            <p className="mt-1 text-xs text-purple-400">
+            <p className="mt-1 text-xs text-brand-400">
               Note: Only Super Admins can create other Super Admins
             </p>
           </div>
@@ -1090,7 +1090,7 @@ const UserManagementTab = () => {
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-500 hover:to-pink-500 transition-all duration-300 font-medium shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-2 bg-gradient-to-r from-brand-600 to-brand-700 text-white rounded-lg hover:from-brand-600 hover:to-brand-600 transition-all duration-300 font-medium shadow-lg focus:outline-none focus:ring-2 focus:ring-brand-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Creating..." : "Create User"}
             </button>
@@ -1101,7 +1101,7 @@ const UserManagementTab = () => {
       {/* Password Reset Confirmation Modal */}
       {showResetModal && selectedUser && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-[#241536]/90 via-[#1b0b28]/90 to-[#0f0f23]/90 backdrop-blur-sm rounded-xl border border-purple-500/40 p-6 max-w-md w-full shadow-xl">
+          <div className="vibe-panel bg-gradient-to-br from-[#14282c]/90 via-[#0e1b1e]/90 to-[#0b1619]/90 backdrop-blur-sm rounded-xl border border-brand-500/40 p-6 max-w-md w-full shadow-xl">
             <div className="flex items-center text-red-400 mb-4">
               <div className="bg-red-500/20 p-2 rounded-full">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1112,20 +1112,20 @@ const UserManagementTab = () => {
             </div>
             <p className="text-white mb-6">Are you sure you want to reset this user's password?</p>
 
-            <div className="bg-purple-900/30 border border-purple-500/20 rounded-lg p-4 mb-6">
+            <div className="bg-brand-900/30 border border-brand-500/20 rounded-lg p-4 mb-6">
               <div className="grid grid-cols-4 gap-2 text-sm">
-                <span className="text-purple-300">User:</span>
+                <span className="text-brand-300">User:</span>
                 <span className="text-white col-span-3">{selectedUser.username}</span>
 
-                <span className="text-purple-300">Email:</span>
+                <span className="text-brand-300">Email:</span>
                 <span className="text-white col-span-3">{selectedUser.email}</span>
 
-                <span className="text-purple-300">Action:</span>
+                <span className="text-brand-300">Action:</span>
                 <span className="text-white col-span-3">Reset password</span>
               </div>
             </div>
 
-            <div className="flex justify-center items-center text-purple-300 text-sm mb-6">
+            <div className="flex justify-center items-center text-brand-300 text-sm mb-6">
               <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -1135,7 +1135,7 @@ const UserManagementTab = () => {
             <div className="flex space-x-3">
               <button
                 onClick={cancelResetPassword}
-                className="flex-1 px-4 py-2 bg-transparent border border-purple-500/30 text-purple-300 rounded-lg hover:bg-purple-500/10 transition-all duration-200 font-medium"
+                className="flex-1 px-4 py-2 bg-transparent border border-brand-500/30 text-brand-300 rounded-lg hover:bg-brand-500/10 transition-all duration-200 font-medium"
               >
                 Cancel
               </button>
@@ -1153,7 +1153,7 @@ const UserManagementTab = () => {
       {/* Email Confirmation Modal */}
       {showConfirmationModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-[#241536]/90 via-[#1b0b28]/90 to-[#0f0f23]/90 backdrop-blur-sm rounded-xl border border-purple-500/40 p-6 max-w-md w-full shadow-xl">
+          <div className="vibe-panel bg-gradient-to-br from-[#14282c]/90 via-[#0e1b1e]/90 to-[#0b1619]/90 backdrop-blur-sm rounded-xl border border-brand-500/40 p-6 max-w-md w-full shadow-xl">
             <div className={`flex items-center ${confirmationMessage.includes('deleted') ? 'text-red-400' :
                 confirmationMessage.includes('reset') ? 'text-blue-400' :
                   'text-green-400'} mb-4`}>
@@ -1186,9 +1186,9 @@ const UserManagementTab = () => {
             </div>
 
             {confirmationMessage && confirmationMessage.toLowerCase().includes("confirm their email") && (
-              <div className="bg-purple-900/30 border border-purple-500/20 rounded-lg p-4 mb-6">
+              <div className="bg-brand-900/30 border border-brand-500/20 rounded-lg p-4 mb-6">
                 <div className="grid grid-cols-4 gap-2 text-sm text-center">
-                  <span className="text-purple-300 col-span-4 pb-2">Email Confirmation Required</span>
+                  <span className="text-brand-300 col-span-4 pb-2">Email Confirmation Required</span>
                   <span className="text-white col-span-4">
                     The user will need to check their email inbox and click the confirmation link before they can log in.
                   </span>
@@ -1203,7 +1203,7 @@ const UserManagementTab = () => {
                     ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600'
                     : confirmationMessage.includes('reset')
                       ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600'
-                      : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500'
+                      : 'bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-600 hover:to-brand-600'
                   }`}
               >
                 OK
@@ -1216,7 +1216,7 @@ const UserManagementTab = () => {
       {/* Delete User Confirmation Modal */}
       {showDeleteModal && selectedUser && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-[#241536]/90 via-[#1b0b28]/90 to-[#0f0f23]/90 backdrop-blur-sm rounded-xl border border-purple-500/40 p-6 max-w-md w-full shadow-xl">
+          <div className="vibe-panel bg-gradient-to-br from-[#14282c]/90 via-[#0e1b1e]/90 to-[#0b1619]/90 backdrop-blur-sm rounded-xl border border-brand-500/40 p-6 max-w-md w-full shadow-xl">
             <div className="flex items-center text-red-400 mb-4">
               <div className="bg-red-500/20 p-2 rounded-full">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1227,20 +1227,20 @@ const UserManagementTab = () => {
             </div>
             <p className="text-white mb-6">Are you sure you want to delete this user?</p>
 
-            <div className="bg-purple-900/30 border border-purple-500/20 rounded-lg p-4 mb-6">
+            <div className="bg-brand-900/30 border border-brand-500/20 rounded-lg p-4 mb-6">
               <div className="grid grid-cols-4 gap-2 text-sm">
-                <span className="text-purple-300">User:</span>
+                <span className="text-brand-300">User:</span>
                 <span className="text-white col-span-3">{selectedUser.username}</span>
 
-                <span className="text-purple-300">Email:</span>
+                <span className="text-brand-300">Email:</span>
                 <span className="text-white col-span-3">{selectedUser.email}</span>
 
-                <span className="text-purple-300">Role:</span>
+                <span className="text-brand-300">Role:</span>
                 <span className="text-white col-span-3">{selectedUser.role}</span>
               </div>
             </div>
 
-            <div className="flex justify-center items-center text-purple-300 text-sm mb-6">
+            <div className="flex justify-center items-center text-brand-300 text-sm mb-6">
               <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
@@ -1250,7 +1250,7 @@ const UserManagementTab = () => {
             <div className="flex space-x-3">
               <button
                 onClick={cancelDeleteUser}
-                className="flex-1 px-4 py-2 bg-transparent border border-purple-500/30 text-purple-300 rounded-lg hover:bg-purple-500/10 transition-all duration-200 font-medium"
+                className="flex-1 px-4 py-2 bg-transparent border border-brand-500/30 text-brand-300 rounded-lg hover:bg-brand-500/10 transition-all duration-200 font-medium"
               >
                 Cancel
               </button>
@@ -1266,18 +1266,18 @@ const UserManagementTab = () => {
       )}
 
       {/* User List */}
-      <div className="bg-gradient-to-br from-[#241536]/50 via-[#1b0b28]/40 to-[#0f0f23]/50 backdrop-blur-sm rounded-xl border border-purple-500/20 p-6 shadow-lg">
+      <div className="vibe-panel bg-gradient-to-br from-[#14282c]/50 via-[#0e1b1e]/40 to-[#0b1619]/50 backdrop-blur-sm rounded-xl border border-brand-500/20 p-6 shadow-lg">
         <div className="flex justify-between items-center mb-6">
           <div>
             <h3 className="text-xl font-semibold text-white">Manage Users</h3>
-            <p className="text-purple-400 text-sm mt-1">
+            <p className="text-brand-400 text-sm mt-1">
               Reset user passwords • Modify roles • Delete users
             </p>
           </div>
           <button
             onClick={() => fetchUsers()}
             disabled={loading}
-            className="px-3 py-1.5 bg-purple-700/30 hover:bg-purple-700/50 text-purple-300 rounded-lg text-sm flex items-center transition-colors"
+            className="px-3 py-1.5 bg-brand-700/30 hover:bg-brand-700/50 text-brand-300 rounded-lg text-sm flex items-center transition-colors"
             title="Refresh user list"
           >
             <svg className={`w-4 h-4 mr-1 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1289,39 +1289,39 @@ const UserManagementTab = () => {
 
         {loading && users.length === 0 ? (
           <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-purple-500 border-t-transparent"></div>
-            <p className="mt-2 text-purple-400">Loading users...</p>
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-brand-500 border-t-transparent"></div>
+            <p className="mt-2 text-brand-400">Loading users...</p>
           </div>
         ) : users.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-purple-400">No users found.</p>
+            <p className="text-brand-400">No users found.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-purple-500/20">
-                  <th className="px-4 py-3 text-purple-300 font-medium">Username</th>
-                  <th className="px-4 py-3 text-purple-300 font-medium">Email</th>
-                  <th className="px-4 py-3 text-purple-300 font-medium">Role</th>
-                  <th className="px-4 py-3 text-purple-300 font-medium">Created</th>
-                  <th className="px-4 py-3 text-purple-300 font-medium">Actions</th>
+                <tr className="border-b border-brand-500/20">
+                  <th className="px-4 py-3 text-brand-300 font-medium">Username</th>
+                  <th className="px-4 py-3 text-brand-300 font-medium">Email</th>
+                  <th className="px-4 py-3 text-brand-300 font-medium">Role</th>
+                  <th className="px-4 py-3 text-brand-300 font-medium">Created</th>
+                  <th className="px-4 py-3 text-brand-300 font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {users.map((user) => (
-                  <tr key={user.id} className="border-b border-purple-500/10 hover:bg-purple-900/10">
+                  <tr key={user.id} className="border-b border-brand-500/10 hover:bg-brand-900/10">
                     <td className="px-4 py-3 text-white">{user.username}</td>
                     <td className="px-4 py-3 text-white">{user.email}</td>
                     <td className="px-4 py-3">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${user.role === "superadmin"
                           ? "bg-pink-500/20 text-pink-300"
-                          : "bg-purple-500/20 text-purple-300"
+                          : "bg-brand-500/20 text-brand-300"
                         }`}>
                         {user.role}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-purple-300">
+                    <td className="px-4 py-3 text-brand-300">
                       {new Date(user.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-4 py-3">
@@ -1335,7 +1335,7 @@ const UserManagementTab = () => {
                         </span>
                       )}
                       {user.id === ADMIN_UUID && (
-                        <span className="text-purple-400 text-xs flex items-center">
+                        <span className="text-brand-400 text-xs flex items-center">
                           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                           </svg>
@@ -1349,7 +1349,7 @@ const UserManagementTab = () => {
                           <select
                             value={user.role}
                             onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                            className="px-2 py-1 bg-black/30 border border-purple-500/30 rounded text-white text-xs focus:outline-none focus:ring-1 focus:ring-purple-500/50"
+                            className="px-2 py-1 bg-black/30 border border-brand-500/30 rounded text-white text-xs focus:outline-none focus:ring-1 focus:ring-brand-500/50"
                           >
                             <option value="admin">Admin</option>
                             {isSuperAdmin && <option value="superadmin">Super Admin</option>}
@@ -1380,7 +1380,7 @@ const UserManagementTab = () => {
                       )}
                       {/* Superadmins except the primary one */}
                       {user.role === "superadmin" && user.id !== SUPER_ADMIN_UUID && (
-                        <span className="text-purple-400 text-xs">Super Admin cannot be modified</span>
+                        <span className="text-brand-400 text-xs">Super Admin cannot be modified</span>
                       )}
                     </td>
                   </tr>

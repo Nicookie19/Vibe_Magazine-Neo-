@@ -199,7 +199,7 @@ const readerCover = isPdfMagazine ? pdfPages[0] : magazine?.cover;
         };
 
         loadUserData();
-    }, [magazine?.id, userId]);
+    }, [magazine, userId]);
 
     // Calculate responsive dimensions based on screen size
     const calculateDimensions = () => {
@@ -364,12 +364,13 @@ const readerCover = isPdfMagazine ? pdfPages[0] : magazine?.cover;
         };
 
         checkExistingRating();
-    }, [magazine?.id, userId]);
+    }, [magazine, userId]);
 
     // Fetch overall magazine ratings (average and count)
     const [magazineRating, setMagazineRating] = useState({ average: 0, count: 0 });
 
     useEffect(() => {
+        if (!magazine?.id) return;
         const fetchMagazineRatings = async () => {
             if (!magazine?.id) return;
 
@@ -406,6 +407,7 @@ const readerCover = isPdfMagazine ? pdfPages[0] : magazine?.cover;
 
     // Fetch comments for this magazine
     useEffect(() => {
+        if (!magazine?.id) return;
         const fetchComments = async () => {
             if (!magazine?.id) return;
 
@@ -963,7 +965,7 @@ const renderPdfPages = async () => {
 
     if (isLoadingMagazine) {
         return (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0b0c10] text-white">
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#090d0f] text-white">
                 Loading magazine…
             </div>
         );
@@ -971,11 +973,11 @@ const renderPdfPages = async () => {
 
     if (!magazine) {
         return (
-            <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-[#0b0c10] p-6 text-center text-white">
+            <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-[#090d0f] p-6 text-center text-white">
                 <p>{magazineLoadError || "This magazine could not be loaded."}</p>
                 <button
                     onClick={() => navigate("/archive")}
-                    className="rounded-lg bg-purple-600 px-4 py-2 font-semibold hover:bg-purple-500"
+                    className="rounded-lg bg-brand-600 px-4 py-2 font-semibold hover:bg-brand-500"
                 >
                     Back to archive
                 </button>
@@ -985,12 +987,12 @@ const renderPdfPages = async () => {
 
     if (pdfLoadError) {
         return (
-            <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-[#0b0c10] p-6 text-center text-white">
+            <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-[#090d0f] p-6 text-center text-white">
                 <p>{pdfLoadError}</p>
-                <a href={pdfSource} target="_blank" rel="noreferrer" className="rounded-lg bg-purple-600 px-4 py-2 font-semibold hover:bg-purple-500">
+                <a href={pdfSource} target="_blank" rel="noreferrer" className="rounded-lg bg-brand-600 px-4 py-2 font-semibold hover:bg-brand-500">
                     Open PDF instead
                 </a>
-                <button onClick={() => navigate("/archive")} className="text-purple-300 hover:text-purple-200">
+                <button onClick={() => navigate("/archive")} className="text-brand-300 hover:text-brand-200">
                     Back to archive
                 </button>
             </div>
@@ -998,16 +1000,16 @@ const renderPdfPages = async () => {
     }
 
     return (
-        <div className="fixed inset-0 bg-gradient-to-br from-[#0b0c10] via-[#1b0b28] to-[#071030] z-50 flex flex-col">
+        <div className="fixed inset-0 bg-gradient-to-br from-[#090d0f] via-[#0e1b1e] to-[#0b1417] z-50 flex flex-col">
             {/* Header with Logo and Close Button */}
-            <div className="flex items-center justify-between p-3 md:p-4 border-b border-purple-500/20 bg-black/30 backdrop-blur-sm">
+            <div className="flex items-center justify-between p-3 md:p-4 border-b border-brand-500/20 bg-black/30 backdrop-blur-sm">
                 {/* Logo and Title Section */}
                 <div className="flex items-center space-x-2 md:space-x-3 flex-1 min-w-0">
-                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-purple-400/50 flex items-center justify-center shadow-lg overflow-hidden bg-white flex-shrink-0">
+                    <div className="w-12 h-10 md:w-14 md:h-12 flex items-center justify-center flex-shrink-0">
                         <img
-                            src="https://raw.githubusercontent.com/JayDee15999/pic/refs/heads/main/1.png"
+                            src="/brand/vibe-tv.png"
                             alt="Vibe Magazine Logo"
-                            className="w-8 h-8 md:w-10 md:h-10 object-cover rounded-full"
+                            className="w-full h-full object-contain"
                         />
                     </div>
                     <div className="min-w-0 flex-1">
@@ -1067,7 +1069,7 @@ const renderPdfPages = async () => {
                 <div className="relative ml-2 flex-shrink-0">
                     <button
                         onClick={() => setShowZoomControls(!showZoomControls)}
-                        className="flex items-center gap-2 px-3 py-2 bg-purple-600/50 hover:bg-purple-600 border border-purple-500/30 rounded-full text-white text-sm font-medium transition-all duration-200 shadow-lg"
+                        className="flex items-center gap-2 px-3 py-2 bg-brand-600/50 hover:bg-brand-600 border border-brand-500/30 rounded-full text-white text-sm font-medium transition-all duration-200 shadow-lg"
                         title="Zoom Controls"
                         aria-label="Zoom Controls"
                     >
@@ -1079,11 +1081,11 @@ const renderPdfPages = async () => {
                     
                     {/* Zoom Popup */}
                     {showZoomControls && createPortal(
-                        <div ref={zoomPortalRef} className="fixed right-4 top-20 w-56 bg-gradient-to-br from-[#241231] to-[#1a0d28] border border-purple-500/30 rounded-xl shadow-2xl p-4 z-[99999] animate-in fade-in-0 zoom-in-95">
+                        <div ref={zoomPortalRef} className="fixed right-4 top-20 w-56 bg-gradient-to-br from-[#112326] to-[#0e1c20] border border-brand-500/30 rounded-xl shadow-2xl p-4 z-[99999] animate-in fade-in-0 zoom-in-95">
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between text-gray-300 text-sm">
                                     <span>Zoom Level</span>
-                                    <span className="font-bold text-purple-300">{Math.round(zoom * 100)}%</span>
+                                    <span className="font-bold text-brand-300">{Math.round(zoom * 100)}%</span>
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <button
@@ -1096,7 +1098,7 @@ const renderPdfPages = async () => {
                                     </button>
                                     <button
                                         onClick={resetZoom}
-                                        className="flex-1 w-10 h-10 flex items-center justify-center bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-bold transition-colors"
+                                        className="flex-1 w-10 h-10 flex items-center justify-center bg-brand-600 hover:bg-brand-700 rounded-lg text-white font-bold transition-colors"
                                         aria-label="Reset zoom"
                                     >
                                         100%
@@ -1110,7 +1112,7 @@ const renderPdfPages = async () => {
                                         +
                                     </button>
                                 </div>
-                                <div className="pt-2 border-t border-purple-500/20">
+                                <div className="pt-2 border-t border-brand-500/20">
                                     <p className="text-xs text-gray-400 text-center">
                                         {isMobile ? 'Pinch to zoom' : 'Scroll + Ctrl to zoom'}
                                     </p>
@@ -1135,7 +1137,7 @@ const renderPdfPages = async () => {
 
             {/* Loading State */}
             {!hasFlipbookPages && !isLoadingImages ? (
-                <div className="flex flex-1 items-center justify-center bg-[#0b0c10] p-4">
+                <div className="flex flex-1 items-center justify-center bg-[#090d0f] p-4">
                     <img
                         src={readerCover}
                         alt={`Cover of ${magazine.title}`}
@@ -1145,15 +1147,15 @@ const renderPdfPages = async () => {
             ) : isLoadingImages ? (
                 <div className="flex-1 flex flex-col items-center justify-center gap-6">
                     <div className="relative">
-                        <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-purple-500 shadow-lg shadow-purple-500/50"></div>
+                        <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-brand-500 shadow-lg shadow-brand-500/50"></div>
                         <div className="absolute top-0 left-0 animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-pink-500 opacity-50 shadow-lg shadow-pink-500/50" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
                     </div>
                     <div className="flex flex-col items-center gap-2">
                         <p className="text-gray-100 text-xl font-bold animate-pulse">Loading Magazine</p>
                         <div className="flex gap-1">
-                            <span className="w-2 h-2 bg-purple-500 rounded-full animate-bounce shadow-sm shadow-purple-500/50" style={{ animationDelay: '0ms' }}></span>
-                            <span className="w-2 h-2 bg-purple-500 rounded-full animate-bounce shadow-sm shadow-purple-500/50" style={{ animationDelay: '150ms' }}></span>
-                            <span className="w-2 h-2 bg-purple-500 rounded-full animate-bounce shadow-sm shadow-purple-500/50" style={{ animationDelay: '300ms' }}></span>
+                            <span className="w-2 h-2 bg-brand-500 rounded-full animate-bounce shadow-sm shadow-brand-500/50" style={{ animationDelay: '0ms' }}></span>
+                            <span className="w-2 h-2 bg-brand-500 rounded-full animate-bounce shadow-sm shadow-brand-500/50" style={{ animationDelay: '150ms' }}></span>
+                            <span className="w-2 h-2 bg-brand-500 rounded-full animate-bounce shadow-sm shadow-brand-500/50" style={{ animationDelay: '300ms' }}></span>
                         </div>
                     </div>
                 </div>
@@ -1170,7 +1172,7 @@ const renderPdfPages = async () => {
                     {/* Gesture Guide Overlay */}
                     {showGestureGuide && isMobile && (
                         <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fadeIn">
-                            <div className="bg-gradient-to-br from-purple-900/95 to-pink-900/95 rounded-2xl p-6 mx-4 max-w-sm shadow-2xl border-2 border-purple-400/50 animate-bounce-in relative">
+                            <div className="vibe-panel bg-gradient-to-br from-brand-900/95 to-pink-900/95 rounded-2xl p-6 mx-4 max-w-sm shadow-2xl border-2 border-brand-400/50 animate-bounce-in relative">
                                 {/* Close Button */}
                                 <button
                                     onClick={() => {
@@ -1207,12 +1209,12 @@ const renderPdfPages = async () => {
                                                 <span className="text-2xl">👈👉</span>
                                             <div>
                                                 <p className="text-white font-semibold text-sm">Flip Pages</p>
-                                                <p className="text-purple-200 text-xs">Swipe left/right to change pages</p>
+                                                <p className="text-brand-200 text-xs">Swipe left/right to change pages</p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <p className="text-purple-200 text-xs mt-4 opacity-75">
+                                    <p className="text-brand-200 text-xs mt-4 opacity-75">
                                         Tap the ✕ button above to close
                                     </p>
                                 </div>
@@ -1271,8 +1273,8 @@ const renderPdfPages = async () => {
                             {/* Cover */}
                             <div className="page-wrapper relative border-4 border-gray-300 shadow-2xl" style={{ boxShadow: '0 0 20px rgba(200,200,200,0.3), inset 0 0 10px rgba(255,255,255,0.2)' }}>
                                 {!loadingImages.cover && (
-                                    <div className="absolute inset-0 flex items-center justify-center bg-[#2c1052]">
-                                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+                                    <div className="absolute inset-0 flex items-center justify-center bg-[#18343a]">
+                                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-500"></div>
                                     </div>
                                 )}
                                 <img
@@ -1280,7 +1282,7 @@ const renderPdfPages = async () => {
                                     alt={`Cover of ${magazine.title}`}
                                     className={`w-full h-full object-cover transition-opacity duration-300 ${loadingImages.cover ? 'opacity-100' : 'opacity-0'}`}
                                     style={{ 
-                                        background: '#2c1052',
+                                        background: '#18343a',
                                         imageRendering: 'auto',
                                     }}
                                 />
@@ -1291,8 +1293,8 @@ const renderPdfPages = async () => {
                             {readerPages.map((page, index) => (
                                 <div key={index} className="page-wrapper relative border-4 border-gray-300 shadow-2xl" style={{ boxShadow: '0 0 20px rgba(200,200,200,0.3), inset 0 0 10px rgba(255,255,255,0.2)' }}>
                                     {!loadingImages[`page-${index}`] && (
-                                        <div className="absolute inset-0 flex items-center justify-center bg-[#2c1052]">
-                                            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+                                        <div className="absolute inset-0 flex items-center justify-center bg-[#18343a]">
+                                            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-500"></div>
                                         </div>
                                     )}
                                     <img
@@ -1300,7 +1302,7 @@ const renderPdfPages = async () => {
                                         alt={`Page ${index + 2} of ${magazine.title}`}
                                         className={`w-full h-full object-cover transition-opacity duration-300 ${loadingImages[`page-${index}`] ? 'opacity-100' : 'opacity-0'}`}
                                         style={{ 
-                                            background: '#2c1052',
+                                            background: '#18343a',
                                             imageRendering: 'auto',
                                         }}
                                     />
@@ -1319,7 +1321,7 @@ const renderPdfPages = async () => {
 
             {/* Instructions and Footer */}
             {!isLoadingImages && (
-                <div className="border-t border-purple-500/20 bg-black/30 backdrop-blur-sm">
+                <div className="border-t border-brand-500/20 bg-black/30 backdrop-blur-sm">
                     {/* Instructions */}
                     <div className="p-3 text-center">
                         <p className="text-gray-400 text-xs md:text-sm">
@@ -1332,7 +1334,7 @@ const renderPdfPages = async () => {
                         {isMobile && (
                             <button
                                 onClick={() => setShowGestureGuide(true)}
-                                className="mt-2 text-purple-400 hover:text-purple-300 text-xs underline"
+                                className="mt-2 text-brand-400 hover:text-brand-300 text-xs underline"
                             >
                                 Show gesture guide
                             </button>
@@ -1356,8 +1358,8 @@ const renderPdfPages = async () => {
                             onClick={() => setShowComments(!showComments)}
                             className={`fixed bottom-4 right-4 z-40 flex items-center gap-2 px-4 py-2.5 rounded-xl shadow-xl transition-all duration-300 animate-bounce-in ${
                                 showComments
-                                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-purple-500/40'
-                                    : 'bg-gray-900 border border-gray-700 text-gray-300 hover:border-purple-500/50 hover:text-white'
+                                    ? 'bg-gradient-to-r from-brand-600 to-brand-700 text-white shadow-brand-500/40'
+                                    : 'bg-gray-900 border border-gray-700 text-gray-300 hover:border-brand-500/50 hover:text-white'
                             }`}
                             aria-label={showComments ? "Close comments" : "Open comments"}
                         >
@@ -1390,18 +1392,18 @@ const renderPdfPages = async () => {
                                 ? 'translate-y-0 opacity-100'
                                 : 'translate-y-full opacity-0 pointer-events-none'
                         }`}>
-                            <div className="bg-[#0b0c10] rounded-t-2xl border-t border-purple-500/30 shadow-2xl shadow-black/50 flex flex-col h-full">
+                            <div className="bg-[#090d0f] rounded-t-2xl border-t border-brand-500/30 shadow-2xl shadow-black/50 flex flex-col h-full">
                                 {/* Header */}
-                                <div className="p-3 border-b border-purple-500/30 flex items-center justify-between flex-shrink-0">
+                                <div className="p-3 border-b border-brand-500/30 flex items-center justify-between flex-shrink-0">
                                     <h3 className="text-base font-semibold text-white flex items-center gap-2">
-                                        <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                                         </svg>
-                                        Comments <span className="text-purple-400 font-normal">({comments.length})</span>
+                                        Comments <span className="text-brand-400 font-normal">({comments.length})</span>
                                     </h3>
                                     <button
                                         onClick={() => setShowComments(false)}
-                                        className="p-1.5 rounded-full bg-gray-800 hover:bg-purple-600/30 text-gray-400 hover:text-white transition-colors flex-shrink-0"
+                                        className="p-1.5 rounded-full bg-gray-800 hover:bg-brand-600/30 text-gray-400 hover:text-white transition-colors flex-shrink-0"
                                         aria-label="Close comments"
                                     >
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1419,10 +1421,10 @@ const renderPdfPages = async () => {
                                             className="w-full p-3 flex items-center justify-between text-left hover:bg-gray-900 transition-colors"
                                         >
                                             <span className="flex items-center gap-2 text-sm font-medium text-white">
-                                                <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg className="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                                                 </svg>
-                                                View Comments <span className="text-purple-400 font-normal text-xs">({comments.length})</span>
+                                                View Comments <span className="text-brand-400 font-normal text-xs">({comments.length})</span>
                                             </span>
                                             <svg
                                                 className={`w-4 h-4 text-gray-400 transition-transform ${showViewComments ? 'rotate-180' : ''}`}
@@ -1437,7 +1439,7 @@ const renderPdfPages = async () => {
                                             <div className="p-3 space-y-2">
                                                 {isLoadingComments ? (
                                                     <div className="text-center py-4">
-                                                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500 mx-auto"></div>
+                                                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-brand-500 mx-auto"></div>
                                                         <p className="text-gray-400 text-xs mt-2">Loading comments...</p>
                                                     </div>
                                                 ) : commentsError ? (
@@ -1452,7 +1454,7 @@ const renderPdfPages = async () => {
                                                                 setIsLoadingComments(true);
                                                                 setCommentsError("");
                                                             }}
-                                                            className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded text-xs transition-colors"
+                                                            className="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded text-xs transition-colors"
                                                         >
                                                             Retry
                                                         </button>
@@ -1469,11 +1471,11 @@ const renderPdfPages = async () => {
                                                     comments.map((c) => (
                                                         <div
                                                             key={c.id}
-                                                            className="bg-gray-900 p-3 rounded-lg border border-gray-700 hover:border-purple-500/50 transition-colors animate-slide-up"
+                                                            className="bg-gray-900 p-3 rounded-lg border border-gray-700 hover:border-brand-500/50 transition-colors animate-slide-up"
                                                         >
                                                             <div className="flex items-start justify-between gap-2 mb-1">
                                                                 <div className="flex items-center gap-2">
-                                                                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+                                                                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-brand-500 to-pink-500 flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
                                                                         {(c.user_name || "A")[0].toUpperCase()}
                                                                     </div>
                                                                     <div>
@@ -1529,7 +1531,7 @@ const renderPdfPages = async () => {
                                                     value={commentForm.name}
                                                     onChange={(e) => setCommentForm({...commentForm, name: e.target.value})}
                                                     placeholder="Your name"
-                                                    className="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-white text-sm focus:outline-none focus:ring-1 focus:ring-violet-600 focus:border-transparent"
+                                                    className="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-white text-sm focus:outline-none focus:ring-1 focus:ring-brand-600 focus:border-transparent"
                                                     required
                                                 />
                                             </div>
@@ -1540,7 +1542,7 @@ const renderPdfPages = async () => {
                                                     value={commentForm.idNumber}
                                                     onChange={(e) => setCommentForm({...commentForm, idNumber: e.target.value})}
                                                     placeholder="Student/Employee ID"
-                                                    className="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-white text-sm focus:outline-none focus:ring-1 focus:ring-violet-600 focus:border-transparent"
+                                                    className="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-white text-sm focus:outline-none focus:ring-1 focus:ring-brand-600 focus:border-transparent"
                                                     required
                                                 />
                                             </div>
@@ -1551,7 +1553,7 @@ const renderPdfPages = async () => {
                                                     value={commentForm.email}
                                                     onChange={(e) => setCommentForm({...commentForm, email: e.target.value})}
                                                     placeholder="your@email.com"
-                                                    className="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-white text-sm focus:outline-none focus:ring-1 focus:ring-violet-600 focus:border-transparent"
+                                                    className="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-white text-sm focus:outline-none focus:ring-1 focus:ring-brand-600 focus:border-transparent"
                                                     required
                                                 />
                                             </div>
@@ -1562,7 +1564,7 @@ const renderPdfPages = async () => {
                                                     value={commentForm.course}
                                                     onChange={(e) => setCommentForm({...commentForm, course: e.target.value})}
                                                     placeholder="e.g., BSIT, BSCS"
-                                                    className="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-white text-sm focus:outline-none focus:ring-1 focus:ring-violet-600 focus:border-transparent"
+                                                    className="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-white text-sm focus:outline-none focus:ring-1 focus:ring-brand-600 focus:border-transparent"
                                                     required
                                                 />
                                             </div>
@@ -1573,7 +1575,7 @@ const renderPdfPages = async () => {
                                                     value={commentForm.year}
                                                     onChange={(e) => setCommentForm({...commentForm, year: e.target.value})}
                                                     placeholder="e.g., 1st Year, 2nd Year"
-                                                    className="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-white text-sm focus:outline-none focus:ring-1 focus:ring-violet-600 focus:border-transparent"
+                                                    className="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-white text-sm focus:outline-none focus:ring-1 focus:ring-brand-600 focus:border-transparent"
                                                     required
                                                 />
                                             </div>
@@ -1585,14 +1587,14 @@ const renderPdfPages = async () => {
                                                 onChange={(e) => setCommentForm({...commentForm, text: e.target.value})}
                                                 placeholder="Share your thoughts..."
                                                 rows={2}
-                                                className="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-white text-sm focus:outline-none focus:ring-1 focus:ring-violet-600 focus:border-transparent resize-none"
+                                                className="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-white text-sm focus:outline-none focus:ring-1 focus:ring-brand-600 focus:border-transparent resize-none"
                                                 required
                                             />
                                         </div>
                                         <button
                                             type="submit"
                                             disabled={isSubmittingComment}
-                                            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-2 rounded text-xs font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                            className="w-full bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-700 hover:to-brand-800 text-white py-2 rounded text-xs font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                         >
                                             {isSubmittingComment ? (
                                                 <>
@@ -1618,7 +1620,7 @@ const renderPdfPages = async () => {
             {/* Rating Modal */}
             {showRatingModal && (
                 <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-                    <div className="bg-gradient-to-br from-[#2c1052] to-[#1b0b28] border border-purple-500/30 rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl shadow-purple-500/20 animate-bounce-in">
+                    <div className="vibe-panel bg-gradient-to-br from-[#18343a] to-[#0e1b1e] border border-brand-500/30 rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl shadow-brand-500/20 animate-bounce-in">
                         <div className="text-center">
                             {/* Celebration Icon */}
                             <div className="mb-6">
@@ -1662,7 +1664,7 @@ const renderPdfPages = async () => {
 
                             {/* Rating Text */}
                             {rating > 0 && (
-                                <p className="text-center text-purple-300 mb-6 font-semibold animate-fadeIn">
+                                <p className="text-center text-brand-300 mb-6 font-semibold animate-fadeIn">
                                     {rating === 1 && "⭐ Poor"}
                                     {rating === 2 && "⭐⭐ Fair"}
                                     {rating === 3 && "⭐⭐⭐ Good"}
@@ -1684,7 +1686,7 @@ const renderPdfPages = async () => {
                                     <button
                                         onClick={handleSubmitRating}
                                         disabled={isSubmitting}
-                                        className="px-8 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-full transition-all duration-200 text-sm font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                                        className="px-8 py-2.5 bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-700 hover:to-brand-800 text-white rounded-full transition-all duration-200 text-sm font-bold shadow-lg shadow-brand-500/30 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                                     >
                                         {isSubmitting ? (
                                             <span className="flex items-center justify-center gap-2">

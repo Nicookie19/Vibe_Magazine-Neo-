@@ -10,12 +10,9 @@ const UploadTab = ({
   formData,
   setFormData,
   editor,
-  setEditor,
   handleEditorChange,
-  magazines,
   setMagazines,
   pagesDropRef,
-  setActiveTab,
 }) => {
   const [showDraftModal, setShowDraftModal] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
@@ -427,45 +424,8 @@ const UploadTab = ({
     }, 3000);
   };
 
-  // Delete magazine
-  const removeMagazine = async (id) => {
-    const { error } = await supabase.from("magazines").delete().eq("id", id);
-
-    if (error) {
-      console.error("Error deleting magazine:", error);
-      toast.error("❌ Failed to delete magazine.", {
-        position: "bottom-right",
-        style: {
-          background: "#1F2937",
-          color: "#fff",
-          borderLeft: "4px solid #EF4444",
-        },
-        progressStyle: {
-          background: "#EF4444",
-        },
-        icon: "⚠️",
-      });
-      return;
-    }
-
-    setMagazines((prev) => prev.filter((m) => m.id !== id));
-    toast.info("🗑️ Magazine deleted successfully!", {
-      position: "bottom-right",
-      style: {
-        background: "#1F2937",
-        color: "#fff",
-        borderLeft: "4px solid #3B82F6",
-      },
-      progressStyle: {
-        background: "#3B82F6",
-      },
-      icon: "ℹ️",
-    });
-  };
-
-
   return (
-    <div className="h-screen overflow-hidden p-6">
+    <div className="min-h-screen p-3 sm:p-6">
       {/* Draft Confirmation Modal */}
       {showDraftModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
@@ -548,13 +508,13 @@ const UploadTab = ({
         <p className="text-gray-400">Create and publish your magazine with professional tools</p>
       </div>
 
-      <div className="grid grid-cols-12 gap-6 h-[calc(100vh-140px)]">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Left: Upload Form - Takes 4 columns */}
-        <div className="col-span-4 overflow-y-auto">
+        <div className="min-w-0">
           <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-purple-600/20 rounded-lg">
-                <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="p-2 bg-brand-600/20 rounded-lg">
+                <svg className="w-5 h-5 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
               </div>
@@ -563,7 +523,7 @@ const UploadTab = ({
 
             <form onSubmit={handleUpload} className="space-y-6">
               {/* Title & Subtitle */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
                     Title *
@@ -575,7 +535,7 @@ const UploadTab = ({
                     onChange={(e) =>
                       setFormData((p) => ({ ...p, title: e.target.value }))
                     }
-                    className="w-full bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className="w-full bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all"
                     required
                   />
                 </div>
@@ -590,7 +550,7 @@ const UploadTab = ({
                     onChange={(e) =>
                       setFormData((p) => ({ ...p, subtitle: e.target.value }))
                     }
-                    className="w-full bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className="w-full bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all"
                   />
                 </div>
               </div>
@@ -611,12 +571,12 @@ const UploadTab = ({
                     onChange={(e) =>
                       setFormData((p) => ({ ...p, cover: e.target.value }))
                     }
-                    className="w-full bg-gray-900/50 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-sm"
+                    className="w-full bg-gray-900/50 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all text-sm"
                   />
                   <label className="cursor-pointer">
-                    <div className="bg-gray-900/30 border border-dashed border-gray-600 rounded-lg p-2 text-center hover:border-purple-500 hover:bg-gray-900/50 transition-all group h-full flex items-center justify-center">
+                    <div className="bg-gray-900/30 border border-dashed border-gray-600 rounded-lg p-2 text-center hover:border-brand-500 hover:bg-gray-900/50 transition-all group h-full flex items-center justify-center">
                       <div className="flex items-center gap-2">
-                        <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                         </svg>
                         <span className="text-xs text-gray-300">Upload</span>
@@ -640,14 +600,14 @@ const UploadTab = ({
                 <label className="block text-xs font-medium text-gray-300">Magazine Pages</label>
                 <div
                   ref={pagesDropRef}
-                  className="bg-gray-900/30 border-2 border-dashed border-gray-600 rounded-lg p-4 min-h-[80px] flex flex-col items-center justify-center gap-2 hover:border-purple-500 hover:bg-gray-900/50 transition-all group"
+                  className="bg-gray-900/30 border-2 border-dashed border-gray-600 rounded-lg p-4 min-h-[80px] flex flex-col items-center justify-center gap-2 hover:border-brand-500 hover:bg-gray-900/50 transition-all group"
                 >
-                  <svg className="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
                   <p className="text-gray-300 text-xs text-center">Drop pages or browse</p>
                   <div className="flex gap-2">
-                    <label className="px-3 py-1 bg-purple-600/20 text-purple-300 rounded text-xs font-medium cursor-pointer hover:bg-purple-600/30 transition-colors">
+                    <label className="px-3 py-1 bg-brand-600/20 text-brand-300 rounded text-xs font-medium cursor-pointer hover:bg-brand-600/30 transition-colors">
                       Choose Images
                       <input
                         type="file"
@@ -696,7 +656,7 @@ const UploadTab = ({
                         Clear
                       </button>
                     </div>
-                    <div className="grid grid-cols-8 gap-1 max-h-24 overflow-y-auto">
+                    <div className="grid grid-cols-4 sm:grid-cols-8 xl:grid-cols-4 gap-1 max-h-24 overflow-y-auto">
                       {formData.pages.map((page, i) => (
                         <div key={i} className="relative group">
                           <div className="aspect-[3/4] rounded overflow-hidden border border-gray-600">
@@ -730,7 +690,7 @@ const UploadTab = ({
                     onChange={(e) =>
                       setFormData((p) => ({ ...p, published: e.target.checked }))
                     }
-                    className="w-4 h-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500 focus:ring-1"
+                    className="w-4 h-4 text-brand-600 bg-gray-700 border-gray-600 rounded focus:ring-brand-500 focus:ring-1"
                   />
                   <div className="flex-1">
                     <span className="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">
@@ -747,7 +707,7 @@ const UploadTab = ({
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="submit"
-                  className="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:from-purple-500 hover:to-blue-500 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2 text-sm"
+                  className="bg-gradient-to-r from-brand-600 to-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:from-brand-600 hover:to-blue-500 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2 text-sm"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -767,7 +727,7 @@ const UploadTab = ({
         </div>
 
         {/* Middle: Style Editor - Takes 4 columns */}
-        <div className="col-span-4 overflow-y-auto">
+        <div className="min-w-0">
           <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50">
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 bg-blue-600/20 rounded-lg">
@@ -792,7 +752,7 @@ const UploadTab = ({
                     <div key={filter.name} className="space-y-1">
                       <label className="flex justify-between text-xs">
                         <span className="text-gray-300">{filter.label}</span>
-                        <span className="text-purple-400 font-medium">
+                        <span className="text-brand-400 font-medium">
                           {editor[filter.name]}{filter.unit}
                         </span>
                       </label>
@@ -889,7 +849,7 @@ const UploadTab = ({
         </div>
 
         {/* Right: Live Preview - Takes 4 columns */}
-        <div className="col-span-4 overflow-y-auto">
+        <div className="min-w-0">
           <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50">
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 bg-green-600/20 rounded-lg">

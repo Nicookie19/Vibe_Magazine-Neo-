@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 const AdminAccessButton = () => {
   return (
     <Link
-      to="/login"
-      className="fixed bottom-4 right-4 w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center shadow-lg hover:shadow-purple-500/50 opacity-30 hover:opacity-100 transition-all duration-300 hover:scale-110 z-50 group"
+      to="/vibelogin"
+      className="fixed bottom-4 right-4 w-12 h-12 bg-gradient-to-br from-brand-600 to-brand-700 rounded-full flex items-center justify-center shadow-lg hover:shadow-brand-500/50 opacity-30 hover:opacity-100 transition-all duration-300 hover:scale-110 z-50 group"
       title="Admin Login"
     >
       <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

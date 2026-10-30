@@ -50,11 +50,11 @@ serve(async (req) => {
     // Check if the user has admin privileges
     const { data: userProfile, error: profileError } = await supabaseAdmin
       .from('user_profiles')
-      .select('role')
+      .select('role, is_active')
       .eq('id', user.id)
       .single()
 
-    if (profileError || !userProfile) {
+    if (profileError || !userProfile?.is_active) {
       throw new Error('Could not verify user permissions')
     }
 
@@ -67,6 +67,13 @@ serve(async (req) => {
 
     if (!user_id || !new_password) {
       throw new Error('Missing required parameters: user_id and new_password')
+    }
+
+    const { data: targetProfile, error: targetError } = await supabaseAdmin
+      .from('user_profiles').select('role').eq('id', user_id).single()
+    if (targetError || !targetProfile) throw new Error('Target user not found')
+    if (targetProfile.role === 'superadmin' && userProfile.role !== 'superadmin') {
+      throw new Error('Only superadmins can reset a superadmin password')
     }
 
     // Validate password length

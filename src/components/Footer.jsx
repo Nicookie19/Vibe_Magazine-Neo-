@@ -14,14 +14,14 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-gradient-to-r from-[#241536] via-[#1b0b28] to-[#0f0f23] border-t border-purple-500/30">
+    <footer className="bg-[#0b1012] border-t border-brand-500/30">
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
 
           {/* University Information */}
           <div className="flex items-center space-x-4">
             {/* UIC Logo */}
-            <div className="w-16 h-16 flex-shrink-0 rounded-full border-2 border-purple-400/50 overflow-hidden bg-white/10 shadow-lg">
+            <div className="w-16 h-16 flex-shrink-0 rounded-full border-2 border-brand-400/50 overflow-hidden bg-white/10 shadow-lg">
               <img
                 src="https://raw.githubusercontent.com/NotJayDee119/pic/refs/heads/main/uic-logo2-(1).png"
                 alt="University of the Immaculate Conception Logo"
@@ -53,7 +53,7 @@ const Footer = () => {
                   href={social.name === "Facebook" ? "https://www.facebook.com/uicvibe" : "#"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 bg-purple-900/30 hover:bg-purple-700/50 rounded-xl flex items-center justify-center text-gray-400 hover:text-white transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-purple-500/25"
+                  className="w-10 h-10 bg-brand-900/30 hover:bg-brand-700/50 rounded-xl flex items-center justify-center text-gray-400 hover:text-white transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-brand-500/25"
                   aria-label={`Follow us on ${social.name}`}
                   title={social.name}
                 >

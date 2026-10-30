@@ -36,9 +36,9 @@ const FeedbackTab = () => {
         "postgres_changes",
         { event: "*", schema: "public", table: "feedback" },
         (payload) => {
-          if (payload.event === "INSERT") {
+          if (payload.eventType === "INSERT") {
             setComments((prevComments) => [payload.new, ...prevComments]);
-          } else if (payload.event === "DELETE") {
+          } else if (payload.eventType === "DELETE") {
             setComments((prevComments) =>
               prevComments.filter((comment) => comment.id !== payload.old.id)
             );
@@ -91,7 +91,7 @@ const FeedbackTab = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-400"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-400"></div>
       </div>
     );
   }
@@ -111,7 +111,7 @@ const FeedbackTab = () => {
       </section>
 
       {/* Feedback List */}
-      <section className="bg-gradient-to-br from-[#241231] to-[#1a0d28] border border-purple-500/20 rounded-xl shadow-lg overflow-hidden">
+      <section className="vibe-panel bg-gradient-to-br from-[#112326] to-[#0e1c20] border border-brand-500/20 rounded-xl shadow-lg overflow-hidden">
         <div className="p-6">
           {comments.length === 0 ? (
             <div className="text-center py-16">
@@ -128,7 +128,7 @@ const FeedbackTab = () => {
               {comments.map((c) => (
                 <div
                   key={c.id}
-                  className="rounded-xl border border-gray-600/50 bg-gray-800/30 hover:border-purple-500/50 hover:bg-gray-800/50 transition-all duration-200 overflow-hidden"
+                  className="rounded-xl border border-gray-600/50 bg-gray-800/30 hover:border-brand-500/50 hover:bg-gray-800/50 transition-all duration-200 overflow-hidden"
                 >
                   {/* Header */}
                   <div className="px-6 py-4 border-b border-gray-600/30 bg-gray-800/20">
@@ -187,7 +187,7 @@ const FeedbackTab = () => {
                   {/* Message Content */}
                   <div className="px-6 py-4">
                     <label className="text-xs text-gray-400 uppercase tracking-wide mb-2 block">Message</label>
-                    <div className="bg-gray-800/50 border-l-4 border-purple-500 rounded-r-lg p-4">
+                    <div className="bg-gray-800/50 border-l-4 border-brand-500 rounded-r-lg p-4">
                       <p className="text-gray-200 leading-relaxed whitespace-pre-wrap">
                         {c.message || "No message content"}
                       </p>
@@ -213,9 +213,9 @@ const FeedbackTab = () => {
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-[#241231] via-[#1b0b28] to-[#0f0f23] rounded-2xl border border-purple-500/30 shadow-2xl max-w-md w-full overflow-hidden">
+          <div className="vibe-panel bg-gradient-to-br from-[#112326] via-[#0e1b1e] to-[#0b1619] rounded-2xl border border-brand-500/30 shadow-2xl max-w-md w-full overflow-hidden">
             {/* Header */}
-            <div className="px-6 py-4 border-b border-purple-500/20">
+            <div className="px-6 py-4 border-b border-brand-500/20">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-red-500/20 rounded-full flex items-center justify-center">
                   <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -231,7 +231,7 @@ const FeedbackTab = () => {
               <div className="mb-6">
                 <p className="text-gray-300 mb-3">
                   Are you sure you want to delete this{" "}
-                  <span className="font-semibold text-purple-300">feedback</span>?
+                  <span className="font-semibold text-brand-300">feedback</span>?
                 </p>
                 <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700 space-y-2">
                   <div className="flex justify-between items-center text-sm">

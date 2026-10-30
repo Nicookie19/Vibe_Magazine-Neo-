@@ -107,11 +107,11 @@ export const handle = async (req) => {
     // Get the role of the calling user
     const { data: callerProfile, error: profileError } = await supabaseAdmin
       .from('user_profiles')
-      .select('role')
+      .select('role, is_active')
       .eq('id', callingUser.id)
       .single()
 
-    if (profileError || !callerProfile) {
+    if (profileError || !callerProfile?.is_active) {
       return new Response(
         JSON.stringify({ error: 'Could not verify admin permissions.' }),
         { 

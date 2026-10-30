@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import { motion as Motion } from 'motion/react';
 import { useEffect, useRef, useState, useMemo } from 'react';
 
 const buildKeyframes = (from, steps) => {
@@ -42,7 +42,6 @@ const BlurText = ({
         );
         observer.observe(ref.current);
         return () => observer.disconnect();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [threshold, rootMargin]);
 
     const defaultFrom = useMemo(
@@ -83,7 +82,7 @@ const BlurText = ({
                 spanTransition.ease = easing;
 
                 return (
-                    <motion.span
+                    <Motion.span
                         className="inline-block will-change-[transform,filter,opacity]"
                         key={index}
                         initial={fromSnapshot}
@@ -93,7 +92,7 @@ const BlurText = ({
                     >
                         {segment === ' ' ? '\u00A0' : segment}
                         {animateBy === 'words' && index < elements.length - 1 && '\u00A0'}
-                    </motion.span>
+                    </Motion.span>
                 );
             })}
         </p>

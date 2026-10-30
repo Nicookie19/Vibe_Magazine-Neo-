@@ -1,0 +1,162 @@
+.vibe-home {
+  --vibe-cyan: #60c5ce;
+  --vibe-paper: #faf9ef;
+  background: #090d0f;
+}
+
+.vibe-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 3rem 1.5rem 2.5rem;
+  border-bottom: 1px solid #60c5ce40;
+  background: radial-gradient(ellipse at 50% 40%, #173337 0%, #090d0f 65%);
+}
+
+.vibe-hero-grid {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  opacity: .16;
+  background-image: linear-gradient(#60c5ce40 1px, transparent 1px), linear-gradient(90deg, #60c5ce40 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse, #000, transparent 75%);
+}
+
+.vibe-hero-content { max-width: 64rem; margin: auto; text-align: center; }
+.vibe-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: .65rem;
+  color: var(--vibe-cyan);
+  font: 700 .7rem/1.5 monospace;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+.vibe-eyebrow > span { width: 8px; height: 8px; border-radius: 50%; background: #7dce76; }
+.vibe-logo-stage { position: relative; max-width: 470px; margin: .5rem auto 1.25rem; padding-bottom: 1.5rem; }
+.vibe-logo-float { animation: vibe-tv-float 5s ease-in-out infinite; }
+.vibe-hero-logo { display: block; width: 100%; height: auto; filter: drop-shadow(0 16px 25px #0008); }
+.vibe-motion-toggle {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #a7bec0;
+  font: .65rem/1.5 monospace;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  padding: .35rem .5rem;
+  white-space: nowrap;
+}
+.vibe-motion-toggle:hover { transform: translateX(-50%); color: white; }
+.is-paused .vibe-logo-float { animation-play-state: paused; }
+.vibe-hero-tagline { color: var(--vibe-paper); font-size: clamp(1.1rem, 2.5vw, 1.65rem); font-weight: 700; }
+.vibe-hero-description { max-width: 32rem; margin: .8rem auto 1.5rem; color: #a7b6ba; font-size: .95rem; line-height: 1.8; }
+.vibe-hero-actions { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+.vibe-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  border: 2px solid var(--vibe-cyan);
+  border-radius: 1rem;
+  padding: .9rem 1.4rem;
+  font-size: .875rem;
+  font-weight: 800;
+  transition: transform .2s, box-shadow .2s;
+}
+.vibe-button-primary { background: var(--vibe-cyan); color: #090d0f; box-shadow: 4px 4px 0 #faf9ef; }
+.vibe-button-secondary { color: var(--vibe-paper); border-color: #faf9ef60; }
+.vibe-button:hover { transform: translateY(-3px); box-shadow: 4px 6px 0 #ffc400; }
+.vibe-home a:focus-visible, .vibe-motion-toggle:focus-visible { outline: 3px solid #ffc400; outline-offset: 6px; }
+.vibe-frequency { display: flex; justify-content: center; gap: 5px; margin: 2.5rem auto 0; }
+.vibe-frequency span { width: 34px; height: 5px; border-radius: 2px; background: var(--vibe-cyan); }
+.vibe-frequency span:nth-child(2) { background: #ff0080; }
+.vibe-frequency span:nth-child(3) { background: #8335e9; }
+.vibe-frequency span:nth-child(4) { background: #7dce76; }
+.vibe-frequency span:nth-child(5) { background: #ffc400; }
+.vibe-frequency span:nth-child(6) { background: #ff5900; }
+.vibe-home .vibe-feature { border-top: 3px solid var(--feature-color); border-radius: 2rem 2rem 1rem 1rem; }
+.vibe-feature-line { background: var(--feature-color); }
+.vibe-feature-wash { background: linear-gradient(135deg, var(--feature-color), transparent); opacity: .04; }
+.vibe-feature:hover .vibe-feature-wash { opacity: .09; }
+
+@keyframes vibe-tv-float {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-10px) rotate(1deg); }
+}
+
+@media (max-width: 480px) {
+  .vibe-hero { padding: 2rem 1.25rem; }
+  .vibe-logo-stage { max-width: 330px; }
+  .vibe-hero-actions { flex-direction: column; }
+  .vibe-button { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vibe-home *, .vibe-home *::before, .vibe-home *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .vibe-motion-toggle { display: none; }
+  .vibe-button:hover { transform: none; }
+}
+
+/* Shared brand foundation for public, account, admin, and reader screens. */
+:root {
+  --vibe-cyan: #60c5ce;
+  --vibe-paper: #faf9ef;
+  --vibe-ink: #090d0f;
+  --vibe-panel: #112326;
+  --vibe-spectrum: linear-gradient(90deg, #60c5ce 0% 17%, #ff0080 17% 34%, #8335e9 34% 50%, #7dce76 50% 67%, #ffc400 67% 84%, #ff5900 84%);
+  --toastify-color-dark: #112326;
+  --toastify-color-info: #60c5ce;
+}
+body { margin: 0; background: var(--vibe-ink); }
+::selection { background: #60c5ce; color: #090d0f; }
+.vibe-app { color-scheme: dark; }
+.vibe-app :is(h1, h2, h3) { letter-spacing: -.025em; }
+.vibe-app :is(button, a, input, textarea, select):focus-visible {
+  outline: 2px solid #ffc400;
+  outline-offset: 3px;
+}
+.vibe-app :is(input:not([type="range"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]), textarea, select) {
+  border-radius: .75rem;
+  caret-color: var(--vibe-cyan);
+}
+.vibe-app :is(input[type="checkbox"], input[type="radio"]) { accent-color: var(--vibe-cyan); }
+.vibe-app select option { background: #112326; color: #faf9ef; }
+.vibe-app button:disabled { cursor: not-allowed; }
+.vibe-app .vibe-panel {
+  border-radius: 1.5rem;
+  border-color: #60c5ce40;
+  box-shadow: 0 3px 0 #60c5ce18, 0 12px 30px #0002;
+}
+.vibe-app form.vibe-panel { border-top: 3px solid var(--vibe-cyan); }
+.vibe-app nav { border-bottom-color: #60c5ce50; }
+.vibe-app footer { border-image: var(--vibe-spectrum) 1; border-top-width: 4px; }
+.vibe-app thead { background: #173237; }
+.vibe-app thead th { color: #a4e3e7; }
+.vibe-app tbody tr { border-color: #60c5ce26; }
+.vibe-app .vibe-stat {
+  border: 1px solid #60c5ce40;
+  border-top: 3px solid #60c5ce;
+  border-radius: 1.25rem;
+}
+.vibe-stat:nth-child(4n + 2) { border-top-color: #ff0080; }
+.vibe-stat:nth-child(4n + 3) { border-top-color: #7dce76; }
+.vibe-stat:nth-child(4n + 4) { border-top-color: #ffc400; }
+
+@media (max-width: 640px) {
+  .vibe-app .vibe-panel { border-radius: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .vibe-app *, .vibe-app *::before, .vibe-app *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

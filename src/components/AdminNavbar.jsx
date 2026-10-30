@@ -1,7 +1,7 @@
 // src/components/AdminNavbar.js
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { supabase, auth } from "../supabaseClient";
+import { auth } from "../supabaseClient";
 
 const AdminNavbar = ({ activeTab, setActiveTab }) => {
   const isSuperAdmin = localStorage.getItem("vibeSuperAdmin") === "true";
@@ -112,7 +112,7 @@ const AdminNavbar = ({ activeTab, setActiveTab }) => {
       await new Promise(resolve => setTimeout(resolve, 100));
       
       // Redirect to login page
-      window.location.href = "/login";
+      window.location.href = "/vibelogin";
     } catch (err) {
       console.error("Logout error:", err);
       
@@ -126,7 +126,7 @@ const AdminNavbar = ({ activeTab, setActiveTab }) => {
       localStorage.removeItem("vibeAdminActiveTab");
       
       // Force redirect even if there's an error
-      window.location.href = "/login";
+      window.location.href = "/vibelogin";
     } finally {
       setLoggingOut(false);
     }
@@ -135,37 +135,37 @@ const AdminNavbar = ({ activeTab, setActiveTab }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-gradient-to-r from-[#241536] via-[#1b0b28] to-[#0f0f23] border-b border-purple-500/30 sticky top-0 z-20 shadow-2xl">
+    <nav className="bg-[#0b1012] border-b border-brand-500/30 sticky top-0 z-20 shadow-2xl">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4">
         {/* Desktop Layout - Hidden on mobile/tablet */}
         <div className="hidden lg:flex items-center justify-between">
           {/* Left Side - Logo and Title */}
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-full border-2 border-purple-400/50 flex items-center justify-center shadow-lg overflow-hidden bg-white">
+            <div className="w-14 h-12 flex shrink-0 items-center justify-center">
               <img 
-                src="https://raw.githubusercontent.com/JayDee15999/pic/refs/heads/main/1.png" 
+                src="/brand/vibe-tv.png"
                 alt="Vibe Magazine Logo" 
-                className="w-8 h-8 object-cover rounded-full"
+                className="w-full h-full object-contain"
               />
             </div>
             <div>
-              <h1 className="text-lg font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
+              <h1 className="text-lg font-bold text-white">
                 Vibe Magazine
               </h1>
-              <p className="text-xs text-purple-300 font-medium">Admin Dashboard</p>
+              <p className="text-xs text-brand-300 font-medium">Admin Dashboard</p>
             </div>
           </div>
 
           {/* Center - Horizontal Tab Navigation */}
-          <div className="flex items-center space-x-1 bg-purple-900/30 rounded-xl p-1 border border-purple-500/20">
+          <div className="vibe-panel flex items-center space-x-1 bg-brand-900/30 rounded-xl p-1 border border-brand-500/20">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => handleTabClick(tab.id)}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-xs xl:text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500/50 whitespace-nowrap ${
+                className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-xs xl:text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-500/50 whitespace-nowrap ${
                   activeTab === tab.id
-                    ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg"
-                    : "text-gray-300 hover:text-white hover:bg-purple-700/50"
+                    ? "bg-brand-300 text-black shadow-lg"
+                    : "text-gray-300 hover:text-white hover:bg-brand-700/50"
                 }`}
                 aria-current={activeTab === tab.id ? "page" : undefined}
               >
@@ -202,18 +202,18 @@ const AdminNavbar = ({ activeTab, setActiveTab }) => {
           <div className="flex items-center justify-between">
             {/* Logo and Title */}
             <div className="flex items-center space-x-2">
-              <div className="w-9 h-9 rounded-full border-2 border-purple-400/50 flex items-center justify-center shadow-lg overflow-hidden bg-white">
+              <div className="w-14 h-12 flex shrink-0 items-center justify-center">
                 <img 
-                  src="https://raw.githubusercontent.com/JayDee15999/pic/refs/heads/main/1.png" 
+                  src="/brand/vibe-tv.png"
                   alt="Vibe Magazine Logo" 
-                  className="w-7 h-7 object-cover rounded-full"
+                  className="w-full h-full object-contain"
                 />
               </div>
               <div>
-                <h1 className="text-base sm:text-lg font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
+                <h1 className="text-base sm:text-lg font-bold text-white">
                   Vibe Magazine
                 </h1>
-                <p className="text-xs text-purple-300 font-medium hidden sm:block">Admin Dashboard</p>
+                <p className="text-xs text-brand-300 font-medium hidden sm:block">Admin Dashboard</p>
               </div>
             </div>
 
@@ -231,7 +231,7 @@ const AdminNavbar = ({ activeTab, setActiveTab }) => {
               </button>
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="flex items-center justify-center w-9 h-9 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 rounded-lg transition-all duration-200"
+                className="flex items-center justify-center w-9 h-9 bg-brand-600/20 hover:bg-brand-600/30 border border-brand-500/30 text-brand-300 rounded-lg transition-all duration-200"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   {isMobileMenuOpen ? (
@@ -246,7 +246,7 @@ const AdminNavbar = ({ activeTab, setActiveTab }) => {
 
           {/* Mobile Tab Navigation */}
           {isMobileMenuOpen && (
-            <div className="mt-3 pt-3 border-t border-purple-500/20">
+            <div className="mt-3 pt-3 border-t border-brand-500/20">
               <div className="grid grid-cols-2 gap-2">
                 {tabs.map((tab) => (
                   <button
@@ -257,8 +257,8 @@ const AdminNavbar = ({ activeTab, setActiveTab }) => {
                     }}
                     className={`flex items-center space-x-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                       activeTab === tab.id
-                        ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg"
-                        : "text-gray-300 hover:text-white bg-purple-900/20 hover:bg-purple-700/50"
+                        ? "bg-brand-300 text-black shadow-lg"
+                        : "text-gray-300 hover:text-white bg-brand-900/20 hover:bg-brand-700/50"
                     }`}
                   >
                     {tab.icon}

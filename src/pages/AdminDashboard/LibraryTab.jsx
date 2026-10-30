@@ -254,7 +254,7 @@ const LibraryTab = ({ magazines, removeMagazine, fetchMagazines }) => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             {magazines.map((m) => (
-              <div key={m.id} className="bg-gradient-to-br from-[#241231] to-[#1a0d28] border border-purple-500/20 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-200 hover:-translate-y-1">
+              <div key={m.id} className="bg-gradient-to-br from-[#112326] to-[#0e1c20] border border-brand-500/20 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-200 hover:-translate-y-1">
                 <div 
                   className="p-4 sm:p-6 cursor-pointer"
                   onClick={() => handleMagazineClick(m)}
@@ -264,11 +264,11 @@ const LibraryTab = ({ magazines, removeMagazine, fetchMagazines }) => {
                       <img 
                         src={m.cover} 
                         alt={m.title} 
-                        className="w-16 h-24 sm:w-20 sm:h-28 object-cover rounded-lg shadow-md border border-purple-500/30 transition-transform duration-300 hover:scale-105" 
+                        className="w-16 h-24 sm:w-20 sm:h-28 object-cover rounded-lg shadow-md border border-brand-500/30 transition-transform duration-300 hover:scale-105"
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-base sm:text-lg text-gray-100 mb-1 sm:mb-2 truncate hover:text-purple-300 transition-colors duration-200">{m.title}</h3>
+                      <h3 className="font-bold text-base sm:text-lg text-gray-100 mb-1 sm:mb-2 truncate hover:text-brand-300 transition-colors duration-200">{m.title}</h3>
                       <p className="text-gray-300 text-xs sm:text-sm mb-2 sm:mb-3 line-clamp-2">{m.subtitle}</p>
                       <div className="space-y-2 sm:space-y-3">
                         <div className="flex items-center gap-2 flex-wrap">
@@ -323,7 +323,7 @@ const LibraryTab = ({ magazines, removeMagazine, fetchMagazines }) => {
         </div>
 
         {/* Add Event Form */}
-        <div className="bg-gradient-to-br from-[#241231] to-[#1a0d28] border border-purple-500/20 rounded-xl p-4 sm:p-6 md:p-8 shadow-lg">
+        <div className="vibe-panel bg-gradient-to-br from-[#112326] to-[#0e1c20] border border-brand-500/20 rounded-xl p-4 sm:p-6 md:p-8 shadow-lg">
           <h3 className="text-lg sm:text-xl font-semibold text-gray-100 mb-4 sm:mb-6">Add New Event</h3>
           <form onSubmit={addEvent} className="space-y-3 sm:space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
@@ -334,7 +334,7 @@ const LibraryTab = ({ magazines, removeMagazine, fetchMagazines }) => {
                   placeholder="Enter event title"
                   value={form.title}
                   onChange={e => setForm({ ...form, title: e.target.value })}
-                  className="w-full p-2 sm:p-3 rounded-lg bg-gray-800/50 border border-gray-600 text-sm sm:text-base text-gray-100 placeholder-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-colors duration-200"
+                  className="w-full p-2 sm:p-3 rounded-lg bg-gray-800/50 border border-gray-600 text-sm sm:text-base text-gray-100 placeholder-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-colors duration-200"
                   required
                 />
               </div>
@@ -345,7 +345,7 @@ const LibraryTab = ({ magazines, removeMagazine, fetchMagazines }) => {
                   placeholder="e.g. Fri, Apr 12 • 7:00 PM"
                   value={form.date}
                   onChange={e => setForm({ ...form, date: e.target.value })}
-                  className="w-full p-2 sm:p-3 rounded-lg bg-gray-800/50 border border-gray-600 text-sm sm:text-base text-gray-100 placeholder-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-colors duration-200"
+                  className="w-full p-2 sm:p-3 rounded-lg bg-gray-800/50 border border-gray-600 text-sm sm:text-base text-gray-100 placeholder-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-colors duration-200"
                   required
                 />
               </div>
@@ -358,7 +358,7 @@ const LibraryTab = ({ magazines, removeMagazine, fetchMagazines }) => {
                 placeholder="Enter venue location"
                 value={form.venue}
                 onChange={e => setForm({ ...form, venue: e.target.value })}
-                className="w-full p-2 sm:p-3 rounded-lg bg-gray-800/50 border border-gray-600 text-sm sm:text-base text-gray-100 placeholder-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-colors duration-200"
+                className="w-full p-2 sm:p-3 rounded-lg bg-gray-800/50 border border-gray-600 text-sm sm:text-base text-gray-100 placeholder-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-colors duration-200"
                 required
               />
             </div>
@@ -371,7 +371,7 @@ const LibraryTab = ({ magazines, removeMagazine, fetchMagazines }) => {
                   placeholder="https://example.com/image.jpg"
                   value={form.image}
                   onChange={e => setForm({ ...form, image: e.target.value })}
-                  className="w-full p-2 sm:p-3 rounded-lg bg-gray-800/50 border border-gray-600 text-sm sm:text-base text-gray-100 placeholder-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-colors duration-200"
+                  className="w-full p-2 sm:p-3 rounded-lg bg-gray-800/50 border border-gray-600 text-sm sm:text-base text-gray-100 placeholder-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-colors duration-200"
                 />
               </div>
               <div className="space-y-1 sm:space-y-2">
@@ -380,7 +380,7 @@ const LibraryTab = ({ magazines, removeMagazine, fetchMagazines }) => {
                   type="file"
                   accept="image/*"
                   onChange={e => setImageFile(e.target.files[0])}
-                  className="w-full p-2 sm:p-3 rounded-lg bg-gray-800/50 border border-gray-600 text-sm sm:text-base text-gray-100 file:mr-3 sm:file:mr-4 file:py-1.5 sm:file:py-2 file:px-3 sm:file:px-4 file:rounded-lg file:border-0 file:text-xs sm:file:text-sm file:font-medium file:bg-purple-600 file:text-white hover:file:bg-purple-700 file:cursor-pointer"
+                  className="w-full p-2 sm:p-3 rounded-lg bg-gray-800/50 border border-gray-600 text-sm sm:text-base text-gray-100 file:mr-3 sm:file:mr-4 file:py-1.5 sm:file:py-2 file:px-3 sm:file:px-4 file:rounded-lg file:border-0 file:text-xs sm:file:text-sm file:font-medium file:bg-brand-600 file:text-white hover:file:bg-brand-700 file:cursor-pointer"
                 />
               </div>
             </div>
@@ -389,7 +389,7 @@ const LibraryTab = ({ magazines, removeMagazine, fetchMagazines }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full md:w-auto bg-gradient-to-r from-pink-600 to-purple-600 text-white font-semibold px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg hover:from-pink-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base"
+                className="w-full md:w-auto bg-gradient-to-r from-pink-600 to-brand-600 text-white font-semibold px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg hover:from-pink-700 hover:to-brand-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -444,14 +444,14 @@ const LibraryTab = ({ magazines, removeMagazine, fetchMagazines }) => {
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {events.map(ev => (
-                <div key={ev.id} className="bg-gradient-to-br from-[#241231] to-[#1a0d28] border border-purple-500/20 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-200 hover:-translate-y-1">
+                <div key={ev.id} className="bg-gradient-to-br from-[#112326] to-[#0e1c20] border border-brand-500/20 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-200 hover:-translate-y-1">
                   <div className="p-4 sm:p-6">
                     <div className="flex gap-3 sm:gap-4">
                       <div className="flex-shrink-0">
                         <img 
                           src={ev.image} 
                           alt={ev.title} 
-                          className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg shadow-md border border-purple-500/30" 
+                          className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg shadow-md border border-brand-500/30"
                         />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -492,15 +492,15 @@ const LibraryTab = ({ magazines, removeMagazine, fetchMagazines }) => {
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-300">
-          <div className="bg-gradient-to-br from-[#2a1b3d] via-[#1e1332] to-[#0f0f23] rounded-3xl border border-purple-500/40 shadow-2xl max-w-md w-full overflow-hidden transform transition-all duration-300 animate-in zoom-in-95">
+          <div className="vibe-panel bg-gradient-to-br from-[#193237] via-[#102126] to-[#0b1619] rounded-3xl border border-brand-500/40 shadow-2xl max-w-md w-full overflow-hidden transform transition-all duration-300 animate-in zoom-in-95">
             {/* Animated Background Elements */}
             <div className="absolute inset-0 overflow-hidden">
               <div className="absolute -top-4 -right-4 w-24 h-24 bg-red-500/10 rounded-full blur-xl animate-pulse"></div>
-              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-purple-500/10 rounded-full blur-xl animate-pulse delay-1000"></div>
+              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-brand-500/10 rounded-full blur-xl animate-pulse delay-1000"></div>
             </div>
             
             {/* Header */}
-            <div className="relative px-6 py-6 border-b border-purple-500/30">
+            <div className="relative px-6 py-6 border-b border-brand-500/30">
               <div className="flex items-center gap-4">
                 <div className="relative">
                   <div className="w-14 h-14 bg-gradient-to-br from-red-500/30 to-red-600/20 rounded-full flex items-center justify-center border border-red-500/40 shadow-lg">
@@ -531,7 +531,7 @@ const LibraryTab = ({ magazines, removeMagazine, fetchMagazines }) => {
                 
                 <p className="text-gray-300 text-center mb-4 leading-relaxed">
                   You're about to permanently delete this{" "}
-                  <span className="font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
+                  <span className="font-bold text-transparent bg-gradient-to-r from-brand-400 to-pink-400 bg-clip-text">
                     {deleteType === "magazine" ? "magazine" : "event"}
                   </span>
                 </p>
@@ -542,14 +542,14 @@ const LibraryTab = ({ magazines, removeMagazine, fetchMagazines }) => {
                       <img 
                         src={deleteTarget.cover} 
                         alt={deleteTarget.title}
-                        className="w-12 h-16 object-cover rounded-lg border border-purple-500/30 shadow-md"
+                        className="w-12 h-16 object-cover rounded-lg border border-brand-500/30 shadow-md"
                       />
                     )}
                     {deleteType === "event" && deleteTarget?.image && (
                       <img 
                         src={deleteTarget.image} 
                         alt={deleteTarget.title}
-                        className="w-12 h-12 object-cover rounded-lg border border-purple-500/30 shadow-md"
+                        className="w-12 h-12 object-cover rounded-lg border border-brand-500/30 shadow-md"
                       />
                     )}
                     <div className="flex-1">

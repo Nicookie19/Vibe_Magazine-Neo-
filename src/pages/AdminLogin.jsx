@@ -1,17 +1,4 @@
 import React, { useState, useEffect } from 'react';
-// For icons, you would typically install lucide-react: npm install lucide-react
-// In this environment, we'll simulate the icons with simple text or SVGs.
-const icons = {
-  LayoutDashboard: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>,
-  BookUp: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path><path d="m12 13 3 3 3-3"></path><path d="M15 16V7"></path></svg>,
-  MessageSquareQuote: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><path d="M8 10h.01"></path><path d="M12 10h.01"></path><path d="M16 10h.01"></path></svg>,
-  BarChart3: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path></svg>,
-  LogOut: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>,
-  UploadCloud: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="M12 12v9"></path><path d="m16 16-4-4-4 4"></path></svg>,
-  ThumbsUp: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 10v12"></path><path d="M18.37 12.87a1 1 0 0 0 .63-1.87 1 1 0 0 0-1-1.74l-3-.5a1 1 0 0 0-1 .8v1.5h2.5a1 1 0 0 1 .99 1.29l-1.17 4.32a1 1 0 0 0 .24 1.02l.5.5a1 1 0 0 0 1.42 0l3-3a1 1 0 0 0 0-1.42l-3-3.01z"></path></svg>,
-  MessageCircle: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"></path></svg>,
-};
-
 // --- MOCK DATA ---
 const mockFeedback = [
     { id: 1, user: 'Alex Doe', avatar: 'https://placehold.co/40x40/E2E8F0/4A5568?text=AD', comment: 'Loved the latest issue! The article on sustainable tech was particularly insightful. Keep up the great work!', date: '2024-08-15' },
@@ -74,7 +61,7 @@ const AdminLogin = ({ onLogin }) => {
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full p-3 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                            className="w-full p-3 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-500 transition"
                             placeholder="admin@uic.edu"
                             required
                         />
@@ -88,7 +75,7 @@ const AdminLogin = ({ onLogin }) => {
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full p-3 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                            className="w-full p-3 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-500 transition"
                             placeholder="password"
                             required
                         />
@@ -97,7 +84,7 @@ const AdminLogin = ({ onLogin }) => {
                     <div>
                         <button
                             type="submit"
-                            className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white font-bold text-lg transition-transform transform hover:scale-105"
+                            className="w-full py-3 px-4 bg-brand-600 hover:bg-brand-700 rounded-lg text-white font-bold text-lg transition-transform transform hover:scale-105"
                         >
                             Sign In
                         </button>
@@ -149,11 +136,11 @@ const MagazineUpload = () => {
                 <form onSubmit={handleUpload} className="space-y-6">
                     <div>
                         <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">Magazine Title</label>
-                        <input type="text" id="title" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full p-3 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g., August 2024 Issue" />
+                        <input type="text" id="title" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full p-3 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-500" placeholder="e.g., August 2024 Issue" />
                     </div>
                     <div>
                         <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">Description (Optional)</label>
-                        <textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} rows="3" className="w-full p-3 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="A brief summary of this issue's content."></textarea>
+                        <textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} rows="3" className="w-full p-3 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-500" placeholder="A brief summary of this issue's content."></textarea>
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Magazine File (PDF)</label>
@@ -161,7 +148,7 @@ const MagazineUpload = () => {
                             <div className="space-y-1 text-center">
                                 <icons.UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
                                 <div className="flex text-sm text-gray-600">
-                                    <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                                    <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-brand-600 hover:text-brand-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-brand-500">
                                         <span>Upload a file</span>
                                         <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept=".pdf" />
                                     </label>
@@ -174,7 +161,7 @@ const MagazineUpload = () => {
                     </div>
                     <div className="flex items-center justify-end space-x-4">
                          {message && <p className={`text-sm ${message.includes('Successfully') ? 'text-green-600' : 'text-gray-600'}`}>{message}</p>}
-                        <button type="submit" disabled={uploading} className="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-300">
+                        <button type="submit" disabled={uploading} className="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-brand-600 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 disabled:bg-brand-300">
                             {uploading ? 'Uploading...' : 'Upload'}
                         </button>
                     </div>
@@ -231,7 +218,7 @@ const Analytics = () => {
                     </div>
                 </div>
                 <div className="bg-white p-6 rounded-2xl shadow-md flex items-center space-x-4">
-                    <div className="p-3 bg-purple-100 rounded-full"><icons.MessageCircle className="h-6 w-6 text-purple-600" /></div>
+                    <div className="p-3 bg-brand-100 rounded-full"><icons.MessageCircle className="h-6 w-6 text-brand-600" /></div>
                     <div>
                         <p className="text-gray-500 text-sm">Total Comments</p>
                         <p className="text-2xl font-bold text-gray-800">{mockAnalytics.totalComments.toLocaleString()}</p>
@@ -248,7 +235,7 @@ const Analytics = () => {
                     <div className="flex items-end justify-between h-64 space-x-2">
                         {mockAnalytics.commentsData.map(data => (
                             <div key={data.name} className="flex-1 flex flex-col items-center justify-end">
-                                <div className="w-full bg-indigo-200 rounded-t-lg hover:bg-indigo-400 transition-colors" style={{ height: `${(data.comments / maxComments) * 100}%` }}></div>
+                                <div className="w-full bg-brand-200 rounded-t-lg hover:bg-brand-400 transition-colors" style={{ height: `${(data.comments / maxComments) * 100}%` }}></div>
                                 <p className="text-xs text-gray-500 mt-2">{data.name}</p>
                             </div>
                         ))}
@@ -282,7 +269,7 @@ const AdminDashboard = ({ onLogout }) => {
             onClick={() => setActiveView(view)}
             className={`flex items-center p-3 my-1 rounded-lg cursor-pointer transition-colors ${
                 activeView === view
-                    ? 'bg-indigo-600 text-white shadow-lg'
+                    ? 'bg-brand-600 text-white shadow-lg'
                     : 'text-gray-600 hover:bg-gray-200 hover:text-gray-800'
             }`}
         >
@@ -318,7 +305,7 @@ const AdminDashboard = ({ onLogout }) => {
             {/* Sidebar */}
             <aside className="w-64 bg-white flex flex-col shadow-lg">
                 <div className="h-20 flex items-center justify-center border-b">
-                    <h1 className="text-2xl font-bold text-indigo-600">Admin Panel</h1>
+                    <h1 className="text-2xl font-bold text-brand-600">Admin Panel</h1>
                 </div>
                 <nav className="flex-1 px-4 py-4">
                     <ul>

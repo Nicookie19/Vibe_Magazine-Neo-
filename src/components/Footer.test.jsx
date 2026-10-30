@@ -37,9 +37,6 @@ describe('Footer', () => {
   it('has correct footer styling classes', () => {
     render(<Footer />)
     const footer = screen.getByRole('contentinfo')
-    expect(footer).toHaveClass('bg-gradient-to-r')
-    expect(footer).toHaveClass('from-[#241536]')
-    expect(footer).toHaveClass('via-[#1b0b28]')
-    expect(footer).toHaveClass('to-[#0f0f23]')
+    expect(footer).toHaveClass('bg-[#0b1012]', 'border-brand-500/30')
   })
 })

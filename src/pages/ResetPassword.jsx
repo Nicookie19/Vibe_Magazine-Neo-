@@ -140,7 +140,7 @@ const ResetPassword = () => {
         
         // Redirect to login after success
         setTimeout(() => {
-          navigate('/login', { 
+          navigate('/vibelogin', {
             state: { 
               message: "Password updated successfully. Please log in with your new password." 
             }
@@ -170,11 +170,11 @@ const ResetPassword = () => {
   // Show loading state while checking token
   if (isValidToken === null) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#0b0c10] via-[#1b0b28] to-[#071030] flex items-center justify-center px-6">
+      <div className="min-h-screen bg-gradient-to-br from-[#090d0f] via-[#0e1b1e] to-[#0b1417] flex items-center justify-center px-6">
         <div className="relative z-10 w-full max-w-lg">
-          <div className="bg-gradient-to-br from-[#241536]/80 via-[#1b0b28]/70 to-[#0f0f23]/80 backdrop-blur-xl rounded-2xl border border-purple-500/30 shadow-2xl p-8 text-center">
-            <div className="w-8 h-8 border-2 border-purple-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-purple-300">Verifying password reset link...</p>
+          <div className="vibe-panel bg-gradient-to-br from-[#14282c]/80 via-[#0e1b1e]/70 to-[#0b1619]/80 backdrop-blur-xl rounded-2xl border border-brand-500/30 shadow-2xl p-8 text-center">
+            <div className="w-8 h-8 border-2 border-brand-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-brand-300">Verifying password reset link...</p>
           </div>
         </div>
       </div>
@@ -184,9 +184,9 @@ const ResetPassword = () => {
   // Show error if token is invalid
   if (isValidToken === false) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#0b0c10] via-[#1b0b28] to-[#071030] flex items-center justify-center px-6">
+      <div className="min-h-screen bg-gradient-to-br from-[#090d0f] via-[#0e1b1e] to-[#0b1417] flex items-center justify-center px-6">
         <div className="relative z-10 w-full max-w-lg">
-          <div className="bg-gradient-to-br from-[#241536]/80 via-[#1b0b28]/70 to-[#0f0f23]/80 backdrop-blur-xl rounded-2xl border border-purple-500/30 shadow-2xl p-8">
+          <div className="vibe-panel bg-gradient-to-br from-[#14282c]/80 via-[#0e1b1e]/70 to-[#0b1619]/80 backdrop-blur-xl rounded-2xl border border-brand-500/30 shadow-2xl p-8">
             <div className="text-center mb-6">
               <div className="w-16 h-16 rounded-full border-2 border-red-400/50 flex items-center justify-center mx-auto mb-4 bg-red-500/10">
                 <svg className="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -199,8 +199,8 @@ const ResetPassword = () => {
             
             <div className="text-center">
               <Link 
-                to="/login" 
-                className="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg hover:from-purple-500 hover:to-pink-500 transition-all duration-300 font-medium"
+                to="/vibelogin"
+                className="inline-flex items-center space-x-2 bg-gradient-to-r from-brand-600 to-brand-700 text-white px-6 py-3 rounded-lg hover:from-brand-600 hover:to-brand-600 transition-all duration-300 font-medium"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -215,29 +215,29 @@ const ResetPassword = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0b0c10] via-[#1b0b28] to-[#071030] flex items-center justify-center px-6">
+    <div className="min-h-screen bg-gradient-to-br from-[#090d0f] via-[#0e1b1e] to-[#0b1417] flex items-center justify-center px-6">
       {/* Background Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-brand-500/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-500/5 rounded-full blur-3xl"></div>
       </div>
 
       <div className="relative z-10 w-full max-w-lg">
-        <div className="bg-gradient-to-br from-[#241536]/80 via-[#1b0b28]/70 to-[#0f0f23]/80 backdrop-blur-xl rounded-2xl border border-purple-500/30 shadow-2xl p-8">
+        <div className="vibe-panel bg-gradient-to-br from-[#14282c]/80 via-[#0e1b1e]/70 to-[#0b1619]/80 backdrop-blur-xl rounded-2xl border border-brand-500/30 shadow-2xl p-8">
           {/* Logo and Title Section */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-full border-2 border-purple-400/50 flex items-center justify-center shadow-lg overflow-hidden bg-white mx-auto mb-4">
+            <div className="w-28 h-24 flex items-center justify-center mx-auto mb-4">
               <img 
-                src="https://raw.githubusercontent.com/JayDee15999/pic/refs/heads/main/1.png" 
+                src="/brand/vibe-tv.png"
                 alt="Vibe Magazine Logo" 
-                className="w-12 h-12 object-cover rounded-full"
+                className="w-full h-full object-contain"
               />
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent mb-2">
+            <h1 className="text-3xl font-bold mb-2 text-[#faf9ef]">
               Reset Password
             </h1>
-            <p className="text-purple-300 text-sm font-medium">Create a new secure password</p>
+            <p className="text-brand-300 text-sm font-medium">Create a new secure password</p>
           </div>
 
           {/* Success Message */}
@@ -268,10 +268,10 @@ const ResetPassword = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* New Password Field */}
               <div>
-                <label className="block text-sm font-medium text-purple-300 mb-2">New Password</label>
+                <label className="block text-sm font-medium text-brand-300 mb-2">New Password</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                   </div>
@@ -280,20 +280,20 @@ const ResetPassword = () => {
                     placeholder="Enter new password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-black/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-400 transition-all duration-200"
+                    className="w-full pl-10 pr-4 py-3 bg-black/20 border border-brand-500/30 rounded-lg text-white placeholder-brand-300/50 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-400 transition-all duration-200"
                     required
                     minLength={6}
                   />
                 </div>
-                <p className="text-purple-400 text-xs mt-1">Password must be at least 6 characters long</p>
+                <p className="text-brand-400 text-xs mt-1">Password must be at least 6 characters long</p>
               </div>
 
               {/* Confirm Password Field */}
               <div>
-                <label className="block text-sm font-medium text-purple-300 mb-2">Confirm New Password</label>
+                <label className="block text-sm font-medium text-brand-300 mb-2">Confirm New Password</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
@@ -302,7 +302,7 @@ const ResetPassword = () => {
                     placeholder="Confirm new password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-black/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-400 transition-all duration-200"
+                    className="w-full pl-10 pr-4 py-3 bg-black/20 border border-brand-500/30 rounded-lg text-white placeholder-brand-300/50 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-400 transition-all duration-200"
                     required
                     minLength={6}
                   />
@@ -319,7 +319,7 @@ const ResetPassword = () => {
               <button
                 type="submit"
                 disabled={loading || !newPassword || !confirmPassword || newPassword !== confirmPassword}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3.5 rounded-lg hover:from-purple-500 hover:to-pink-500 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-brand-600 to-brand-700 text-white py-3.5 rounded-lg hover:from-brand-600 hover:to-brand-600 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-brand-500/50 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center justify-center space-x-2">
                   {loading ? (
@@ -341,11 +341,11 @@ const ResetPassword = () => {
           )}
 
           {/* Back Link */}
-          <div className="mt-8 pt-6 border-t border-purple-500/20">
+          <div className="mt-8 pt-6 border-t border-brand-500/20">
             <div className="text-center">
               <Link 
-                to="/login" 
-                className="inline-flex items-center space-x-2 text-purple-300 hover:text-purple-200 transition-colors duration-200 text-sm font-medium"
+                to="/vibelogin"
+                className="inline-flex items-center space-x-2 text-brand-300 hover:text-brand-200 transition-colors duration-200 text-sm font-medium"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />

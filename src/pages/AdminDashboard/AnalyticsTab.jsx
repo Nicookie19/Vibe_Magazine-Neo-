@@ -1,5 +1,5 @@
 // src/pages/AdminDashboard/AnalyticsTab.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "../../supabaseClient";
 import StatCard from "./StatCard";
 import {
@@ -20,7 +20,7 @@ import {
     AreaChart
 } from "recharts";
 
-const AnalyticsTab = ({ magazines, submissions }) => {
+const AnalyticsTab = ({ magazines }) => {
     const [analytics, setAnalytics] = useState({
         totalViews: 0,
         totalLikes: 0,
@@ -33,11 +33,7 @@ const AnalyticsTab = ({ magazines, submissions }) => {
     });
     const [selectedTimeRange, setSelectedTimeRange] = useState('7d');
 
-    useEffect(() => {
-        fetchAnalytics();
-    }, [selectedTimeRange, magazines]);
-
-    const fetchAnalytics = async () => {
+    const fetchAnalytics = useCallback(async () => {
         try {
             // Calculate date range based on selection
             const now = new Date();
@@ -107,10 +103,10 @@ const AnalyticsTab = ({ magazines, submissions }) => {
 
             // Create engagement breakdown data for pie chart
             const engagementData = [
-                { name: 'Views', value: totals.visit || 0, color: '#8884d8' },
-                { name: 'Likes', value: totals.like || 0, color: '#82ca9d' },
-                { name: 'Comments', value: totals.comment || 0, color: '#ffc658' },
-                { name: 'Saves', value: totals.save || 0, color: '#ff7300' }
+                { name: 'Views', value: totals.visit || 0, color: '#60c5ce' },
+                { name: 'Likes', value: totals.like || 0, color: '#7dce76' },
+                { name: 'Comments', value: totals.comment || 0, color: '#ffc400' },
+                { name: 'Saves', value: totals.save || 0, color: '#ff5900' }
             ].filter(item => item.value > 0);
 
             setAnalytics({
@@ -127,7 +123,9 @@ const AnalyticsTab = ({ magazines, submissions }) => {
             console.error('Error fetching analytics:', error);
             setAnalytics(prev => ({ ...prev, loading: false }));
         }
-    };
+    }, [selectedTimeRange, magazines]);
+
+    useEffect(() => { fetchAnalytics(); }, [fetchAnalytics]);
 
     if (analytics.loading) {
         return (
@@ -138,7 +136,7 @@ const AnalyticsTab = ({ magazines, submissions }) => {
         );
     }
 
-    const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#00ff88'];
+    const COLORS = ['#60c5ce', '#7dce76', '#ffc400', '#ff5900', '#ff0080'];
 
     return (
         <div className="p-6">
@@ -157,7 +155,7 @@ const AnalyticsTab = ({ magazines, submissions }) => {
                                 key={range}
                                 onClick={() => setSelectedTimeRange(range)}
                                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedTimeRange === range
-                                    ? 'bg-purple-600 text-white'
+                                    ? 'bg-brand-600 text-white'
                                     : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                                     }`}
                             >
@@ -175,7 +173,7 @@ const AnalyticsTab = ({ magazines, submissions }) => {
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div className="space-y-4">
-                            <h4 className="text-lg font-medium text-purple-400">Metric Definitions:</h4>
+                            <h4 className="text-lg font-medium text-brand-400">Metric Definitions:</h4>
                             <ul className="space-y-2 text-gray-300">
                                 <li>• <span className="font-medium text-blue-400">Total Views</span> → How many times people opened or looked at the magazine</li>
                                 <li>• <span className="font-medium text-green-400">Total Likes</span> → How many times people clicked "like" on the magazine</li>
@@ -184,17 +182,17 @@ const AnalyticsTab = ({ magazines, submissions }) => {
                             </ul>
                         </div>
                         <div className="space-y-4">
-                            <h4 className="text-lg font-medium text-purple-400">Calculation Formulas:</h4>
+                            <h4 className="text-lg font-medium text-brand-400">Calculation Formulas:</h4>
                             <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-600">
                                 <div className="space-y-3 text-gray-300">
                                     <div>
-                                        <span className="font-medium text-purple-400">Total Engagement:</span>
+                                        <span className="font-medium text-brand-400">Total Engagement:</span>
                                         <div className="text-sm mt-1 font-mono bg-gray-800 p-2 rounded">
                                             Views + Likes + Comments + Saves
                                         </div>
                                     </div>
                                     <div>
-                                        <span className="font-medium text-purple-400">Engagement Rate (%):</span>
+                                        <span className="font-medium text-brand-400">Engagement Rate (%):</span>
                                         <div className="text-sm mt-1 font-mono bg-gray-800 p-2 rounded">
                                             ((Likes + Comments + Saves) / Views) × 100
                                         </div>
@@ -243,12 +241,12 @@ const AnalyticsTab = ({ magazines, submissions }) => {
                                     <Tooltip
                                         contentStyle={{
                                             backgroundColor: '#111827',
-                                            border: '1px solid #6366F1',
+                                            border: '1px solid #60c5ce',
                                             borderRadius: '12px',
                                             boxShadow: '0 10px 25px rgba(0,0,0,0.5)'
                                         }}
                                         labelStyle={{ color: '#F9FAFB', fontWeight: 'bold' }}
-                                        cursor={{ stroke: '#6366F1', strokeWidth: 2, strokeDasharray: '5 5' }}
+                                        cursor={{ stroke: '#60c5ce', strokeWidth: 2, strokeDasharray: '5 5' }}
                                     />
                                     <Legend
                                         wrapperStyle={{ paddingTop: '20px' }}
@@ -257,11 +255,11 @@ const AnalyticsTab = ({ magazines, submissions }) => {
                                     <Line
                                         type="monotone"
                                         dataKey="visits"
-                                        stroke="#8B5CF6"
+                                        stroke="#60c5ce"
                                         strokeWidth={3}
                                         name="Views"
-                                        dot={{ fill: '#8B5CF6', strokeWidth: 2, r: 4 }}
-                                        activeDot={{ r: 6, stroke: '#8B5CF6', strokeWidth: 2, fill: '#FFFFFF' }}
+                                        dot={{ fill: '#60c5ce', strokeWidth: 2, r: 4 }}
+                                        activeDot={{ r: 6, stroke: '#60c5ce', strokeWidth: 2, fill: '#FFFFFF' }}
                                         connectNulls
                                     />
                                     <Line
@@ -312,7 +310,7 @@ const AnalyticsTab = ({ magazines, submissions }) => {
                                         labelLine={false}
                                         label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                                         outerRadius={80}
-                                        fill="#8884d8"
+                                        fill="#60c5ce"
                                         dataKey="value"
                                     >
                                         {analytics.engagementData.map((entry, index) => (
@@ -364,10 +362,10 @@ const AnalyticsTab = ({ magazines, submissions }) => {
                                         }}
                                     />
                                     <Legend />
-                                    <Bar dataKey="visits" fill="#8884d8" name="Views" />
-                                    <Bar dataKey="likes" fill="#82ca9d" name="Likes" />
-                                    <Bar dataKey="comments" fill="#ffc658" name="Comments" />
-                                    <Bar dataKey="saves" fill="#ff7300" name="Saves" />
+                                    <Bar dataKey="visits" fill="#60c5ce" name="Views" />
+                                    <Bar dataKey="likes" fill="#7dce76" name="Likes" />
+                                    <Bar dataKey="comments" fill="#ffc400" name="Comments" />
+                                    <Bar dataKey="saves" fill="#ff5900" name="Saves" />
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>
@@ -420,7 +418,7 @@ const AnalyticsTab = ({ magazines, submissions }) => {
                                                 <td className="py-3 text-center text-green-400">{magazine.likes}</td>
                                                 <td className="py-3 text-center text-blue-400">{magazine.comments}</td>
                                                 <td className="py-3 text-center text-orange-400">{magazine.saves}</td>
-                                                <td className="py-3 text-center font-semibold text-purple-400">
+                                                <td className="py-3 text-center font-semibold text-brand-400">
                                                     {magazine.totalEngagement}
                                                 </td>
                                                 <td className="py-3 text-center">

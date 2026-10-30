@@ -69,45 +69,49 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed top-0 w-full bg-gradient-to-r from-[#241536] via-[#1b0b28] to-[#0f0f23] border-b border-purple-500/30 z-50 shadow-2xl">
+    <nav className="fixed top-0 w-full bg-[#0b1012] border-b border-brand-500/30 z-50 shadow-2xl">
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Left Side - Logo and Title */}
           <Link to="/" className="flex items-center space-x-4 group">
-            <div className="w-12 h-12 rounded-full border-2 border-purple-400/50 flex items-center justify-center shadow-lg overflow-hidden bg-white group-hover:border-purple-400 transition-colors duration-200">
+            <div className="w-14 h-12 flex shrink-0 items-center justify-center">
               <img 
-                src="https://raw.githubusercontent.com/JayDee15999/pic/refs/heads/main/1.png" 
+                src="/brand/vibe-tv.png"
                 alt="Vibe Magazine Logo" 
-                className="w-10 h-10 object-cover rounded-full"
+                className="w-full h-full object-contain"
               />
             </div>
             <div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
+              <h1 className="text-xl font-bold text-white">
                 Vibe Magazine
               </h1>
-              <p className="text-xs text-purple-300 font-medium">Campus Insights</p>
+              <p className="text-xs text-brand-300 font-medium">Campus Insights</p>
             </div>
           </Link>
 
           {/* Hamburger Menu Icon (Mobile Only) */}
-          <div
-            className="md:hidden text-purple-300 text-2xl cursor-pointer transition-transform duration-300 ease-in-out hover:text-purple-200"
+          <button
+            type="button"
+            aria-expanded={isOpen}
+            aria-controls="mobile-navigation"
+            className="lg:hidden text-brand-300 text-2xl cursor-pointer transition-transform duration-300 ease-in-out hover:text-brand-200"
             onClick={toggleMenu}
             aria-label="Toggle Menu"
           >
             {isOpen ? <FaTimes /> : <FaBars />}
-          </div>
+          </button>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-1 bg-purple-900/30 rounded-xl p-1 border border-purple-500/20">
+          <div className="vibe-panel hidden lg:flex items-center space-x-1 bg-brand-900/30 rounded-xl p-1 border border-brand-500/20">
             {navItems.map((item) => (
               <Link
                 key={item.name}
                 to={item.path}
-                className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500/50 whitespace-nowrap ${
+                aria-current={location.pathname === item.path ? "page" : undefined}
+                className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-500/50 whitespace-nowrap ${
                   location.pathname === item.path
-                    ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg"
-                    : "text-gray-300 hover:text-white hover:bg-purple-700/50"
+                    ? "bg-brand-300 text-black shadow-lg"
+                    : "text-gray-300 hover:text-white hover:bg-brand-700/50"
                 }`}
               >
                 {item.icon}
@@ -120,21 +124,24 @@ const Navbar = () => {
 
       {/* Mobile Dropdown Menu */}
       <div
-        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+        id="mobile-navigation"
+        inert={!isOpen}
+        className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${
           isOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
-        <div className="bg-gradient-to-r from-[#241536] via-[#1b0b28] to-[#0f0f23] border-t border-purple-500/20">
+        <div className="bg-[#0b1012] border-t border-brand-500/20">
           <div className="flex flex-col space-y-1 px-6 py-4">
             {navItems.map((item) => (
               <Link
                 key={item.name}
                 to={item.path}
+                aria-current={location.pathname === item.path ? "page" : undefined}
                 onClick={() => setIsOpen(false)}
                 className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                   location.pathname === item.path
-                    ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg"
-                    : "text-gray-300 hover:text-white hover:bg-purple-700/50"
+                    ? "bg-brand-300 text-black shadow-lg"
+                    : "text-gray-300 hover:text-white hover:bg-brand-700/50"
                 }`}
               >
                 {item.icon}

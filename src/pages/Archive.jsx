@@ -1,44 +1,19 @@
 // src/pages/Archive.jsx
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Document, Page, pdfjs } from "react-pdf";
 import PageFlip from "react-pageflip";
 import { supabase } from "../supabaseClient";
-import "react-pdf/dist/Page/AnnotationLayer.css";
-import "react-pdf/dist/Page/TextLayer.css";
 import "../styles/magazineFlipbook.css";
 
-// Setup PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = "/node_modules/pdfjs-dist/build/pdf.worker.min.js";
 
 const Archive = () => {
   const [magazines, setMagazines] = useState([]);
   const [selectedMag, setSelectedMag] = useState(null);
   const [magazineRatings, setMagazineRatings] = useState({});
   const navigate = useNavigate();
-  const pageFlipRef = useRef(null);
-  const [modalDimensions, setModalDimensions] = useState({ width: 480, height: 700 });
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Fetch magazines from Supabase (only published ones)
-  const fetchMagazines = async () => {
-    const { data, error } = await supabase
-      .from("magazines")
-      .select("*")
-      .eq("published", true)
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Error fetching magazines:", error);
-    } else {
-      setMagazines(data || []);
-      // Fetch ratings for all magazines
-      fetchMagazineRatings(data || []);
-    }
-  };
 
   // Fetch average ratings for all magazines
-  const fetchMagazineRatings = async (mags) => {
+  const fetchMagazineRatings = useCallback(async (mags) => {
     const ratings = {};
     
     for (const mag of mags) {
@@ -63,7 +38,24 @@ const Archive = () => {
     }
     
     setMagazineRatings(ratings);
-  };
+  }, []);
+
+  // Fetch magazines from Supabase (only published ones)
+  const fetchMagazines = useCallback(async () => {
+    const { data, error } = await supabase
+      .from("magazines")
+      .select("*")
+      .eq("published", true)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching magazines:", error);
+    } else {
+      setMagazines(data || []);
+      // Fetch ratings for all magazines
+      fetchMagazineRatings(data || []);
+    }
+  }, [fetchMagazineRatings]);
 
   useEffect(() => {
     fetchMagazines();
@@ -92,7 +84,7 @@ const Archive = () => {
       supabase.removeChannel(magazinesChannel);
       supabase.removeChannel(ratingsChannel);
     };
-  }, []); // Empty dependency array - only run on mount
+  }, [fetchMagazines]);
 
   // Check for magazineId in URL and auto-open that magazine
   useEffect(() => {
@@ -110,7 +102,7 @@ const Archive = () => {
   }, [magazines]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0b0c10] via-[#1b0b28] to-[#071030] text-gray-200 pt-20">
+    <div className="min-h-screen bg-gradient-to-br from-[#090d0f] via-[#0e1b1e] to-[#0b1417] text-gray-200 pt-20">
       {/* Header */}
       <header className="py-16 text-center px-6">
         <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-4 text-gray-100">
@@ -119,7 +111,7 @@ const Archive = () => {
         <p className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto font-light mb-6">
           Explore student research, projects, and innovation from across campus.
         </p>
-        <Link to="/" className="text-purple-300 hover:text-yellow-300 font-medium">
+        <Link to="/" className="text-brand-300 hover:text-yellow-300 font-medium">
           ← Back to Home
         </Link>
       </header>
@@ -142,9 +134,9 @@ const Archive = () => {
                 <article
                   key={mag.id}
                   onClick={() => navigate(`/magazine/${mag.id}`, { state: { magazine: mag } })}
-                  className="group overflow-hidden rounded-lg shadow-lg transform transition duration-500 hover:scale-105 hover:shadow-2xl cursor-pointer bg-black/20 border border-purple-500/20 relative"
+                  className="group overflow-hidden rounded-lg shadow-lg transform transition duration-500 hover:scale-105 hover:shadow-2xl cursor-pointer bg-black/20 border border-brand-500/20 relative"
                 >
-                  <div className="aspect-[3/4] overflow-hidden bg-[#241231]">
+                  <div className="aspect-[3/4] overflow-hidden bg-[#112326]">
                     <img
                       src={mag.cover}
                       alt={mag.title}
@@ -156,7 +148,7 @@ const Archive = () => {
                       </div>
                     )}
                   </div>
-                  <div className="p-5 bg-[#241231] bg-opacity-90 border-t border-purple-500/30">
+                  <div className="p-5 bg-[#112326] bg-opacity-90 border-t border-brand-500/30">
                     <h2 className="text-xl font-bold mb-1 text-gray-100">
                       {mag.title}
                       <p className="text-gray-400 text-sm">By {mag.author}</p>
@@ -230,10 +222,9 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
   const [showRatingPopup, setShowRatingPopup] = useState(false);
   const [userRating, setUserRating] = useState(0);
   const [hasRated, setHasRated] = useState(false);
-  const [numPages, setNumPages] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [, setCurrentPage] = useState(1);
   const [modalDimensions, setModalDimensions] = useState({ width: 480, height: 700 });
-  const [isMobile, setIsMobile] = useState(false);
+  const [, setIsMobile] = useState(false);
   const pageFlipRef = useRef(null);
 
   // Generate or get user ID from localStorage
@@ -317,18 +308,6 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
       window.removeEventListener('orientationchange', calculateModalDimensions);
     };
   }, []);
-
-  const onDocumentLoadSuccess = ({ numPages }) => {
-    setNumPages(numPages);
-  };
-  
-  const goToPrevPage = () =>
-    setCurrentPage(currentPage - 1 <= 1 ? 1 : currentPage - 1);
-
-  const goToNextPage = () =>
-    setCurrentPage(
-      currentPage + 1 >= numPages ? numPages : currentPage + 1,
-    );
 
   // Track if user has spent enough time to warrant a rating request
   const [timeSpent, setTimeSpent] = useState(0);
@@ -577,7 +556,7 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
 
     // Add listeners for various interactions
     const magazineElement = document.querySelector('.magazine-flipbook');
-    const modalContent = document.querySelector('.bg-\\[\\#241231\\]');
+    const modalContent = document.querySelector('.bg-\\[\\#112326\\]');
     
     // Track magazine interactions
     if (magazineElement) {
@@ -628,7 +607,6 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
     if (hasRated) return; // Don't show popup if already rated
 
     let lastPageTimer = null;
-    let hasReachedEnd = false;
 
     // Method 1: PageFlip events
     const setupPageFlipDetection = () => {
@@ -653,7 +631,6 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
         // If user reaches the last page
         if (currentPageIndex >= totalPages - 1) {
           console.log('User reached last page, starting timer...');
-          hasReachedEnd = true;
           // Show popup after 3 seconds on last page
           lastPageTimer = setTimeout(() => {
             if (!hasRated) {
@@ -672,8 +649,7 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
           const currentPage = pageFlip.getCurrentPageIndex ? pageFlip.getCurrentPageIndex() : 0;
           const totalPages = 1 + (mag.pages?.length || 0);
           if (currentPage >= totalPages - 1) {
-            hasReachedEnd = true;
-            lastPageTimer = setTimeout(() => {
+              lastPageTimer = setTimeout(() => {
               if (!hasRated) {
                 setShowRatingPopup(true);
               }
@@ -826,7 +802,7 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-[#0b0c10] bg-opacity-95 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-[#090d0f] bg-opacity-95 z-50 flex items-center justify-center p-4"
       onClick={(e) => {
         // Only trigger when clicking the backdrop (not the modal content)
         if (e.target === e.currentTarget) {
@@ -838,7 +814,7 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
         <div className="flex flex-col items-center justify-center gap-6">
           {/* Animated spinner with dual rings and glow effect */}
           <div className="relative">
-            <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-purple-500 shadow-lg shadow-purple-500/50"></div>
+            <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-brand-500 shadow-lg shadow-brand-500/50"></div>
             <div className="absolute top-0 left-0 animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-pink-500 opacity-50 shadow-lg shadow-pink-500/50" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
           </div>
           
@@ -846,9 +822,9 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
           <div className="flex flex-col items-center gap-2">
             <p className="text-gray-100 text-xl font-bold animate-pulse">Loading Magazine</p>
             <div className="flex gap-1">
-              <span className="w-2 h-2 bg-purple-500 rounded-full animate-bounce shadow-sm shadow-purple-500/50" style={{ animationDelay: '0ms' }}></span>
-              <span className="w-2 h-2 bg-purple-500 rounded-full animate-bounce shadow-sm shadow-purple-500/50" style={{ animationDelay: '150ms' }}></span>
-              <span className="w-2 h-2 bg-purple-500 rounded-full animate-bounce shadow-sm shadow-purple-500/50" style={{ animationDelay: '300ms' }}></span>
+              <span className="w-2 h-2 bg-brand-500 rounded-full animate-bounce shadow-sm shadow-brand-500/50" style={{ animationDelay: '0ms' }}></span>
+              <span className="w-2 h-2 bg-brand-500 rounded-full animate-bounce shadow-sm shadow-brand-500/50" style={{ animationDelay: '150ms' }}></span>
+              <span className="w-2 h-2 bg-brand-500 rounded-full animate-bounce shadow-sm shadow-brand-500/50" style={{ animationDelay: '300ms' }}></span>
             </div>
           </div>
           
@@ -862,7 +838,7 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
           className="max-h-full overflow-auto rounded-lg shadow-2xl max-w-6xl w-full"
           onClick={(e) => e.stopPropagation()}
         >
-        <div className="bg-[#241231] bg-opacity-95 text-gray-200 flex flex-col md:flex-row gap-8 p-6 rounded-lg shadow-2xl border border-purple-500/30">
+        <div className="bg-[#112326] bg-opacity-95 text-gray-200 flex flex-col md:flex-row gap-8 p-6 rounded-lg shadow-2xl border border-brand-500/30">
           {/* Flip Book */}
           <div className="w-full md:w-auto md:flex-shrink-0 flex flex-col items-center justify-center p-2 md:p-4 relative group">
             <button
@@ -872,7 +848,7 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
                   state: { magazine: mag }
                 });
               }}
-              className="absolute top-2 right-2 z-10 md:opacity-0 md:group-hover:opacity-100 opacity-100 transition-opacity duration-300 bg-purple-600 hover:bg-purple-700 text-white p-2 rounded-full shadow-lg pointer-events-auto"
+              className="absolute top-2 right-2 z-10 md:opacity-0 md:group-hover:opacity-100 opacity-100 transition-opacity duration-300 bg-brand-600 hover:bg-brand-700 text-white p-2 rounded-full shadow-lg pointer-events-auto"
               title="Book Reading Mode"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -915,7 +891,7 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
             </button>
             
             {/* Fullscreen Instructions - only visible in fullscreen mode */}
-            <div className="fullscreen-instructions absolute bottom-4 left-1/2 transform -translate-x-1/2 z-[60] opacity-0 transition-all duration-300 bg-black/70 backdrop-blur-sm px-6 py-3 rounded-full border border-purple-500/30" style={{ display: 'none' }}>
+            <div className="fullscreen-instructions absolute bottom-4 left-1/2 transform -translate-x-1/2 z-[60] opacity-0 transition-all duration-300 bg-black/70 backdrop-blur-sm px-6 py-3 rounded-full border border-brand-500/30" style={{ display: 'none' }}>
               <p className="text-gray-300 text-sm text-center">
                 📖 Click corners to flip pages • Press ESC or click X to exit
               </p>
@@ -953,15 +929,15 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
                 {/* Cover */}
                 <div className="page-wrapper relative shadow-2xl" style={{ boxShadow: '0 0 20px rgba(200,200,200,0.3), inset 0 0 10px rgba(255,255,255,0.2)' }}>
                   {!loadingImages.cover && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-[#2c1052]">
-                      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+                    <div className="absolute inset-0 flex items-center justify-center bg-[#18343a]">
+                      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-500"></div>
                     </div>
                   )}
                   <img
                     src={mag.cover}
                     alt={`Cover of ${mag.title}`}
                     className={`w-full h-full object-cover transition-opacity duration-300 ${loadingImages.cover ? 'opacity-100' : 'opacity-0'}`}
-                    style={{ background: '#2c1052' }}
+                    style={{ background: '#18343a' }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none"></div>
                 </div>
@@ -970,15 +946,15 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
                 {mag.pages?.map((page, index) => (
                   <div key={index} className="page-wrapper relative shadow-2xl" style={{ boxShadow: '0 0 20px rgba(200,200,200,0.3), inset 0 0 10px rgba(255,255,255,0.2)' }}>
                     {!loadingImages[`page-${index}`] && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-[#2c1052]">
-                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+                      <div className="absolute inset-0 flex items-center justify-center bg-[#18343a]">
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-500"></div>
                       </div>
                     )}
                     <img
                       src={page}
                       alt={`Page ${index + 2} of ${mag.title}`}
                       className={`w-full h-full object-cover transition-opacity duration-300 ${loadingImages[`page-${index}`] ? 'opacity-100' : 'opacity-0'}`}
-                      style={{ background: '#2c1052' }}
+                      style={{ background: '#18343a' }}
                     />
                     {/* Optional page number overlay */}
                     <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
@@ -1082,7 +1058,7 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
             </div>
 
             {/* Comment Section */}
-            <div className="border-t border-purple-500/20 pt-4 flex flex-col max-h-[40vh]">
+            <div className="border-t border-brand-500/20 pt-4 flex flex-col max-h-[40vh]">
               <h3 className="text-lg font-semibold mb-3 text-gray-100">
                 Comments
               </h3>
@@ -1090,7 +1066,7 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
               <ul className="space-y-3 overflow-y-auto flex-grow pr-2">
                 {isLoadingComments ? (
                   <div className="text-center py-4">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500 mx-auto"></div>
                     <p className="text-gray-400 text-sm mt-2">Loading comments...</p>
                   </div>
                 ) : commentsError ? (
@@ -1101,7 +1077,7 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
                         setIsLoadingComments(true);
                         setCommentsError("");
                       }}
-                      className="text-purple-400 hover:text-purple-300 text-sm underline"
+                      className="text-brand-400 hover:text-brand-300 text-sm underline"
                     >
                       Retry
                     </button>
@@ -1114,7 +1090,7 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
                   comments.map((c) => (
                     <li
                       key={c.id}
-                      className="bg-black/20 p-3 rounded-lg border border-purple-500/20"
+                      className="bg-black/20 p-3 rounded-lg border border-brand-500/20"
                     >
                       <div className="flex justify-between">
                         <div>
@@ -1140,11 +1116,11 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                   placeholder="Join the discussion..."
-                  className="flex-grow bg-black/20 border border-purple-500/20 rounded-full px-4 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-600"
+                  className="flex-grow bg-black/20 border border-brand-500/20 rounded-full px-4 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-600"
                 />
                 <button
                   type="submit"
-                  className="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2 rounded-full text-sm transition"
+                  className="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2 rounded-full text-sm transition"
                 >
                   Post
                 </button>
@@ -1166,7 +1142,7 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
         {/* Rating Popup */}
         {showRatingPopup && !hasRated && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
-            <div className="bg-gradient-to-br from-[#2c1052] to-[#1b0b28] border border-purple-500/30 rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl shadow-purple-500/20 animate-bounce-in">
+            <div className="vibe-panel bg-gradient-to-br from-[#18343a] to-[#0e1b1e] border border-brand-500/30 rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl shadow-brand-500/20 animate-bounce-in">
               <div className="text-center">
                 {/* Celebration Icon */}
                 <div className="mb-6">
@@ -1220,7 +1196,7 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
                   {userRating > 0 && (
                     <button
                       onClick={() => handleRating(userRating)}
-                      className="px-8 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-full transition-all duration-200 text-sm font-bold shadow-lg shadow-purple-500/30 transform hover:scale-105"
+                      className="px-8 py-2.5 bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-700 hover:to-brand-800 text-white rounded-full transition-all duration-200 text-sm font-bold shadow-lg shadow-brand-500/30 transform hover:scale-105"
                     >
                       Submit Rating
                     </button>

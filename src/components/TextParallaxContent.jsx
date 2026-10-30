@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion as Motion, useScroll, useTransform } from "framer-motion";
 import { FiArrowUpRight } from "react-icons/fi";
 
 export const TextParallaxContentExample = () => {
@@ -40,7 +40,7 @@ const StickyImage = ({ imgUrl }) => {
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
 
   return (
-    <motion.div
+    <Motion.div
       style={{
         backgroundImage: `url(${imgUrl})`,
         backgroundSize: "cover",
@@ -53,11 +53,11 @@ const StickyImage = ({ imgUrl }) => {
       className="sticky z-0 overflow-hidden rounded-3xl shadow-xl"
     >
       {/* Dark grey gradient fade overlay */}
-      <motion.div
+      <Motion.div
         className="absolute inset-0 bg-gradient-to-b from-neutral-900/80 via-neutral-900/50 to-transparent backdrop-blur-sm"
         style={{ opacity }}
       />
-    </motion.div>
+    </Motion.div>
   );
 };
 
@@ -72,18 +72,18 @@ const OverlayCopy = ({ subheading, heading }) => {
   const opacity = useTransform(scrollYProgress, [0.2, 0.5, 0.8], [0, 1, 0]);
 
   return (
-    <motion.div
+    <Motion.div
       style={{ y, opacity }}
       ref={targetRef}
       className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center text-white px-6"
     >
-      <motion.p className="mb-3 text-lg tracking-wider text-neutral-200 md:text-2xl">
+      <Motion.p className="mb-3 text-lg tracking-wider text-neutral-200 md:text-2xl">
         {subheading}
-      </motion.p>
-      <motion.h1 className="text-4xl font-extrabold leading-tight tracking-tight md:text-7xl lg:text-8xl">
+      </Motion.p>
+      <Motion.h1 className="text-4xl font-extrabold leading-tight tracking-tight md:text-7xl lg:text-8xl">
         {heading}
-      </motion.h1>
-    </motion.div>
+      </Motion.h1>
+    </Motion.div>
   );
 };
 

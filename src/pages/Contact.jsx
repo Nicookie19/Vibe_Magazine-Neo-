@@ -51,12 +51,12 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0b0c10] via-[#1b0b28] to-[#071030] text-gray-200 pt-20">
+    <div className="min-h-screen bg-gradient-to-br from-[#090d0f] via-[#0e1b1e] to-[#0b1417] text-gray-200 pt-20">
       {/* Background Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-20 left-10 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-violet-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
       <div className="relative z-10 px-4 sm:px-6 py-12 sm:py-16 max-w-7xl mx-auto">
@@ -64,25 +64,25 @@ const Contact = () => {
         {/* Header Section */}
         <div className="text-center mb-12 sm:mb-16">
           <div className="flex items-center justify-center mb-6">
-            <div className="w-16 sm:w-20 h-16 sm:h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl sm:rounded-2xl flex items-center justify-center transform hover:rotate-6 transition-transform duration-300 shadow-lg shadow-purple-500/50">
+            <div className="w-16 sm:w-20 h-16 sm:h-20 bg-gradient-to-br from-brand-500 to-pink-500 rounded-xl sm:rounded-2xl flex items-center justify-center transform hover:rotate-6 transition-transform duration-300 shadow-lg shadow-brand-500/50">
               <svg className="w-8 sm:w-10 h-8 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
               </svg>
             </div>
           </div>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 text-[#faf9ef]">
             Contact Us
           </h1>
-          <div className="w-24 sm:w-32 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto mb-6 sm:mb-8 rounded-full"></div>
+          <div className="w-24 sm:w-32 h-1 bg-gradient-to-r from-brand-500 to-pink-500 mx-auto mb-6 sm:mb-8 rounded-full"></div>
           <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
             Connect with The VIBE Club. We'd love to hear from you about submissions, collaborations, or any inquiries.
           </p>
         </div>
 
         {/* Team Members */}
-        <div className="bg-purple-900/20 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-purple-500/30 shadow-xl sm:shadow-2xl shadow-purple-500/10 p-6 sm:p-8 md:p-10 mb-8 sm:mb-12 hover:border-purple-500/50 hover:shadow-purple-500/20 transition-all duration-500">
+        <div className="vibe-panel bg-brand-900/20 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-brand-500/30 shadow-xl sm:shadow-2xl shadow-brand-500/10 p-6 sm:p-8 md:p-10 mb-8 sm:mb-12 hover:border-brand-500/50 hover:shadow-brand-500/20 transition-all duration-500">
           <div className="flex items-center space-x-3 mb-6 sm:mb-8">
-            <div className="w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center transform hover:scale-110 transition-transform duration-300 shadow-md shadow-purple-500/50">
+            <div className="w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-br from-brand-500 to-pink-500 rounded-xl flex items-center justify-center transform hover:scale-110 transition-transform duration-300 shadow-md shadow-brand-500/50">
               <svg className="w-5 sm:w-6 h-5 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
               </svg>
@@ -92,14 +92,14 @@ const Contact = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
             {/* Faculty Advisor - Dr. Alan Reyes */}
-            <div className="bg-purple-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 text-center border border-purple-500/20 hover:border-purple-500/40 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 transition-all duration-500 group">
+            <div className="vibe-panel bg-brand-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 text-center border border-brand-500/20 hover:border-brand-500/40 hover:scale-105 hover:shadow-xl hover:shadow-brand-500/20 transition-all duration-500 group">
               <div className="relative mb-4 sm:mb-6">
                 <img
                   src="https://ui-avatars.com/api/?name=Alan+Reyes&size=128&background=6366f1&color=fff&rounded=true&bold=true"
                   alt="Dr. Alan Reyes"
-                  className="w-24 sm:w-28 h-24 sm:h-28 rounded-full object-cover mx-auto border-4 border-purple-500 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-purple-500/50"
+                  className="w-24 sm:w-28 h-24 sm:h-28 rounded-full object-cover mx-auto border-4 border-brand-500 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-brand-500/50"
                 />
-                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 translate-y-1/2 w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full flex items-center justify-center shadow-lg shadow-purple-500/50">
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 translate-y-1/2 w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-br from-brand-500 to-brand-500 rounded-full flex items-center justify-center shadow-lg shadow-brand-500/50">
                   <svg className="w-3 sm:w-4 h-3 sm:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l9-5-9-5-9 5 9 5z"/>
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
@@ -107,11 +107,11 @@ const Contact = () => {
                 </div>
               </div>
               <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">N/A</h3>
-              <p className="text-purple-300 font-semibold mb-2">Faculty Advisor</p>
+              <p className="text-brand-300 font-semibold mb-2">Faculty Advisor</p>
               <p className="text-gray-400 mb-4">Department of Computer Science</p>
               <a
                 href="mailto:alan.reyes@university.edu"
-                className="inline-flex items-center space-x-2 text-purple-400 hover:text-purple-300 font-medium transition-colors duration-200 group/link">
+                className="inline-flex items-center space-x-2 text-brand-400 hover:text-brand-300 font-medium transition-colors duration-200 group/link">
                 <svg className="w-4 sm:w-5 h-4 sm:h-5 group-hover/link:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                 </svg>
@@ -120,7 +120,7 @@ const Contact = () => {
             </div>
 
             {/* Student Editor - Sophia Kim */}
-            <div className="bg-purple-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 text-center border border-purple-500/20 hover:border-purple-500/40 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 transition-all duration-500 group">
+            <div className="vibe-panel bg-brand-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 text-center border border-brand-500/20 hover:border-brand-500/40 hover:scale-105 hover:shadow-xl hover:shadow-brand-500/20 transition-all duration-500 group">
               <div className="relative mb-4 sm:mb-6">
                 <img
                   src="https://ui-avatars.com/api/?name=Sophia+Kim&size=128&background=ec4899&color=fff&rounded=true&bold=true"
@@ -134,11 +134,11 @@ const Contact = () => {
                 </div>
               </div>
               <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">N/A</h3>
-              <p className="text-purple-300 font-semibold mb-2">Editor-in-Chief</p>
+              <p className="text-brand-300 font-semibold mb-2">Editor-in-Chief</p>
               <p className="text-gray-400 mb-4">Class of 2025</p>
               <a
                 href="mailto:sophia.kim@university.edu"
-                className="inline-flex items-center space-x-2 text-purple-400 hover:text-purple-300 font-medium transition-colors duration-200 group/link"
+                className="inline-flex items-center space-x-2 text-brand-400 hover:text-brand-300 font-medium transition-colors duration-200 group/link"
               >
                 <svg className="w-4 sm:w-5 h-4 sm:h-5 group-hover/link:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
@@ -150,7 +150,7 @@ const Contact = () => {
         </div>
 
         {/* University Information */}
-        <div className="bg-purple-900/20 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-purple-500/30 shadow-xl sm:shadow-2xl shadow-purple-500/10 p-6 sm:p-8 md:p-10 mb-8 sm:mb-12 hover:border-purple-500/50 hover:shadow-purple-500/20 transition-all duration-500">
+        <div className="vibe-panel bg-brand-900/20 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-brand-500/30 shadow-xl sm:shadow-2xl shadow-brand-500/10 p-6 sm:p-8 md:p-10 mb-8 sm:mb-12 hover:border-brand-500/50 hover:shadow-brand-500/20 transition-all duration-500">
           <div className="flex items-center space-x-3 mb-6 sm:mb-8">
             <div className="w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center transform hover:scale-110 transition-transform duration-300 shadow-md shadow-orange-500/50">
               <svg className="w-5 sm:w-6 h-5 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -160,9 +160,9 @@ const Contact = () => {
             <h2 className="text-2xl sm:text-3xl font-bold text-white">Visit Our Campus</h2>
           </div>
 
-          <div className="bg-purple-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-purple-500/30 hover:border-purple-500/40 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-500">
+          <div className="vibe-panel bg-brand-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-brand-500/30 hover:border-brand-500/40 hover:shadow-lg hover:shadow-brand-500/10 transition-all duration-500">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
-              <div className="w-14 sm:w-16 h-14 sm:h-16 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-indigo-500/50">
+              <div className="w-14 sm:w-16 h-14 sm:h-16 bg-gradient-to-br from-brand-500 to-brand-500 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-brand-500/50">
                 <svg className="w-7 sm:w-8 h-7 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -189,7 +189,7 @@ const Contact = () => {
         </div>
 
         {/* Google Map */}
-        <div className="bg-purple-900/20 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-purple-500/30 shadow-xl sm:shadow-2xl shadow-purple-500/10 p-6 sm:p-8 md:p-10 mb-8 sm:mb-12 hover:border-purple-500/50 hover:shadow-purple-500/20 transition-all duration-500">
+        <div className="vibe-panel bg-brand-900/20 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-brand-500/30 shadow-xl sm:shadow-2xl shadow-brand-500/10 p-6 sm:p-8 md:p-10 mb-8 sm:mb-12 hover:border-brand-500/50 hover:shadow-brand-500/20 transition-all duration-500">
           <div className="flex items-center space-x-3 mb-6 sm:mb-8">
             <div className="w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center transform hover:scale-110 transition-transform duration-300 shadow-md shadow-green-500/50">
               <svg className="w-5 sm:w-6 h-5 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -199,7 +199,7 @@ const Contact = () => {
             <h2 className="text-2xl sm:text-3xl font-bold text-white">Find Us</h2>
           </div>
 
-          <div className="bg-purple-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-2 sm:p-3 border border-purple-500/30 shadow-lg shadow-purple-500/10">
+          <div className="vibe-panel bg-brand-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-2 sm:p-3 border border-brand-500/30 shadow-lg shadow-brand-500/10">
             <div className="overflow-hidden rounded-lg aspect-video">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d29324.91588788938!2d125.56409871083981!3d7.069941700000025!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x32f96d7040fea619%3A0xc5edd89e649e05b0!2sUniversity%20of%20the%20Immaculate%20Conception%20-%20Main!5e1!3m2!1sen!2sph!4v1756817726593!5m2!1sen!2sph"
@@ -218,7 +218,7 @@ const Contact = () => {
 
         {/* Office Hours */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-12">
-          <div className="bg-purple-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-purple-500/20 hover:border-purple-500/40 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 transition-all duration-500 group">
+          <div className="vibe-panel bg-brand-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-brand-500/20 hover:border-brand-500/40 hover:scale-105 hover:shadow-xl hover:shadow-brand-500/20 transition-all duration-500 group">
             <div className="flex items-start space-x-3 sm:space-x-4">
               <div className="w-12 sm:w-14 h-12 sm:h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center group-hover:rotate-6 transition-transform duration-300 flex-shrink-0 shadow-lg shadow-blue-500/50">
                 <svg className="w-6 sm:w-7 h-6 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -236,9 +236,9 @@ const Contact = () => {
             </div>
           </div>
 
-          <div className="bg-purple-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-purple-500/20 hover:border-purple-500/40 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 transition-all duration-500 group">
+          <div className="vibe-panel bg-brand-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-brand-500/20 hover:border-brand-500/40 hover:scale-105 hover:shadow-xl hover:shadow-brand-500/20 transition-all duration-500 group">
             <div className="flex items-start space-x-3 sm:space-x-4">
-              <div className="w-12 sm:w-14 h-12 sm:h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center group-hover:rotate-6 transition-transform duration-300 flex-shrink-0 shadow-lg shadow-purple-500/50">
+              <div className="w-12 sm:w-14 h-12 sm:h-14 bg-gradient-to-br from-brand-500 to-pink-500 rounded-xl flex items-center justify-center group-hover:rotate-6 transition-transform duration-300 flex-shrink-0 shadow-lg shadow-brand-500/50">
                 <svg className="w-6 sm:w-7 h-6 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                 </svg>
@@ -256,9 +256,9 @@ const Contact = () => {
         </div>
 
         {/* Feedback Form */}
-        <div className="bg-purple-900/20 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-purple-500/30 shadow-xl sm:shadow-2xl shadow-purple-500/10 p-6 sm:p-8 md:p-10 hover:border-purple-500/50 hover:shadow-purple-500/20 transition-all duration-500">
+        <div className="vibe-panel bg-brand-900/20 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-brand-500/30 shadow-xl sm:shadow-2xl shadow-brand-500/10 p-6 sm:p-8 md:p-10 hover:border-brand-500/50 hover:shadow-brand-500/20 transition-all duration-500">
           <div className="flex items-center space-x-3 mb-6 sm:mb-8">
-            <div className="w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center transform hover:scale-110 transition-transform duration-300 shadow-md shadow-purple-500/50">
+            <div className="w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-br from-brand-500 to-pink-500 rounded-xl flex items-center justify-center transform hover:scale-110 transition-transform duration-300 shadow-md shadow-brand-500/50">
               <svg className="w-5 sm:w-6 h-5 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
               </svg>
@@ -300,7 +300,7 @@ const Contact = () => {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-purple-950/50 border border-purple-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-white placeholder-gray-400 transition-all duration-300 hover:border-purple-500/50"
+                className="w-full px-4 py-3 bg-brand-950/50 border border-brand-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-white placeholder-gray-400 transition-all duration-300 hover:border-brand-500/50"
                 placeholder="Enter your full name"
               />
             </div>
@@ -316,7 +316,7 @@ const Contact = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-purple-950/50 border border-purple-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-white placeholder-gray-400 transition-all duration-300 hover:border-purple-500/50"
+                className="w-full px-4 py-3 bg-brand-950/50 border border-brand-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-white placeholder-gray-400 transition-all duration-300 hover:border-brand-500/50"
                 placeholder="you@university.edu"
               />
             </div>
@@ -332,7 +332,7 @@ const Contact = () => {
                 value={formData.subject}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-purple-950/50 border border-purple-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-white placeholder-gray-400 transition-all duration-300 hover:border-purple-500/50"
+                className="w-full px-4 py-3 bg-brand-950/50 border border-brand-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-white placeholder-gray-400 transition-all duration-300 hover:border-brand-500/50"
                 placeholder="Feedback, Inquiry, etc."
               />
             </div>
@@ -348,7 +348,7 @@ const Contact = () => {
                 value={formData.message}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-purple-950/50 border border-purple-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-white placeholder-gray-400 resize-none transition-all duration-300 hover:border-purple-500/50"
+                className="w-full px-4 py-3 bg-brand-950/50 border border-brand-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-white placeholder-gray-400 resize-none transition-all duration-300 hover:border-brand-500/50"
                 placeholder="Type your message here..."
               ></textarea>
             </div>
@@ -359,8 +359,8 @@ const Contact = () => {
               className={`w-full py-4 sm:py-5 px-8 sm:px-10 rounded-xl font-bold text-base sm:text-lg transition-all duration-500 relative overflow-hidden group
                 ${loading 
                   ? "bg-gray-600 cursor-not-allowed" 
-                  : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 hover:scale-105"
-                } text-white shadow-xl hover:shadow-2xl hover:shadow-purple-500/30 border border-purple-500/30`}
+                  : "bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-700 hover:to-brand-800 hover:scale-105"
+                } text-white shadow-xl hover:shadow-2xl hover:shadow-brand-500/30 border border-brand-500/30`}
             >
               {!loading && (
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>

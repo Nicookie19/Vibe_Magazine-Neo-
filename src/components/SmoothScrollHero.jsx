@@ -1,6 +1,6 @@
 import { ReactLenis } from "lenis/dist/lenis-react";
 import {
-  motion,
+  motion as Motion,
   useAnimation,
   useMotionTemplate,
   useScroll,
@@ -21,7 +21,7 @@ export const SmoothScrollHero = () => {
   }, [controls]);
 
   return (
-    <motion.div
+    <Motion.div
       initial={{
         backgroundImage:
           "linear-gradient(90deg, #312E81 0%, rgba(59, 19, 96, 0.8) 50%, #4C1D95 100%)",
@@ -39,7 +39,7 @@ export const SmoothScrollHero = () => {
         <Hero />
         <Schedule />
       </ReactLenis>
-    </motion.div>
+    </Motion.div>
   );
 };
 
@@ -72,7 +72,7 @@ const Hero = () => {
 
       <ParallaxImages />
 
-      <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-b from-transparent to-indigo-900/80" />
+      <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-b from-transparent to-brand-900/80" />
     </div>
   );
 };
@@ -96,7 +96,7 @@ const CenterImage = () => {
   ]);
 
   return (
-    <motion.div
+    <Motion.div
       className="sticky top-0 h-screen w-full"
       style={{
         clipPath,
@@ -162,7 +162,7 @@ const ParallaxImg = ({ className, alt, src, start, end }) => {
   const transform = useMotionTemplate`translateY(${y}px) scale(${scale})`;
 
   return (
-    <motion.img
+    <Motion.img
       src={src}
       alt={alt}
       className={className}
@@ -182,14 +182,14 @@ const Schedule = () => {
       id="launch-schedule"
       className="mx-auto max-w-5xl px-4 py-48 text-zinc-100 font-sans"
     >
-      <motion.h1
+      <Motion.h1
         initial={{ y: 48, opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}
         transition={{ ease: "easeInOut", duration: 0.75 }}
         className="mb-20 text-4xl font-black uppercase text-zinc-50"
       >
         Vibe Event
-      </motion.h1>
+      </Motion.h1>
       <ScheduleItem title="Party" date="Dec 9th" location="Father Celga" />
       <ScheduleItem title="Anniversary" date="Dec 20th" location="Boni" />
       <ScheduleItem title="Event" date="Jan 13th" location="Bajada" />
@@ -203,7 +203,7 @@ const Schedule = () => {
 
 const ScheduleItem = ({ title, date, location }) => {
   return (
-    <motion.div
+    <Motion.div
       initial={{ y: 48, opacity: 0 }}
       whileInView={{ y: 0, opacity: 1 }}
       transition={{ ease: "easeInOut", duration: 0.75 }}
@@ -217,6 +217,6 @@ const ScheduleItem = ({ title, date, location }) => {
         <p>{location}</p>
         <FiMapPin />
       </div>
-    </motion.div>
+    </Motion.div>
   );
 };

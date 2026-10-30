@@ -18,7 +18,7 @@ describe('Navbar', () => {
     renderNavbar()
     const logo = screen.getByAltText('Vibe Magazine Logo')
     expect(logo).toBeInTheDocument()
-    expect(logo).toHaveAttribute('src', 'https://raw.githubusercontent.com/JayDee15999/pic/refs/heads/main/1.png')
+    expect(logo).toHaveAttribute('src', '/brand/vibe-tv.png')
   })
 
   it('renders "Vibe Magazine" title', () => {

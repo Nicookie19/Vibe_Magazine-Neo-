@@ -164,13 +164,13 @@ input[type="range"] {
 }
 
 input[type="range"]::-webkit-slider-thumb {
-  @apply appearance-none w-4 h-4 rounded-full bg-purple-500 border-2 border-white shadow-md hover:bg-purple-400 transition-all;
+  @apply appearance-none w-4 h-4 rounded-full bg-brand-500 border-2 border-white shadow-md hover:bg-brand-400 transition-all;
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 input[type="range"]::-moz-range-thumb {
-  @apply w-4 h-4 rounded-full bg-purple-500 border-2 border-white shadow-md hover:bg-purple-400 transition-all;
+  @apply w-4 h-4 rounded-full bg-brand-500 border-2 border-white shadow-md hover:bg-brand-400 transition-all;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
@@ -182,17 +182,11 @@ input[type="range"]::-moz-range-thumb {
 input:focus,
 textarea:focus,
 select:focus {
-  @apply outline-none ring-2 ring-purple-500 shadow-md;
+  @apply outline-none ring-2 ring-brand-500 shadow-md;
   transition: all 0.2s ease-in-out;
 }
 
-/* Soft hover glow for buttons */
-button:hover,
-label:hover,
-a:hover {
-  @apply scale-[1.01];
-  transition: all 0.15s ease-out;
-}
+/* Hover treatments are scoped to components to keep controls stable. */
 
 /* =================== */
 /*   Custom Utility Classes */
@@ -200,15 +194,15 @@ a:hover {
 
 /* Pulsing CTA Button */
 .pulse-button {
-  box-shadow: 0 0 15px rgba(147, 51, 234, 0.3);
+  box-shadow: 0 0 15px rgba(96, 197, 206, 0.3);
   animation: pulse-slow 2s infinite;
 }
 
 /* Subtle Glassmorphism Card (optional) */
 .glass-card {
-  background: rgba(30, 10, 40, 0.6);
+  background: rgba(17, 35, 38, 0.6);
   /* Dark magenta-transparent */
-  border: 1px solid rgba(88, 28, 135, 0.3);
+  border: 1px solid rgba(57, 168, 179, 0.3);
   border-radius: 1rem;
 }
 
@@ -232,12 +226,12 @@ a:hover {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #6b21a8;
+  background: #217782;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9333ea;
+  background: #39a8b3;
 }
 
 /* =================== */
@@ -249,7 +243,7 @@ a:hover {
   border-radius: 8px;
   box-shadow: 
     0 8px 20px rgba(0, 0, 0, 0.4),
-    0 4px 8px rgba(76, 29, 149, 0.2);
+    0 4px 8px rgba(33, 119, 130, 0.2);
 }
 
 /* Book fullscreen mode styles */
@@ -261,13 +255,13 @@ a:hover {
   z-index: 9999 !important;
   width: 900px !important;
   height: 650px !important;
-  background: linear-gradient(145deg, #2a1f3d, #1a0f2e) !important;
-  border: 4px solid #4c1d95 !important;
+  background: linear-gradient(145deg, #193237, #0e1c20) !important;
+  border: 4px solid #217782 !important;
   border-radius: 16px !important;
   box-shadow: 
     0 0 0 3000px rgba(11, 12, 16, 0.95),
     0 30px 60px rgba(0, 0, 0, 0.8),
-    0 20px 40px rgba(76, 29, 149, 0.4),
+    0 20px 40px rgba(33, 119, 130, 0.4),
     inset 0 2px 6px rgba(255, 255, 255, 0.1),
     inset 0 -3px 6px rgba(0, 0, 0, 0.4) !important;
   animation: bookFullscreenIn 0.6s ease-out forwards;
@@ -282,11 +276,11 @@ a:hover {
   bottom: 0;
   width: 16px;
   background: linear-gradient(to right, 
-    #1a0f2e 0%, 
-    #3d2a4f 30%,
-    #4c1d95 50%,
-    #3d2a4f 70%, 
-    #1a0f2e 100%);
+    #0e1c20 0%,
+    #23444a 30%,
+    #217782 50%,
+    #23444a 70%,
+    #0e1c20 100%);
   border-radius: 8px 0 0 8px;
   box-shadow: 
     -3px 0 12px rgba(0, 0, 0, 0.7),
@@ -336,7 +330,7 @@ a:hover {
   box-shadow: 
     0 6px 16px rgba(0, 0, 0, 0.6),
     inset 0 1px 3px rgba(255, 255, 255, 0.1) !important;
-  border: 2px solid rgba(76, 29, 149, 0.3) !important;
+  border: 2px solid rgba(33, 119, 130, 0.3) !important;
 }
 
 .book-fullscreen-mode .magazine-flipbook .page-wrapper img {
@@ -360,11 +354,11 @@ a:hover {
   width: 2px;
   background: linear-gradient(to bottom, 
     transparent 0%,
-    rgba(76, 29, 149, 0.3) 10%,
-    rgba(76, 29, 149, 0.6) 50%,
-    rgba(76, 29, 149, 0.3) 90%,
+    rgba(33, 119, 130, 0.3) 10%,
+    rgba(33, 119, 130, 0.6) 50%,
+    rgba(33, 119, 130, 0.3) 90%,
     transparent 100%);
   transform: translateX(-50%);
   z-index: 1000;
-  box-shadow: 0 0 4px rgba(76, 29, 149, 0.4);
+  box-shadow: 0 0 4px rgba(33, 119, 130, 0.4);
 }

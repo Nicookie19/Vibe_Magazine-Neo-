@@ -109,7 +109,7 @@ const Submit = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0b0c10] via-[#1b0b28] to-[#071030] text-gray-200 pt-20">
+    <div className="min-h-screen bg-gradient-to-br from-[#090d0f] via-[#0e1b1e] to-[#0b1417] text-gray-200 pt-20">
       {/* Error Popup Modal */}
       {showErrorPopup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn">
@@ -163,9 +163,9 @@ const Submit = () => {
 
       {/* Background Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-20 left-10 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-violet-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
       <div className="relative z-10 px-4 sm:px-6 py-12 sm:py-16 max-w-5xl mx-auto">
@@ -173,16 +173,16 @@ const Submit = () => {
         {/* Header Section */}
         <div className="text-center mb-12 sm:mb-16">
           <div className="flex items-center justify-center mb-6">
-            <div className="w-16 sm:w-20 h-16 sm:h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl sm:rounded-2xl flex items-center justify-center transform hover:rotate-6 transition-transform duration-300">
+            <div className="w-16 sm:w-20 h-16 sm:h-20 bg-gradient-to-br from-brand-500 to-pink-500 rounded-xl sm:rounded-2xl flex items-center justify-center transform hover:rotate-6 transition-transform duration-300">
               <svg className="w-8 sm:w-10 h-8 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
               </svg>
             </div>
           </div>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 text-[#faf9ef]">
             Submit Your Work
           </h1>
-          <div className="w-24 sm:w-32 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto mb-6 sm:mb-8 rounded-full"></div>
+          <div className="w-24 sm:w-32 h-1 bg-gradient-to-r from-brand-500 to-pink-500 mx-auto mb-6 sm:mb-8 rounded-full"></div>
           <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
             Share your creativity with the university community. Submit your project and inspire others with your innovative work.
           </p>
@@ -191,7 +191,7 @@ const Submit = () => {
 
 
         {/* Submission Guidelines */}
-        <div className="bg-purple-900/20 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-purple-500/30 shadow-xl sm:shadow-2xl shadow-purple-500/10 p-6 sm:p-8 md:p-10 mb-8 sm:mb-12 hover:border-purple-500/50 hover:shadow-purple-500/20 transition-all duration-500">
+        <div className="vibe-panel bg-brand-900/20 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-brand-500/30 shadow-xl sm:shadow-2xl shadow-brand-500/10 p-6 sm:p-8 md:p-10 mb-8 sm:mb-12 hover:border-brand-500/50 hover:shadow-brand-500/20 transition-all duration-500">
           <div className="flex items-center space-x-3 mb-6 sm:mb-8">
             <div className="w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center transform hover:scale-110 transition-transform duration-300">
               <svg className="w-5 sm:w-6 h-5 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -202,7 +202,7 @@ const Submit = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-            <div className="bg-purple-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-purple-500/20 hover:border-purple-500/40 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 transition-all duration-500 group">
+            <div className="vibe-panel bg-brand-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-brand-500/20 hover:border-brand-500/40 hover:scale-105 hover:shadow-xl hover:shadow-brand-500/20 transition-all duration-500 group">
               <div className="w-12 sm:w-14 h-12 sm:h-14 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:rotate-6 transition-transform duration-300 shadow-lg shadow-green-500/50">
                 <svg className="w-6 sm:w-7 h-6 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -214,7 +214,7 @@ const Submit = () => {
               </p>
             </div>
 
-            <div className="bg-purple-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-purple-500/20 hover:border-purple-500/40 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 transition-all duration-500 group">
+            <div className="vibe-panel bg-brand-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-brand-500/20 hover:border-brand-500/40 hover:scale-105 hover:shadow-xl hover:shadow-brand-500/20 transition-all duration-500 group">
               <div className="w-12 sm:w-14 h-12 sm:h-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:rotate-6 transition-transform duration-300 shadow-lg shadow-orange-500/50">
                 <svg className="w-6 sm:w-7 h-6 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -226,8 +226,8 @@ const Submit = () => {
               </p>
             </div>
 
-            <div className="bg-purple-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-purple-500/20 hover:border-purple-500/40 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 transition-all duration-500 group">
-              <div className="w-12 sm:w-14 h-12 sm:h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:rotate-6 transition-transform duration-300 shadow-lg shadow-purple-500/50">
+            <div className="vibe-panel bg-brand-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-brand-500/20 hover:border-brand-500/40 hover:scale-105 hover:shadow-xl hover:shadow-brand-500/20 transition-all duration-500 group">
+              <div className="w-12 sm:w-14 h-12 sm:h-14 bg-gradient-to-br from-brand-500 to-pink-500 rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:rotate-6 transition-transform duration-300 shadow-lg shadow-brand-500/50">
                 <svg className="w-6 sm:w-7 h-6 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                 </svg>
@@ -272,7 +272,7 @@ const Submit = () => {
               </div>
               <button
                 onClick={() => setSuccess(false)}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-white transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-purple-500/50 text-base sm:text-lg"
+                className="bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-700 hover:to-brand-800 px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-white transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-brand-500/50 text-base sm:text-lg"
               >
                 Submit Another Work
               </button>
@@ -282,9 +282,9 @@ const Submit = () => {
 
         {/* Submission Form */}
         {!success && (
-          <div className="bg-purple-900/20 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-purple-500/30 shadow-xl sm:shadow-2xl shadow-purple-500/10 p-6 sm:p-8 md:p-10 hover:border-purple-500/50 hover:shadow-purple-500/20 transition-all duration-500">
+          <div className="vibe-panel bg-brand-900/20 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-brand-500/30 shadow-xl sm:shadow-2xl shadow-brand-500/10 p-6 sm:p-8 md:p-10 hover:border-brand-500/50 hover:shadow-brand-500/20 transition-all duration-500">
             <div className="flex items-center space-x-3 mb-6 sm:mb-8">
-              <div className="w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center transform hover:scale-110 transition-transform duration-300">
+              <div className="w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-br from-brand-500 to-pink-500 rounded-xl flex items-center justify-center transform hover:scale-110 transition-transform duration-300">
                 <svg className="w-5 sm:w-6 h-5 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                 </svg>
@@ -294,9 +294,9 @@ const Submit = () => {
 
             <form onSubmit={handleSubmit} className="space-y-8" encType="multipart/form-data">
               {/* Personal Information Section */}
-              <div className="bg-purple-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-purple-500/30 hover:border-purple-500/40 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-500">
+              <div className="vibe-panel bg-brand-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-brand-500/30 hover:border-brand-500/40 hover:shadow-lg hover:shadow-brand-500/10 transition-all duration-500">
                 <h3 className="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6 flex items-center space-x-3">
-                  <div className="w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center shadow-md shadow-purple-500/50">
+                  <div className="w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-br from-brand-500 to-pink-500 rounded-lg flex items-center justify-center shadow-md shadow-brand-500/50">
                     <svg className="w-4 sm:w-5 h-4 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                     </svg>
@@ -316,7 +316,7 @@ const Submit = () => {
                       value={form.full_name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-purple-950/50 border border-purple-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-white placeholder-gray-400 transition-all duration-300 hover:border-purple-500/50"
+                      className="w-full px-4 py-3 bg-brand-950/50 border border-brand-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-white placeholder-gray-400 transition-all duration-300 hover:border-brand-500/50"
                       placeholder="Enter your full name"
                     />
                   </div>
@@ -332,7 +332,7 @@ const Submit = () => {
                       value={form.student_id}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-purple-950/50 border border-purple-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-white placeholder-gray-400 transition-all duration-300 hover:border-purple-500/50"
+                      className="w-full px-4 py-3 bg-brand-950/50 border border-brand-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-white placeholder-gray-400 transition-all duration-300 hover:border-brand-500/50"
                       placeholder="e.g., 20230001"
                     />
                   </div>
@@ -349,14 +349,14 @@ const Submit = () => {
                     value={form.student_email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 bg-purple-950/50 border border-purple-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-white placeholder-gray-400 transition-all duration-300 hover:border-purple-500/50"
+                    className="w-full px-4 py-3 bg-brand-950/50 border border-brand-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-white placeholder-gray-400 transition-all duration-300 hover:border-brand-500/50"
                     placeholder="you@university.edu"
                   />
                 </div>
               </div>
 
               {/* Project Information Section */}
-              <div className="bg-purple-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-purple-500/30 hover:border-purple-500/40 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-500">
+              <div className="vibe-panel bg-brand-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-brand-500/30 hover:border-brand-500/40 hover:shadow-lg hover:shadow-brand-500/10 transition-all duration-500">
                 <h3 className="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6 flex items-center space-x-3">
                   <div className="w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center shadow-md shadow-blue-500/50">
                     <svg className="w-4 sm:w-5 h-4 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -378,7 +378,7 @@ const Submit = () => {
                       value={form.title_of_work}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-purple-950/50 border border-purple-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-white placeholder-gray-400 transition-all duration-300 hover:border-purple-500/50"
+                      className="w-full px-4 py-3 bg-brand-950/50 border border-brand-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-white placeholder-gray-400 transition-all duration-300 hover:border-brand-500/50"
                       placeholder="Enter the title of your work"
                     />
                   </div>
@@ -394,7 +394,7 @@ const Submit = () => {
                         name="course_program"
                         value={form.course_program}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 bg-purple-950/50 border border-purple-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-white placeholder-gray-400 transition-all duration-300 hover:border-purple-500/50"
+                        className="w-full px-4 py-3 bg-brand-950/50 border border-brand-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-white placeholder-gray-400 transition-all duration-300 hover:border-brand-500/50"
                         placeholder="e.g., CS 490, Digital Media"
                       />
                     </div>
@@ -408,7 +408,7 @@ const Submit = () => {
                         name="category"
                         value={form.category}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 bg-purple-950/50 border border-purple-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-white transition-all duration-300 hover:border-purple-500/50"
+                        className="w-full px-4 py-3 bg-brand-950/50 border border-brand-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-white transition-all duration-300 hover:border-brand-500/50"
                       >
                         <option value="Design Project">Design Project</option>
                         <option value="Literary Work">Literary Work</option>
@@ -429,7 +429,7 @@ const Submit = () => {
                       value={form.abstract}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-purple-950/50 border border-purple-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-white placeholder-gray-400 resize-none transition-all duration-300 hover:border-purple-500/50"
+                      className="w-full px-4 py-3 bg-brand-950/50 border border-brand-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-white placeholder-gray-400 resize-none transition-all duration-300 hover:border-brand-500/50"
                       placeholder="Briefly describe your project, its significance, methodology, and key findings or outcomes..."
                     ></textarea>
                   </div>
@@ -437,7 +437,7 @@ const Submit = () => {
               </div>
 
               {/* File Upload Section */}
-              <div className="bg-purple-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-purple-500/30 hover:border-purple-500/40 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-500">
+              <div className="vibe-panel bg-brand-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-brand-500/30 hover:border-brand-500/40 hover:shadow-lg hover:shadow-brand-500/10 transition-all duration-500">
                 <h3 className="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6 flex items-center space-x-3">
                   <div className="w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center shadow-md shadow-green-500/50">
                     <svg className="w-4 sm:w-5 h-4 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -477,7 +477,7 @@ const Submit = () => {
                           }
                         }}
                         required
-                        className="w-full px-4 py-3 bg-purple-950/50 border border-purple-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gradient-to-r file:from-purple-500 file:to-pink-500 file:text-white hover:file:from-purple-600 hover:file:to-pink-600 transition-all duration-300 hover:border-purple-500/50 cursor-pointer"
+                        className="w-full px-4 py-3 bg-brand-950/50 border border-brand-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gradient-to-r file:from-brand-500 file:to-pink-500 file:text-white hover:file:from-brand-600 hover:file:to-pink-600 transition-all duration-300 hover:border-brand-500/50 cursor-pointer"
                       />
                     </div>
                     <p className="text-sm text-gray-400 mt-2 flex items-center space-x-1">
@@ -511,16 +511,16 @@ const Submit = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`relative px-6 sm:px-10 py-4 sm:py-5 rounded-xl font-bold text-base sm:text-lg transition-all duration-500 text-white shadow-2xl border border-purple-500/30 overflow-hidden group
+                  className={`relative px-6 sm:px-10 py-4 sm:py-5 rounded-xl font-bold text-base sm:text-lg transition-all duration-500 text-white shadow-2xl border border-brand-500/30 overflow-hidden group
                     ${loading 
                       ? "bg-gray-600 cursor-not-allowed opacity-60" 
-                      : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 hover:scale-105 hover:shadow-purple-500/50"
+                      : "bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-700 hover:to-brand-800 hover:scale-105 hover:shadow-brand-500/50"
                     }`}
                 >
                   {!loading && (
                     <>
                       <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                      <div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <div className="absolute inset-0 bg-gradient-to-r from-brand-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     </>
                   )}
                   

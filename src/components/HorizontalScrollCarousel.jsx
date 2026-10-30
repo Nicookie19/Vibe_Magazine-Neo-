@@ -1,4 +1,4 @@
-import { motion, useTransform, useScroll } from "framer-motion";
+import { motion as Motion, useTransform, useScroll } from "framer-motion";
 import { useRef } from "react";
 
 const Example = () => {
@@ -27,12 +27,12 @@ const HorizontalScrollCarousel = () => {
     [0, 1],
     [
       "linear-gradient(to bottom, #27272a, #52525b)", // neutral-800 to neutral-600
-      "linear-gradient(to bottom, #4C1D95, #3B1360, #000000, #312E81)", // your purple-indigo base gradient
+      "linear-gradient(to bottom, #173237, #112326, #090d0f, #0e1b1e)", // VIBE television palette
     ]
   );
 
   return (
-    <motion.section
+    <Motion.section
       ref={targetRef}
       style={{ background }}
       className="relative h-[300vh]"
@@ -41,13 +41,13 @@ const HorizontalScrollCarousel = () => {
       <div className="absolute -top-10 left-20 right-0 h-10bg-gradient-to-b from-transparent to-neutral-900 z-0 pointer-events-none" />
 
       <div className="sticky top-0 flex h-screen items-center overflow-hidden">
-        <motion.div style={{ x }} className="flex gap-6 px-10">
+        <Motion.div style={{ x }} className="flex gap-6 px-10">
           {cards.map((card) => (
             <Card card={card} key={card.id} />
           ))}
-        </motion.div>
+        </Motion.div>
       </div>
-    </motion.section>
+    </Motion.section>
   );
 };
 

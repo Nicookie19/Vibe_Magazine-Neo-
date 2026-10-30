@@ -37,7 +37,7 @@ describe('AdminNavbar', () => {
     renderAdminNavbar()
     const logos = screen.getAllByAltText('Vibe Magazine Logo')
     expect(logos.length).toBeGreaterThanOrEqual(1)
-    expect(logos[0]).toHaveAttribute('src', 'https://raw.githubusercontent.com/JayDee15999/pic/refs/heads/main/1.png')
+    expect(logos[0]).toHaveAttribute('src', '/brand/vibe-tv.png')
   })
 
   it('renders "Vibe Magazine Admin Dashboard" title', () => {
@@ -71,8 +71,8 @@ describe('AdminNavbar', () => {
   it('highlights active tab', () => {
     renderAdminNavbar({ activeTab: 'analytics' })
     const analyticsTab = screen.getByText('Analytics').closest('button')
-    expect(analyticsTab).toHaveClass('bg-gradient-to-r')
-    expect(analyticsTab).toHaveClass('from-purple-600')
+    expect(analyticsTab).toHaveAttribute('aria-current', 'page')
+    expect(analyticsTab).toHaveClass('bg-brand-300')
   })
 
   it('calls handleTabClick when tab is clicked', () => {
@@ -91,7 +91,7 @@ describe('AdminNavbar', () => {
   it('has correct styling classes', () => {
     renderAdminNavbar()
     const nav = screen.getByRole('navigation')
-    expect(nav).toHaveClass('bg-gradient-to-r')
+    expect(nav).toHaveClass('bg-[#0b1012]')
     expect(nav).toHaveClass('sticky')
     expect(nav).toHaveClass('top-0')
     expect(nav).toHaveClass('z-20')

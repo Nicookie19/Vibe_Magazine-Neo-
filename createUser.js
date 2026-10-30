@@ -22,15 +22,14 @@ const supabaseAdmin = createClient(supabaseUrl, serviceKey, {
 });
 
 const createAdminUser = async () => {
-  // CHOOSE THE ROLE FOR THE NEW USER: 'admin' or 'superadmin'
-  const role = 'superadmin'; 
-
-  // --- User Details ---
-  const email = 'vibesuperadmin@uic.edu.ph'; // example: nmahipus_240000001368@uic.edu.ph
-  const password = 'superadmin22925'; // example: superadmin1368
-  const username = 'vibe_superadmin'; //super_admin
-  const displayName = 'Vibe Super Admin'; //Vibe Super Admin
-// Then run node createUser.js in terminal
+  const role = process.env.NEW_USER_ROLE || 'admin';
+  const email = process.env.NEW_USER_EMAIL;
+  const password = process.env.NEW_USER_PASSWORD;
+  const username = process.env.NEW_USER_USERNAME;
+  const displayName = process.env.NEW_USER_DISPLAY_NAME || username;
+  if (!email || !password || !username || !['admin', 'superadmin'].includes(role) || password.length < 8) {
+    throw new Error('Set NEW_USER_EMAIL, NEW_USER_USERNAME, and NEW_USER_PASSWORD (at least 8 characters). NEW_USER_ROLE must be admin or superadmin.');
+  }
 
   console.log(`Attempting to create user: ${email}`);
 
@@ -58,6 +57,7 @@ const createAdminUser = async () => {
         email: email,
         display_name: displayName,
         role: role,
+        is_active: true,
       });
 
     if (profileError) {
@@ -78,4 +78,7 @@ const createAdminUser = async () => {
   }
 };
 
-createAdminUser();
+createAdminUser().catch(error => {
+  console.error(error.message);
+  process.exitCode = 1;
+});
