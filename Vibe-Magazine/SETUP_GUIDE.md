@@ -49,6 +49,8 @@ git --version
 
 If a command is “not recognized,” close and reopen PowerShell after the installer has finished. This reloads your PATH.
 
+> **Note on Node.js version:** This project uses React 19 and Vite 7, which require Node.js 18+. Node.js 20 LTS or newer is recommended.
+
 ## 2. Recommended VS Code extensions
 
 Open VS Code, select the Extensions icon, and install:
@@ -175,14 +177,27 @@ Vite prints a local address, normally `http://localhost:5173/`. Open that addres
 Useful commands:
 
 ```bash
-npm run build    # Creates an optimized production build in dist/
-npm run preview  # Serves the already-built dist/ folder locally
-npm run lint     # Checks the source with ESLint
+npm run build       # Creates an optimized production build in dist/
+npm run preview     # Serves the already-built dist/ folder locally
+npm run lint        # Checks the source with ESLint
+npm test            # Runs tests in watch mode (development)
+npm run test:run    # Runs tests once (CI/CD)
+npm run test:ui     # Opens Vitest UI for visual test debugging
 ```
 
 To stop the development server, focus its terminal and press `Ctrl+C` on Windows or `Control+C` on macOS.
 
-## 7. Optional: deploy Supabase Edge Functions
+## 7. Running tests
+
+The project includes a Vitest + React Testing Library test suite. See [`TEST_SETUP.md`](../TEST_SETUP.md) for detailed test configuration and patterns.
+
+```bash
+npm test            # Watch mode for development
+npm run test:run    # Single run for CI/CD
+npm run test:ui     # Visual Vitest UI
+```
+
+## 8. Optional: deploy Supabase Edge Functions
 
 The admin tools call these hosted functions:
 
@@ -210,7 +225,7 @@ npx supabase secrets set SENDGRID_API_KEY=your_sendgrid_key
 
 Never expose any of these values in frontend code or a `VITE_` variable.
 
-## 8. Optional: Firebase deployment
+## 9. Optional: Firebase deployment
 
 The `package.json` file includes Firebase deploy scripts. They require a Firebase project and Firebase hosting configuration (`firebase.json` and `.firebaserc`), which are not currently committed in this repository. Do not run these scripts until that configuration exists.
 
@@ -222,7 +237,7 @@ firebase login
 npm run deploy:hosting
 ```
 
-## 9. Common problems
+## 10. Common problems
 
 ### `npm` or `node` is not recognized
 
@@ -266,7 +281,7 @@ Start Vite on another port:
 npm run dev -- --port 5174
 ```
 
-## 10. Before sharing code or asking for help
+## 11. Before sharing code or asking for help
 
 Run this quick check:
 
