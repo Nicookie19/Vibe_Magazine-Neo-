@@ -17,7 +17,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.tsx'],
-    include: ['src/**/*.{test,spec}.{ts,tsx,jsx}'],
+    include: ['src/**/*.{test,spec}.{js,ts,tsx,jsx}'],
     globals: true,
   },
 })
@@ -57,7 +57,7 @@ Global test setup with mocks for:
 
 ## Test Suite Summary
 
-### Test Files: 10 | Tests: 55 | All Passing
+### Test Files: 15 | Tests: 83 | All Passing
 
 | Test File | Component | Tests | Description |
 |-----------|-----------|-------|-------------|
@@ -65,12 +65,24 @@ Global test setup with mocks for:
 | `Navbar.test.jsx` | Navbar | 9 | Logo, navigation items, mobile menu, link paths |
 | `AdminNavbar.test.jsx` | AdminNavbar | 9 | Tabs, super admin detection, logout, active state |
 | `PageLayout.test.jsx` | PageLayout | 5 | Layout structure, navbar/footer rendering |
-| `ProtectedRoute.test.jsx` | ProtectedRoute | 4 | Auth loading, authenticated, unauthenticated, error handling |
+| `ProtectedRoute.test.jsx` | ProtectedRoute | 8 | Active staff access, denied profiles, auth changes, loading and errors |
 | `HorizontalScrollCarousel.test.jsx` | HorizontalScrollCarousel | 4 | Carousel rendering, card titles, image URLs |
 | `SmoothScrollHero.test.jsx` | SmoothScrollHero | 3 | Hero section, schedule items, dates/locations |
 | `TextParallaxContent.test.jsx` | TextParallaxContentExample | 4 | Heading, content, button rendering |
 | `BlurText.test.jsx` | BlurText | 8 | Text splitting, animation props, direction handling |
 | `MagazineContext.test.jsx` | MagazineContext | 3 | Provider state, remove magazine, re-renders |
+
+Additional regression coverage:
+
+| Test File | Tests | Description |
+|-----------|-------|-------------|
+| `supabaseClient.test.js` | 12 | Authentication helpers and client calls |
+| `utils/colorUtils.test.js` | 6 | Hex color conversion |
+| `pages/ConfirmSignup.test.jsx` | 2 | Invalid confirmation links and verified success |
+| `pages/MagazineReader.test.jsx` | 2 | Missing magazine and missing route-state handling |
+| `pages/AdminDashboard/AdminSubmissions.test.jsx` | 2 | Publishing without email delivery; denied acceptance does not publish |
+
+Counts above were verified on 2026-11-01. These tests mock backend services; passing them does not verify deployed database policies, OAuth configuration, or email delivery. See [PROJECT_AUDIT.md](PROJECT_AUDIT.md) for browser checks and remaining integration work.
 
 ## Running Tests
 
@@ -133,12 +145,12 @@ await waitFor(() => {
 - Admin navigation (AdminNavbar)
 - Animation components (BlurText, HorizontalScrollCarousel, SmoothScrollHero, TextParallaxContent)
 - Context providers (MagazineContext)
-- Utility functions (colorUtils - via supabaseClient tests)
+- Utility functions (`colorUtils.test.js`) and authentication helpers (`supabaseClient.test.js`)
 
 ❌ **Not Yet Covered:**
-- Main pages (Home, About, Contact, Login, Archive, MagazineReader, Submit)
+- Comprehensive main-page and form flows (reader and email-confirmation error paths have regression coverage)
 - Admin dashboard pages (AdminDashboard, AdminLogin, AdminPanel)
-- Admin tabs (AnalyticsTab, CommentsTab, UploadTab, etc.)
+- Comprehensive admin actions (submission acceptance has regression coverage)
 - Supabase edge functions
 - Form validation and submission flows
 

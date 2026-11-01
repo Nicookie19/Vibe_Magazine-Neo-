@@ -164,6 +164,17 @@ The login page includes a **Continue with Google** option. It uses Supabase OAut
 
 Google requires the `openid`, email, and profile scopes for this standard sign-in flow. Keep the Client Secret in Google/Supabase settings only—never add it to a Vite environment variable.
 
+### Create an initial staff account with the CLI
+
+`createUser.js` reads the following server-side environment variables:
+
+- `VITE_SUPABASE_URL` and `SUPABASE_SERVICE_KEY` identify the backend and authorize account creation.
+- `NEW_USER_EMAIL`, `NEW_USER_USERNAME`, and `NEW_USER_PASSWORD` are required; the password must contain at least eight characters.
+- `NEW_USER_ROLE` is `admin` by default, or `superadmin`.
+- `NEW_USER_DISPLAY_NAME` is optional and defaults to the username.
+
+Set these in your private environment, then run `node createUser.js` only when you intend to create a real account. Never commit passwords or the service key. The audit does not execute this command against the live backend.
+
 ## 6. Start the app
 
 From the project root:
@@ -215,13 +226,9 @@ npx supabase functions deploy reset-user-password
 npx supabase functions deploy send-notification
 ```
 
-The first three use Supabase-managed values such as `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` in the hosted function environment. `send-notification` additionally needs an email service key. Set only the provider you use:
+The first three use Supabase-managed values such as `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` in the hosted function environment.
 
-```bash
-npx supabase secrets set RESEND_API_KEY=your_resend_key
-# or
-npx supabase secrets set SENDGRID_API_KEY=your_sendgrid_key
-```
+`send-notification` currently returns HTTP 501 with `delivery_status: "not_configured"`. It does not send emails. Setting a provider API key alone does not enable delivery: a provider integration must first be implemented, authenticated, and tested in that function. Submission acceptance and magazine publication still work without notification delivery; the UI displays a warning when an email was not sent.
 
 Never expose any of these values in frontend code or a `VITE_` variable.
 
