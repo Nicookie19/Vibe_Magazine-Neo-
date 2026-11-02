@@ -298,3 +298,20 @@ npm run build
 ```
 
 Share the terminal error and the first browser-console error if something fails. Do not share `.env` contents, access tokens, API keys, or passwords.
+
+
+## PDF uploads up to 50 MB
+
+The submission form and admin PDF uploader accept files up to **52,428,800 bytes** (50 MB). Larger files are rejected before upload. Files above 6 MB use resumable Storage uploads in 6 MB chunks, with automatic retries and progress reporting. Keep the page open: resuming after closing or refreshing the browser is not implemented. Uploads go directly to Supabase, not through Vercel functions.
+
+To enable this in the hosted project:
+
+1. In Supabase **Storage settings**, set the global file size limit to 50 MB.
+2. Apply `supabase/migrations/20261102000000_increase_pdf_upload_limit.sql` to set the `student-submissions` and `magazines` bucket limits to 52,428,800 bytes. It updates existing buckets without changing their access policies or accepted file types. If you previously ran the 1 GB version of this SQL, run the updated SQL again to lower the limits; existing files are not deleted.
+3. Commit and push the app changes and lockfile so Vercel redeploys them.
+
+Admin PDF uploads generate cover and page previews. Complex or many-page PDFs may still be slow on devices with limited memory.
+
+The size boundaries and upload routing are tested using metadata-sized fixtures; no real 50 MB file was uploaded and no hosted global setting or bucket limit was changed during implementation.
+
+References: [Supabase file limits](https://supabase.com/docs/guides/storage/uploads/file-limits), [resumable uploads](https://supabase.com/docs/guides/storage/uploads/resumable-uploads).

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { MAX_UPLOAD_LABEL, validateUploadSize, uploadFile } from "../../utils/uploadFile";
 import { hexToRgba } from "../../utils/colorUtils";
 import { supabase } from "../../supabaseClient";
 import { toast } from "react-toastify";
@@ -32,6 +33,10 @@ const UploadTab = ({
       return;
     }
 
+    try { validateUploadSize(file); } catch (error) {
+      toast.error(error.message);
+      return;
+    }
     setIsProcessingPdf(true);
     
     toast.info("📄 Processing PDF... This may take a moment.", {
@@ -57,17 +62,9 @@ const UploadTab = ({
       const timestamp = Date.now();
       const safeFileName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
       const pdfPath = `pdfs/${timestamp}-${safeFileName}`;
-      const { error: pdfUploadError } = await supabase.storage
-        .from("magazines")
-        .upload(pdfPath, file, {
-          contentType: "application/pdf",
-          cacheControl: "3600",
-          upsert: false,
-        });
-
-      if (pdfUploadError) {
-        throw new Error(`Failed to upload the PDF: ${pdfUploadError.message}`);
-      }
+      await uploadFile("magazines", pdfPath, file, {
+        onProgress: percent => toast.update("pdf-processing", { render: `Uploading PDF: ${percent}% — keep this page open.` }),
+      });
 
       const { data: pdfUrlData } = supabase.storage
         .from("magazines")
@@ -597,7 +594,7 @@ const UploadTab = ({
 
               {/* Pages Upload */}
               <div className="space-y-2">
-                <label className="block text-xs font-medium text-gray-300">Magazine Pages</label>
+                <label className="block text-xs font-medium text-gray-300">Magazine Pages (PDF up to {MAX_UPLOAD_LABEL})</label>
                 <div
                   ref={pagesDropRef}
                   className="bg-gray-900/30 border-2 border-dashed border-gray-600 rounded-lg p-4 min-h-[80px] flex flex-col items-center justify-center gap-2 hover:border-brand-500 hover:bg-gray-900/50 transition-all group"

@@ -1,6 +1,7 @@
 // src/pages/Submit.js
 import React, { useState } from "react";
 import { supabase } from "../supabaseClient";
+import { MAX_UPLOAD_BYTES, MAX_UPLOAD_LABEL, uploadFile } from "../utils/uploadFile";
 
 const Submit = () => {
   const [success, setSuccess] = useState(false);
@@ -16,6 +17,7 @@ const Submit = () => {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [showErrorPopup, setShowErrorPopup] = useState(false);
 
   const handleChange = (e) => {
@@ -31,7 +33,9 @@ const Submit = () => {
     e.preventDefault();
     setError("");
     setShowErrorPopup(false);
+    if (loading) return;
     setLoading(true);
+    setUploadProgress(0);
     try {
       if (!form.file) {
         setError("Please select a file.");
@@ -45,10 +49,10 @@ const Submit = () => {
         setLoading(false);
         return;
       }
-      // Check file size (20MB = 20 * 1024 * 1024 bytes)
-      const maxSize = 20 * 1024 * 1024;
+      // Keep selection and submission validation consistent.
+      const maxSize = MAX_UPLOAD_BYTES;
       if (form.file.size > maxSize) {
-        setError("File size exceeds 20MB. Please upload a smaller file.");
+        setError(`File size exceeds ${MAX_UPLOAD_LABEL}. Please upload a smaller file.`);
         setShowErrorPopup(true);
         setLoading(false);
         return;
@@ -57,11 +61,7 @@ const Submit = () => {
       // Upload file to storage bucket
       const file = form.file;
       const fileName = `${Date.now()}_${file.name}`;
-      const { error: uploadError } = await supabase.storage
-        .from("student-submissions") // ✅ bucket name
-        .upload(fileName, file);
-
-      if (uploadError) throw new Error("Storage error: " + uploadError.message);
+      await uploadFile("student-submissions", fileName, file, { onProgress: setUploadProgress });
 
       // Get public URL
       const { data: publicUrlData, error: urlError } = supabase.storage
@@ -210,7 +210,7 @@ const Submit = () => {
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-white mb-3">File Format</h3>
               <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
-                Only <strong className="text-white">PDF files</strong> are accepted. Maximum file size is <strong className="text-emerald-300">20MB</strong>.
+                Only <strong className="text-white">PDF files</strong> are accepted. Maximum file size is <strong className="text-emerald-300">{MAX_UPLOAD_LABEL}</strong>.
               </p>
             </div>
 
@@ -450,12 +450,13 @@ const Submit = () => {
                 <div className="space-y-4">
                   <div>
                     <label htmlFor="file" className="block text-sm font-medium text-white mb-2">
-                      Upload PDF File (Max 20MB) *
+                      Upload PDF File (Max {MAX_UPLOAD_LABEL}) *
                     </label>
                     <div className="relative">
                       <input
                         type="file"
                         id="file"
+                        disabled={loading}
                         name="file"
                         accept=".pdf"
                         onChange={(e) => {
@@ -465,8 +466,8 @@ const Submit = () => {
                             setShowErrorPopup(true);
                             e.target.value = null;
                             setForm((f) => ({ ...f, file: null }));
-                          } else if (file && file.size > 20 * 1024 * 1024) {
-                            setError("File size exceeds 20MB. Please upload a smaller file.");
+                          } else if (file && file.size > MAX_UPLOAD_BYTES) {
+                            setError(`File size exceeds ${MAX_UPLOAD_LABEL}. Please upload a smaller file.`);
                             setShowErrorPopup(true);
                             e.target.value = null;
                             setForm((f) => ({ ...f, file: null }));
@@ -480,11 +481,12 @@ const Submit = () => {
                         className="w-full px-4 py-3 bg-brand-950/50 border border-brand-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gradient-to-r file:from-brand-500 file:to-pink-500 file:text-white hover:file:from-brand-600 hover:file:to-pink-600 transition-all duration-300 hover:border-brand-500/50 cursor-pointer"
                       />
                     </div>
+                    {loading && <p role="status" className="text-brand-300 mt-2">{uploadProgress < 100 ? `Uploading: ${uploadProgress}% — keep this page open.` : 'Upload complete. Saving submission…'}</p>}
                     <p className="text-sm text-gray-400 mt-2 flex items-center space-x-1">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                       </svg>
-                      <span>Only PDF files are accepted. Maximum file size: 20MB</span>
+                      <span>Only PDF files are accepted. Maximum file size: {MAX_UPLOAD_LABEL}</span>
                     </p>
                   </div>
 
