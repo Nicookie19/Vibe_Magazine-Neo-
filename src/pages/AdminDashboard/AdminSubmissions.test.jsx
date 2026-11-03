@@ -23,7 +23,7 @@ describe('submission acceptance', () => {
     supabase.channel = vi.fn(() => channel);
     supabase.auth.getSession.mockResolvedValue({ data: { session: null }, error: null });
     supabase.from.mockImplementation(table => table === 'magazines' ? { insert: publish } : {
-      select: vi.fn(() => ({ order: vi.fn().mockResolvedValue({ data: [submission], error: null }) })),
+      select: vi.fn(() => ({ order: vi.fn().mockReturnValue({ order: vi.fn().mockReturnValue({ range: vi.fn().mockResolvedValue({ data: [submission], error: null }) }) }) })),
       update: vi.fn(() => ({ eq: vi.fn(() => ({ select: vi.fn(() => ({ maybeSingle: updateResult })) })) })),
     });
   });
@@ -42,5 +42,59 @@ describe('submission acceptance', () => {
     fireEvent.click(await screen.findByTitle('Accept submission'));
     await waitFor(() => expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Permission denied'), expect.anything()));
     expect(publish).not.toHaveBeenCalled();
+  });
+});
+
+describe('database-confirmed submission deletion', () => {
+  let deletion, rows;
+  beforeEach(() => {
+    vi.clearAllMocks();
+    rows = [{ ...submission, status: 'Accepted' }];
+    deletion = vi.fn().mockResolvedValue({ data: { id: submission.id }, error: null });
+    const channel = { on: vi.fn().mockReturnThis(), subscribe: vi.fn().mockReturnThis(), unsubscribe: vi.fn() };
+    supabase.channel = vi.fn(() => channel);
+    supabase.from.mockImplementation(() => ({
+      select: vi.fn(() => ({ order: vi.fn().mockReturnValue({ order: vi.fn().mockReturnValue({
+        range: vi.fn(async () => ({ data: rows, error: null })),
+      }) }) })),
+      delete: vi.fn(() => ({ eq: vi.fn(() => ({ select: vi.fn(() => ({ maybeSingle: deletion })) })) })),
+    }));
+  });
+  const confirmDelete = async () => {
+    fireEvent.click(await screen.findByTitle('Delete submission'));
+    fireEvent.click(screen.getByRole('button', { name: 'Delete', exact: true }));
+  };
+  it('keeps approved submissions visible when RLS silently deletes zero rows', async () => {
+    deletion.mockResolvedValue({ data: null, error: null });
+    const { unmount } = render(<AdminSubmissions />);
+    await confirmDelete();
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('did not confirm deletion')));
+    expect(screen.getByTitle('Delete submission')).toBeInTheDocument();
+    expect(toast.success).not.toHaveBeenCalled();
+    unmount();
+    render(<AdminSubmissions />);
+    expect(await screen.findByTitle('Delete submission')).toBeInTheDocument();
+  });
+  it('shows database errors and keeps the submission available for retry', async () => {
+    deletion.mockResolvedValue({ data: null, error: { message: 'Permission denied' } });
+    render(<AdminSubmissions />);
+    await confirmDelete();
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Permission denied')));
+    expect(screen.getByTitle('Delete submission')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Delete', exact: true })).toBeEnabled();
+  });
+  it('removes an approved row only after confirmation and stays removed on reload', async () => {
+    deletion.mockImplementation(async () => {
+      rows = [];
+      return { data: { id: submission.id }, error: null };
+    });
+    const { unmount } = render(<AdminSubmissions />);
+    await confirmDelete();
+    await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Submission deleted.'));
+    expect(screen.queryByTitle('Delete submission')).not.toBeInTheDocument();
+    unmount();
+    render(<AdminSubmissions />);
+    await screen.findByText('Student Submissions');
+    expect(screen.queryByTitle('Delete submission')).not.toBeInTheDocument();
   });
 });

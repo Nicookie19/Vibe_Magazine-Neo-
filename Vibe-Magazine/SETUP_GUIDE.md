@@ -315,3 +315,24 @@ Admin PDF uploads generate cover and page previews. Complex or many-page PDFs ma
 The size boundaries and upload routing are tested using metadata-sized fixtures; no real 50 MB file was uploaded and no hosted global setting or bucket limit was changed during implementation.
 
 References: [Supabase file limits](https://supabase.com/docs/guides/storage/uploads/file-limits), [resumable uploads](https://supabase.com/docs/guides/storage/uploads/resumable-uploads).
+
+## Internal submission screening
+
+In **Admin Dashboard → Submissions**, click **Scan all submissions**. The scan includes all loaded submissions regardless of the status/search filters; the list is paginated when fetched. Review the expandable reports before making approval decisions.
+
+- Flags configurable whole-word/phrase matches (English/Filipino starter list), missing metadata, and common draft placeholders.
+- Extracts PDF text and compares distinct eight-word sequences across submissions. At least three shared sequences produces a review flag with matching submission IDs, page references, and an excerpt. This is not a plagiarism percentage or proof of misconduct; citations, boilerplate, and common passages can match. Paraphrasing and external sources are not detected.
+- No OCR or image moderation. Image-only pages, unsupported files, failed downloads, password protection, and extraction limits are explicitly marked incomplete. Review those manually.
+- Limits each PDF to 200 pages, 200,000 characters, and 60 seconds. Cancel stops the current job. Partial scans do not imply full comparison coverage.
+- Runs on demand inside the admin's browser using existing access to submissions; no new service, database migration, third-party text sharing, or API key is required. Reports and customized terms last only while the panel is mounted, and are invalidated when submission metadata/files or terms change. Replacing a file at the same URL requires a rescan.
+- Screening is advisory and does not modify submission status or block approval. It is not a grammar checker or a comprehensive language/context classifier.
+
+### Scanning selected submissions
+
+Expand **Choose submissions**, search by title/author/ID, check one or more entries, then click **Scan selected**. Only those files are downloaded and compared with each other; an individual scan explicitly reports that cross-submission overlap was not checked. **Scan all submissions** still scans the entire list, regardless of the selection. Limits protect browser memory and responsiveness; incomplete reports now identify the actual stopping page rather than incorrectly claiming 200 pages were scanned.
+
+## Submissions reappearing after deletion
+
+Apply `supabase/migrations/20261103000000_allow_staff_submission_deletion.sql` in the Supabase SQL Editor, then deploy the updated frontend. It grants DELETE access through an RLS policy for authenticated admins/superadmins whose profiles have `is_active = true`, regardless of submission status. It does not delete any records during setup.
+
+The UI now requires the deleted row ID in the database response before removing a submission locally. A zero-row deletion or database error keeps the row visible and shows an error. Deleting a submission does not remove a separately published magazine or its uploaded file; manage publication removal through the Library tab. The migration has not been applied to the hosted database by this code change.

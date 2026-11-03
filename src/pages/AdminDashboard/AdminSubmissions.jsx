@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { supabase } from "../../supabaseClient";
 import { toast } from "react-toastify";
+import SubmissionScreening from "../../components/submissions/SubmissionScreening";
 
 const AdminSubmissions = () => {
   const [submissions, setSubmissions] = useState([]);
@@ -14,12 +15,20 @@ const AdminSubmissions = () => {
 
   const fetchSubmissions = useCallback(async () => {
     try {
-      const { data, error } = await supabase
-        .from("submissions")
-        .select("*")
-        .order("submitted_at", { ascending: false });
-      if (error) throw error;
-      setSubmissions(data || []);
+      const all = [];
+      const pageSize = 100;
+      for (let offset = 0; ; offset += pageSize) {
+        const { data, error } = await supabase
+          .from("submissions")
+          .select("*")
+          .order("submitted_at", { ascending: false })
+          .order("id", { ascending: true })
+          .range(offset, offset + pageSize - 1);
+        if (error) throw error;
+        all.push(...(data || []));
+        if (!data || data.length < pageSize) break;
+      }
+      setSubmissions(all);
     } catch (err) {
       setError("Could not load submissions: " + (err.message || err));
     } finally {
@@ -358,24 +367,30 @@ The Vibe Magazine Editorial Team
 
   // Handle delete confirmation
   const handleDeleteConfirm = async () => {
-    if (!deleteTarget) return;
+    if (!deleteTarget || processingIds.includes(deleteTarget.id)) return;
+    const targetId = deleteTarget.id;
+    setProcessingIds((ids) => [...ids, targetId]);
 
-    setProcessingIds((ids) => [...ids, deleteTarget.id]);
-    
     try {
-      const { error } = await supabase.from("submissions").delete().eq("id", deleteTarget.id);
-      if (error) {
-        console.error("Supabase delete error:", error);
-        throw error;
+      const { data: deleted, error } = await supabase
+        .from("submissions")
+        .delete()
+        .eq("id", targetId)
+        .select("id")
+        .maybeSingle();
+      if (error) throw error;
+      if (!deleted || deleted.id !== targetId) {
+        throw new Error("The database did not confirm deletion. Your account may not have delete permission, or this submission was already removed. Refresh the list; if it remains, apply the staff submission delete policy.");
       }
-      // Optimistically remove from UI in case real-time is delayed
-      setSubmissions((subs) => subs.filter((sub) => sub.id !== deleteTarget.id));
-    } catch (err) {
-      console.error("Delete exception:", err);
-    } finally {
-      setProcessingIds((ids) => ids.filter((pid) => pid !== deleteTarget.id));
+      setSubmissions((subs) => subs.filter((sub) => sub.id !== targetId));
+      toast.success("Submission deleted.");
       setShowDeleteModal(false);
       setDeleteTarget(null);
+    } catch (err) {
+      console.error("Delete submission error:", err);
+      toast.error("Could not delete submission: " + (err.message || err));
+    } finally {
+      setProcessingIds((ids) => ids.filter((pid) => pid !== targetId));
     }
   };
 
@@ -422,6 +437,8 @@ The Vibe Magazine Editorial Team
             </div>
           </div>
         </div>
+
+        <SubmissionScreening submissions={submissions} />
 
         {/* Controls Section */}
         <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 mb-6 shadow-lg">
