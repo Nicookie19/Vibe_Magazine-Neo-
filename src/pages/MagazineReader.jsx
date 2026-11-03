@@ -7,6 +7,7 @@ import * as pdfjsLib from "pdfjs-dist";
 import pdfjsWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 import { supabase } from "../supabaseClient";
 import "../styles/magazineReader.css";
+import { saveRating, ratingErrorMessage } from "../utils/saveRating";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -36,6 +37,7 @@ const MagazineReader = () => {
     const [hoverRating, setHoverRating] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [hasRated, setHasRated] = useState(false);
+    const [ratingError, setRatingError] = useState("");
     const pageFlipRef = React.useRef(null);
     const containerRef = React.useRef(null);
     const [zoom, setZoom] = useState(1);
@@ -783,49 +785,17 @@ const renderPdfPages = async () => {
         if (rating === 0 || isSubmitting) return;
 
         setIsSubmitting(true);
-
+        setRatingError("");
         try {
-            // Save rating to database using upsert (insert or update)
-            const { error } = await supabase
-                .from("magazine_ratings")
-                .upsert([
-                    {
-                        magazine_id: magazine.id,
-                        user_id: userId,
-                        rating: rating
-                    }
-                ], {
-                    onConflict: 'magazine_id,user_id' // Update if already exists
-                });
-
-            if (error) {
-                console.error('Error saving rating:', error);
-                alert('Failed to save rating. Please try again.');
-                setIsSubmitting(false);
-                return;
-            }
-
-            // Record rating analytics event
-            await supabase.from("magazine_analytics").insert([
-                { magazine_id: magazine.id, event_type: "rating", metadata: { rating } }
-            ]);
-
-            console.log('Rating submitted successfully:', rating, 'for magazine:', magazine.id);
-
-            // Mark as rated
+            const savedRating = await saveRating(magazine.id, userId, rating);
+            setRating(savedRating);
             setHasRated(true);
-
-            // Show success feedback
             setShowRatingModal(false);
-
-            // Navigate back after a short delay
-            setTimeout(() => {
-                navigate('/archive');
-            }, 300);
-
-        } catch (err) {
-            console.error('Unexpected error:', err);
-            alert('An unexpected error occurred. Please try again.');
+            navigate('/archive');
+        } catch (error) {
+            console.error('Error saving rating:', error);
+            setRatingError(ratingErrorMessage(error));
+        } finally {
             setIsSubmitting(false);
         }
     };
@@ -1643,6 +1613,8 @@ const renderPdfPages = async () => {
                                 {[1, 2, 3, 4, 5].map((star) => (
                                     <button
                                         key={star}
+                                        disabled={isSubmitting}
+                                        aria-label={`Rate ${star} stars`}
                                         onClick={() => handleStarClick(star)}
                                         onMouseEnter={() => setHoverRating(star)}
                                         onMouseLeave={() => setHoverRating(0)}
@@ -1673,6 +1645,7 @@ const renderPdfPages = async () => {
                                 </p>
                             )}
 
+                            {ratingError && <p role="alert" className="text-red-300 mb-4">{ratingError}</p>}
                             {/* Action Buttons */}
                             <div className="flex gap-3 justify-center">
                                 <button

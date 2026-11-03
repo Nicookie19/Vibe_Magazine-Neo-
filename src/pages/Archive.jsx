@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import PageFlip from "react-pageflip";
 import { supabase } from "../supabaseClient";
 import "../styles/magazineFlipbook.css";
+import { saveRating, ratingErrorMessage } from "../utils/saveRating";
 
 
 const Archive = () => {
@@ -222,6 +223,8 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
   const [showRatingPopup, setShowRatingPopup] = useState(false);
   const [userRating, setUserRating] = useState(0);
   const [hasRated, setHasRated] = useState(false);
+  const [ratingError, setRatingError] = useState("");
+  const [isSubmittingRating, setIsSubmittingRating] = useState(false);
   const [, setCurrentPage] = useState(1);
   const [modalDimensions, setModalDimensions] = useState({ width: 480, height: 700 });
   const [, setIsMobile] = useState(false);
@@ -509,32 +512,20 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
   };
 
   const handleRating = async (rating) => {
-    setUserRating(rating);
-    
-    // Save rating to database
-    const { error } = await supabase
-      .from("magazine_ratings")
-      .upsert([
-        { 
-          magazine_id: mag.id, 
-          user_id: userId, 
-          rating: rating 
-        }
-      ]);
-
-    if (!error) {
+    if (isSubmittingRating || hasRated) return;
+    setIsSubmittingRating(true);
+    setRatingError("");
+    try {
+      const savedRating = await saveRating(mag.id, userId, rating);
+      setUserRating(savedRating);
       setHasRated(true);
       setShowRatingPopup(false);
-      
-      // Record rating analytics event
-      await supabase.from("magazine_analytics").insert([
-        { magazine_id: mag.id, event_type: "rating", metadata: { rating } }
-      ]);
-
-      // Close the modal after rating
-      setTimeout(() => {
-        onClose();
-      }, 1000); // Small delay to show confirmation
+      onClose();
+    } catch (error) {
+      console.error('Error saving rating:', error);
+      setRatingError(ratingErrorMessage(error));
+    } finally {
+      setIsSubmittingRating(false);
     }
   };
 
@@ -1165,9 +1156,8 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
-                      onClick={() => handleRating(star)}
-                      onMouseEnter={() => setUserRating(star)}
-                      onMouseLeave={() => !hasRated && setUserRating(0)}
+                      disabled={isSubmittingRating}
+                      onClick={() => setUserRating(star)}
                       className="group transform transition-all duration-200 hover:scale-125 focus:outline-none"
                     >
                       <svg 
@@ -1185,6 +1175,7 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
                   ))}
                 </div>
 
+                {ratingError && <p role="alert" className="text-red-300 mb-4">{ratingError}</p>}
                 {/* Action Buttons */}
                 <div className="flex gap-3 justify-center">
                   <button
@@ -1195,10 +1186,11 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
                   </button>
                   {userRating > 0 && (
                     <button
+                      disabled={isSubmittingRating}
                       onClick={() => handleRating(userRating)}
                       className="px-8 py-2.5 bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-700 hover:to-brand-800 text-white rounded-full transition-all duration-200 text-sm font-bold shadow-lg shadow-brand-500/30 transform hover:scale-105"
                     >
-                      Submit Rating
+                      {isSubmittingRating ? "Submitting..." : "Submit Rating"}
                     </button>
                   )}
                 </div>
