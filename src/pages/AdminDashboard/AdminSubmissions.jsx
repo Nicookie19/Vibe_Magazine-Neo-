@@ -1,3 +1,4 @@
+import { formatDeadline } from "../../utils/editorialRules";
 import React, { useEffect, useState, useCallback } from "react";
 import { supabase } from "../../supabaseClient";
 import { toast } from "react-toastify";
@@ -12,6 +13,9 @@ const AdminSubmissions = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [rejectTarget, setRejectTarget] = useState(null);
+  const [remarks, setRemarks] = useState("");
+  const [rejectionError, setRejectionError] = useState("");
 
   const fetchSubmissions = useCallback(async () => {
     try {
@@ -152,7 +156,10 @@ Dear ${submission.full_name},
 
 Thank you for your submission "${submission.title_of_work}" to Vibe Magazine.
 
-After careful review, we regret to inform you that your submission has not been selected for this publication cycle.
+After careful review, your submission has not been selected for this publication cycle.
+
+Reviewer remarks:
+${submission.rejection_remarks || "Please contact the editorial team for details."}
 
 Submission Details:
 - Title: ${submission.title_of_work}
@@ -272,6 +279,9 @@ The Vibe Magazine Editorial Team
   };
 
   const handleReject = async (id) => {
+    if (processingIds.includes(id)) return;
+    if (!remarks.trim()) { setRejectionError("Please explain why this submission is being rejected."); return; }
+    setRejectionError("");
     setProcessingIds((ids) => [...ids, id]);
     
     // Show processing toast
@@ -294,7 +304,7 @@ The Vibe Magazine Editorial Team
       // Update status in database
       const { data: updatedSubmission, error } = await supabase
         .from("submissions")
-        .update({ status: "Rejected" })
+        .update({ status: "Rejected", rejection_remarks: remarks.trim() })
         .eq("id", id)
         .select("*")
         .maybeSingle();
@@ -309,9 +319,11 @@ The Vibe Magazine Editorial Team
         subs.map((sub) => (sub.id === id ? updatedSubmission : sub))
       );
 
+      setRejectTarget(null);
+      setRemarks("");
       // Send notification email
       console.log(`📝 Submission rejected. Sending notification to ${submission.student_email}...`);
-      const emailSent = await sendNotificationEmail(submission, "Rejected");
+      const emailSent = await sendNotificationEmail({ ...submission, rejection_remarks: remarks.trim() }, "Rejected");
 
       if (emailSent) {
         toast.success(`📝 Submission rejected and notification sent to ${submission.student_email}.`, {
@@ -326,6 +338,7 @@ The Vibe Magazine Editorial Team
         toast.warn("Submission rejected, but the notification email was not sent.");
       }
     } catch (err) {
+      setRejectionError(err.message || "Could not save rejection. Please try again.");
       console.error("Reject submission error:", err);
     } finally {
       setProcessingIds((ids) => ids.filter((pid) => pid !== id));
@@ -566,7 +579,7 @@ The Vibe Magazine Editorial Team
                         <svg className="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <span className="text-sm font-semibold text-brand-300 uppercase tracking-wider">Date</span>
+                        <span className="text-sm font-semibold text-brand-300 uppercase tracking-wider">Submitted / Deadline</span>
                       </div>
                     </th>
                     <th className="px-6 py-5 text-center">
@@ -594,6 +607,7 @@ The Vibe Magazine Editorial Team
                       <td className="px-6 py-6">
                         <div>
                           <div className="text-sm font-semibold text-white mb-2">{submission.title_of_work}</div>
+                          {submission.rejection_remarks && <p className="text-sm text-red-200 whitespace-pre-wrap break-words max-w-sm mb-2">Rejection remarks: {submission.rejection_remarks}</p>}
                           <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-brand-600/20 to-pink-600/20 text-brand-200 border border-brand-500/30">
                             {submission.category}
                           </span>
@@ -656,6 +670,7 @@ The Vibe Magazine Editorial Team
                         ) : (
                           <span className="text-brand-400">-</span>
                         )}
+                        <p className="text-xs text-yellow-200 mt-2">Publication due: {formatDeadline(submission.submitted_at)}</p>
                       </td>
                       <td className="px-6 py-6 text-center">
                         <div className="flex justify-center">
@@ -684,10 +699,10 @@ The Vibe Magazine Editorial Team
                             )}
                           </button>
                           <button
-                            onClick={() => handleReject(submission.id)}
-                            disabled={submission.status === "Accepted" || submission.status === "Rejected" || processingIds.includes(submission.id)}
+                            onClick={() => { setRejectTarget(submission); setRemarks(submission.rejection_remarks || ""); setRejectionError(""); }}
+                            disabled={submission.status === "Accepted" || processingIds.includes(submission.id)}
                             className="inline-flex items-center px-3 py-2 text-xs font-semibold rounded-lg text-white bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg group-hover:shadow-xl"
-                            title="Reject submission"
+                            title={submission.status === "Rejected" ? "Edit rejection remarks" : "Reject submission"}
                           >
                             {processingIds.includes(submission.id) ? (
                               <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
@@ -727,6 +742,22 @@ The Vibe Magazine Editorial Team
           )}
         </div>
       </div>
+
+      {rejectTarget && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <form role="dialog" aria-modal="true" aria-labelledby="reject-heading" onSubmit={e => { e.preventDefault(); handleReject(rejectTarget.id); }} className="vibe-panel bg-[#193237] p-6 rounded-xl w-full max-w-lg">
+            <h2 id="reject-heading" className="text-xl font-bold text-white">Reject “{rejectTarget.title_of_work}”</h2>
+            <label htmlFor="rejection-remarks" className="block text-gray-200 mt-4 mb-2">Reviewer remarks</label>
+            <textarea autoFocus id="rejection-remarks" required maxLength={3000} value={remarks} onChange={e => setRemarks(e.target.value)} disabled={processingIds.includes(rejectTarget.id)} className="w-full min-h-32 bg-black/30 text-white border rounded p-3" />
+            <p className="text-xs text-gray-400">Explain what needs to change. Remarks are saved with the submission.</p>
+            {rejectionError && <p role="alert" className="text-red-300 mt-2">{rejectionError}</p>}
+            <div className="flex justify-end gap-3 mt-4">
+              <button type="button" disabled={processingIds.includes(rejectTarget.id)} onClick={() => setRejectTarget(null)} className="text-gray-200 px-4 py-2">Cancel</button>
+              <button type="submit" disabled={processingIds.includes(rejectTarget.id)} className="bg-red-600 text-white rounded px-4 py-2">{processingIds.includes(rejectTarget.id) ? "Saving…" : "Save rejection"}</button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (

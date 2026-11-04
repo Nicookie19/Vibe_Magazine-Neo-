@@ -336,3 +336,22 @@ Expand **Choose submissions**, search by title/author/ID, check one or more entr
 Apply `supabase/migrations/20261103000000_allow_staff_submission_deletion.sql` in the Supabase SQL Editor, then deploy the updated frontend. It grants DELETE access through an RLS policy for authenticated admins/superadmins whose profiles have `is_active = true`, regardless of submission status. It does not delete any records during setup.
 
 The UI now requires the deleted row ID in the database response before removing a submission locally. A zero-row deletion or database error keeps the row visible and shows an error. Deleting a submission does not remove a separately published magazine or its uploaded file; manage publication removal through the Library tab. The migration has not been applied to the hosted database by this code change.
+
+## Ratings blocked by database permissions
+
+Run `supabase/migrations/20261104000000_allow_reader_ratings.sql` in the Supabase SQL Editor. This fixes the reader's “Ratings are currently blocked by the database permissions” message by allowing anonymous and authenticated readers to read ratings and insert ratings of 1–5 for published magazines. Row-level security stays enabled, and this migration grants no update or delete access. It supports UUID defaults and sequence-generated rating IDs.
+
+The current site uses a browser-generated text ID stored in localStorage, not an authenticated user ID. One rating per browser is a convenience, not verified identity or abuse prevention. Existing policies are preserved; inspect any other permissive policies if tighter restrictions are needed.
+
+No frontend change or Vercel redeployment is required for this database-only fix. After applying the SQL, retry the rating. This migration has not been applied to the hosted database by the code change.
+
+## School email, review remarks, deadlines, and comment filtering
+
+Apply `supabase/migrations/20261104000100_editorial_review_rules.sql` before deploying the frontend, and redeploy the `create-admin-user` Edge Function if used.
+
+- New submission/contact emails, supplied comment emails, and new or changed account/profile emails must use exactly `@uic.edu.ph` (case insensitive). Subdomains and lookalike suffixes are rejected. Existing accounts and unchanged historical emails are retained; domain validation does not itself prove mailbox ownership. The Auth trigger also covers account creation through direct APIs and OAuth.
+- Active admins and superadmins must provide rejection remarks (up to 3,000 characters); remarks are saved with the rejected status. Existing rejected submissions can receive edited remarks. Remarks are included in notification requests, but delivery still requires the previously unconfigured email provider. Access to stored remarks follows existing submission read policies.
+- “Publication due” means 72 hours after the original submission timestamp, displayed in Asia/Manila time. This is a reminder, not an automatic rejection or publication job. The database assigns submission timestamps and prevents changing them.
+- New/edited comments are censored in the database, covering both `text` and `comment_text` columns. Public rendering also censors historical comment text without rewriting stored history. The filter uses whole words and common English/Filipino curses with a few spelling variants; it cannot recognize every evasion or interpret context. Human moderation remains available.
+
+Verification includes local PostgreSQL-compatible checks for domain restrictions, permissions on reviewer remarks, timestamp integrity, and both comment schemas. Hosted migrations and Edge Function deployment are not performed by these source changes.

@@ -1,3 +1,4 @@
+import { censorComment } from "../utils/editorialRules";
 // src/pages/Archive.jsx
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -489,7 +490,7 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
       magazine_id: mag.id,
       user_id: userId,
       user_name: "Anonymous User", // You can later add user profiles
-      text: newComment.trim()
+      text: censorComment(newComment.trim())
     };
 
     // Save comment to database
@@ -1094,7 +1095,7 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
                           {new Date(c.created_at).toLocaleDateString()}
                         </span>
                       </div>
-                      <p className="text-gray-300 text-sm mt-1">{c.text}</p>
+                      <p className="text-gray-300 text-sm mt-1">{censorComment(c.comment_text || c.text)}</p>
                     </li>
                   ))
                 )}

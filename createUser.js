@@ -1,3 +1,4 @@
+import { isUicEmail, UIC_EMAIL_MESSAGE } from "./src/utils/editorialRules.js";
 import dotenv from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
 
@@ -30,6 +31,8 @@ const createAdminUser = async () => {
   if (!email || !password || !username || !['admin', 'superadmin'].includes(role) || password.length < 8) {
     throw new Error('Set NEW_USER_EMAIL, NEW_USER_USERNAME, and NEW_USER_PASSWORD (at least 8 characters). NEW_USER_ROLE must be admin or superadmin.');
   }
+
+  if (!isUicEmail(email)) throw new Error(UIC_EMAIL_MESSAGE);
 
   console.log(`Attempting to create user: ${email}`);
 

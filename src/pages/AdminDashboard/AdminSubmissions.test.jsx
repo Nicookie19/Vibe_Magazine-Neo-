@@ -43,6 +43,37 @@ describe('submission acceptance', () => {
     await waitFor(() => expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Permission denied'), expect.anything()));
     expect(publish).not.toHaveBeenCalled();
   });
+  it('requires remarks and saves them together with rejected status', async () => {
+    updateResult.mockResolvedValue({ data: { ...submission, status: 'Rejected', rejection_remarks: 'Please cite your sources.' }, error: null });
+    render(<AdminSubmissions />);
+    fireEvent.click(await screen.findByTitle('Reject submission'));
+    fireEvent.change(screen.getByLabelText('Reviewer remarks'), { target: { value: '   ' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save rejection' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Please explain');
+    expect(updateResult).not.toHaveBeenCalled();
+    fireEvent.change(screen.getByLabelText('Reviewer remarks'), { target: { value: 'Please cite your sources.' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save rejection' }));
+    expect(await screen.findByText('Rejection remarks: Please cite your sources.')).toBeInTheDocument();
+    expect(screen.getByTitle('Edit rejection remarks')).toBeEnabled();
+    expect(publish).not.toHaveBeenCalled();
+  });
+
+  it('keeps the remarks dialog open when saving fails', async () => {
+    updateResult.mockResolvedValue({ data: null, error: { message: 'Permission denied' } });
+    render(<AdminSubmissions />);
+    fireEvent.click(await screen.findByTitle('Reject submission'));
+    fireEvent.change(screen.getByLabelText('Reviewer remarks'), { target: { value: 'Please revise.' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save rejection' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Permission denied');
+    expect(screen.getByLabelText('Reviewer remarks')).toHaveValue('Please revise.');
+  });
+
+  it('displays the publication deadline in Philippine time', async () => {
+    render(<AdminSubmissions />);
+    expect(await screen.findByText(/Publication due:/)).toHaveTextContent('Oct 4, 2026');
+    expect(screen.getByText(/Publication due:/)).toHaveTextContent('PHT');
+  });
+
 });
 
 describe('database-confirmed submission deletion', () => {

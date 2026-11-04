@@ -42,6 +42,12 @@ export const handle = async (req) => {
       )
     }
 
+    if (!/^[^\s@]+@uic\.edu\.ph$/i.test(email.trim())) {
+      return new Response(JSON.stringify({ error: 'Please use an email address ending in @uic.edu.ph.' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
     // Validate role is one of the allowed values
     const allowedRoles = ['admin', 'faculty', 'superadmin']
     if (!allowedRoles.includes(role)) {

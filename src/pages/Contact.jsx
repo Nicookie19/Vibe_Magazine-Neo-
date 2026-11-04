@@ -1,3 +1,4 @@
+import { isUicEmail, UIC_EMAIL_MESSAGE } from "../utils/editorialRules";
 // src/pages/Contact.js
 import React, { useState } from "react";
 import { supabase } from "../supabaseClient";
@@ -21,6 +22,10 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!isUicEmail(formData.email)) {
+      setStatus("domain");
+      return;
+    }
     setLoading(true);
 
     if (!formData.name || !formData.email || !formData.subject || !formData.message) {
@@ -33,7 +38,7 @@ const Contact = () => {
     const { error } = await supabase.from("feedback").insert([
       {
         name: formData.name,
-        email: formData.email,
+        email: formData.email.trim().toLowerCase(),
         subject: formData.subject,
         message: formData.message,
       },
@@ -288,6 +293,7 @@ const Contact = () => {
             </div>
           )}
 
+          {status === "domain" && <p role="alert" className="text-red-300">{UIC_EMAIL_MESSAGE}</p>}
           <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-white mb-2">

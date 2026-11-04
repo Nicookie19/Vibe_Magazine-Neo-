@@ -1,3 +1,4 @@
+import { isUicEmail, UIC_EMAIL_MESSAGE } from "../../utils/editorialRules";
 // src/pages/AdminDashboard/UserManagementTab.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import { supabase, ADMIN_UUID, SUPER_ADMIN_UUID } from "../../supabaseClient";
@@ -190,6 +191,7 @@ const UserManagementTab = () => {
       return;
     }
 
+    if (!isUicEmail(newUser.email)) { setError(UIC_EMAIL_MESSAGE); return; }
     if (!newUser.email || !newUser.username || !newUser.password) {
       setError("Email, username, and password are required");
       return;

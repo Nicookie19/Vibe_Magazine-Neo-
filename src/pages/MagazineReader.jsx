@@ -1,3 +1,4 @@
+import { isUicEmail, UIC_EMAIL_MESSAGE, censorComment } from "../utils/editorialRules";
 // src/pages/MagazineReader.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
@@ -873,8 +874,8 @@ const renderPdfPages = async () => {
             alert("Please enter your ID number");
             return;
         }
-        if (!commentForm.email.trim()) {
-            alert("Please enter your email");
+        if (!isUicEmail(commentForm.email)) {
+            alert(UIC_EMAIL_MESSAGE);
             return;
         }
         if (!commentForm.course.trim()) {
@@ -894,10 +895,10 @@ const renderPdfPages = async () => {
                 user_id: userId,
                 user_name: commentForm.name.trim(),
                 id_number: commentForm.idNumber.trim(),
-                email: commentForm.email.trim(),
+                email: commentForm.email.trim().toLowerCase(),
                 course: commentForm.course.trim(),
                 year: commentForm.year.trim(),
-                comment_text: commentForm.text.trim()
+                comment_text: censorComment(commentForm.text.trim())
             };
 
             const { data, error } = await supabase
@@ -1461,7 +1462,7 @@ const renderPdfPages = async () => {
                                                                     {new Date(c.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                                                                 </span>
                                                             </div>
-                                                            <p className="text-gray-200 text-sm leading-snug">{c.comment_text || c.text}</p>
+                                                            <p className="text-gray-200 text-sm leading-snug">{censorComment(c.comment_text || c.text)}</p>
                                                         </div>
                                                     ))
                                                 )}

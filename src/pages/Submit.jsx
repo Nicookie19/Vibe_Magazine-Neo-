@@ -1,3 +1,4 @@
+import { isUicEmail, UIC_EMAIL_MESSAGE } from "../utils/editorialRules";
 // src/pages/Submit.js
 import React, { useState } from "react";
 import { supabase } from "../supabaseClient";
@@ -37,6 +38,7 @@ const Submit = () => {
     setLoading(true);
     setUploadProgress(0);
     try {
+      if (!isUicEmail(form.student_email)) throw new Error(UIC_EMAIL_MESSAGE);
       if (!form.file) {
         setError("Please select a file.");
         setShowErrorPopup(true);
@@ -75,7 +77,7 @@ const Submit = () => {
       const { error: dbError } = await supabase.from("submissions").insert([
         {
           full_name: form.full_name,
-          student_email: form.student_email,
+          student_email: form.student_email.trim().toLowerCase(),
           student_id: form.student_id,
           title_of_work: form.title_of_work,
           course_program: form.course_program,
@@ -83,7 +85,7 @@ const Submit = () => {
           abstract: form.abstract,
           file_url,
           status: "Pending",
-          submitted_at: new Date().toISOString(),
+          // Submission time is assigned by the database.
         },
       ]);
 
@@ -346,6 +348,8 @@ const Submit = () => {
                     type="email"
                     id="student_email"
                     name="student_email"
+                    pattern="[^\s@]+@[uU][iI][cC]\.[eE][dD][uU]\.[pP][hH]"
+                    title="Use your @uic.edu.ph email address"
                     value={form.student_email}
                     onChange={handleChange}
                     required

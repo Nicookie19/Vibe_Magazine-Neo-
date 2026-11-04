@@ -1,3 +1,4 @@
+import { censorComment } from "../../utils/editorialRules";
 // src/pages/AdminDashboard/CommentsTab.jsx
 import { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
@@ -501,7 +502,7 @@ const CommentsTab = () => {
                                         <label className="text-xs text-gray-400 uppercase tracking-wide mb-2 block">Message</label>
                                         <div className="bg-gray-800/50 border-l-4 border-brand-500 rounded-r-lg p-4">
                                             <p className="text-gray-200 leading-relaxed whitespace-pre-wrap">
-                                                {comment.comment_text || comment.text || "No comment content"}
+                                                {censorComment(comment.comment_text || comment.text || "No comment content")}
                                             </p>
                                         </div>
 
