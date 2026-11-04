@@ -17,6 +17,7 @@ let updateResult;
 describe('submission acceptance', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    supabase.functions.invoke.mockResolvedValue({ data: null, error: { message: "Email not configured" } });
     publish = vi.fn().mockResolvedValue({ error: null });
     updateResult = vi.fn().mockResolvedValue({ data: { ...submission, status: 'Accepted' }, error: null });
     const channel = { on: vi.fn().mockReturnThis(), subscribe: vi.fn().mockReturnThis(), unsubscribe: vi.fn() };
@@ -28,11 +29,12 @@ describe('submission acceptance', () => {
     });
   });
 
-  it('publishes an accepted submission even when notification delivery is unavailable', async () => {
+  it('publishes an accepted submission and offers a manual Gmail draft', async () => {
     render(<AdminSubmissions />);
     fireEvent.click(await screen.findByTitle('Accept submission'));
     await waitFor(() => expect(publish).toHaveBeenCalledWith([expect.objectContaining({ title: 'Test Story', published: true, pdfurl: submission.file_url })]));
-    expect(toast.warn).toHaveBeenCalledWith(expect.stringContaining('notification email was not sent'));
+    expect(supabase.functions.invoke).not.toHaveBeenCalled();
+    expect(screen.getByRole('link', { name: 'Open Gmail draft' })).toHaveAttribute('target', '_blank');
     expect(toast.success).not.toHaveBeenCalledWith(expect.stringContaining('notification sent'), expect.anything());
   });
 
@@ -54,7 +56,12 @@ describe('submission acceptance', () => {
     fireEvent.change(screen.getByLabelText('Reviewer remarks'), { target: { value: 'Please cite your sources.' } });
     fireEvent.click(screen.getByRole('button', { name: 'Save rejection' }));
     expect(await screen.findByText('Rejection remarks: Please cite your sources.')).toBeInTheDocument();
+    expect(screen.getByTitle('Reject submission')).toBeDisabled();
+    expect(screen.getByTitle('Accept submission')).toBeDisabled();
     expect(screen.getByTitle('Edit rejection remarks')).toBeEnabled();
+    fireEvent.click(screen.getByTitle('Edit rejection remarks'));
+    expect(screen.getByLabelText('Reviewer remarks')).toHaveValue('Please cite your sources.');
+    expect(screen.getByRole('button', { name: 'Save remarks' })).toBeInTheDocument();
     expect(publish).not.toHaveBeenCalled();
   });
 
@@ -74,12 +81,28 @@ describe('submission acceptance', () => {
     expect(screen.getByText(/Publication due:/)).toHaveTextContent('PHT');
   });
 
+  it('prepares a rejection draft from saved remarks without sending or republishing', async () => {
+    updateResult.mockResolvedValue({ data: { ...submission, status: 'Rejected', rejection_remarks: 'Please revise.' }, error: null });
+    render(<AdminSubmissions />);
+    fireEvent.click(await screen.findByTitle('Reject submission'));
+    fireEvent.change(screen.getByLabelText('Reviewer remarks'), { target: { value: 'Please revise.' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save rejection' }));
+    const link = await screen.findByRole('link', { name: 'Open Gmail draft' });
+    const params = new URL(link.href).searchParams;
+    expect(params.get('to')).toBe(submission.student_email);
+    expect(params.get('body')).toContain('Please revise.');
+    expect(updateResult).toHaveBeenCalledTimes(1);
+    expect(publish).not.toHaveBeenCalled();
+    expect(supabase.functions.invoke).not.toHaveBeenCalled();
+  });
+
 });
 
 describe('database-confirmed submission deletion', () => {
   let deletion, rows;
   beforeEach(() => {
     vi.clearAllMocks();
+    supabase.functions.invoke.mockResolvedValue({ data: null, error: { message: "Email not configured" } });
     rows = [{ ...submission, status: 'Accepted' }];
     deletion = vi.fn().mockResolvedValue({ data: { id: submission.id }, error: null });
     const channel = { on: vi.fn().mockReturnThis(), subscribe: vi.fn().mockReturnThis(), unsubscribe: vi.fn() };

@@ -311,6 +311,7 @@ const UploadTab = ({
     setFormData({
       title: "",
       subtitle: "",
+      author: "",
       cover: "",
       pages: [],
       pdfurl: "",
@@ -354,6 +355,10 @@ const UploadTab = ({
       });
       return;
     }
+    if (!formData.author?.trim()) {
+      toast.warning("Please enter the author's name.", { position: "bottom-right" });
+      return;
+    }
     if (!formData.cover) {
       toast.warning("⚠️ Please upload a cover image.", {
         position: "bottom-right",
@@ -375,7 +380,7 @@ const UploadTab = ({
       .insert([
         {
           title: formData.title,
-          subtitle: formData.subtitle,
+          subtitle: [`By ${formData.author.trim()}`, formData.subtitle?.trim()].filter(Boolean).join(" — "),
           cover: formData.cover,
           pages: formData.pages,
           pdfurl: formData.pdfurl || null,
@@ -535,6 +540,14 @@ const UploadTab = ({
                     className="w-full bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all"
                     required
                   />
+                </div>
+                <div>
+                  <label htmlFor="magazine-author" className="block text-sm font-medium text-gray-300 mb-2">Author's name *</label>
+                  <input id="magazine-author" name="author" placeholder="Full name of the author"
+                    value={formData.author || ""}
+                    onChange={e => setFormData(previous => ({ ...previous, author: e.target.value }))}
+                    className="w-full bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    required maxLength={200} />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -883,6 +896,7 @@ const UploadTab = ({
                         >
                           {formData.title || "Magazine Title"}
                         </h2>
+                        {formData.author?.trim() && <p className="text-sm text-gray-200 mt-1">By {formData.author.trim()}</p>}
                         {formData.subtitle && (
                           <p
                             className="text-sm opacity-90 mt-1"

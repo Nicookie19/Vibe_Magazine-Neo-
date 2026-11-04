@@ -228,7 +228,7 @@ npx supabase functions deploy send-notification
 
 The first three use Supabase-managed values such as `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` in the hosted function environment.
 
-`send-notification` currently returns HTTP 501 with `delivery_status: "not_configured"`. It does not send emails. Setting a provider API key alone does not enable delivery: a provider integration must first be implemented, authenticated, and tested in that function. Submission acceptance and magazine publication still work without notification delivery; the UI displays a warning when an email was not sent.
+The dashboard now uses manual Gmail drafts. See “Gmail decision drafts” below. The optional Resend backend remains available but is not invoked by the dashboard.
 
 Never expose any of these values in frontend code or a `VITE_` variable.
 
@@ -350,8 +350,44 @@ No frontend change or Vercel redeployment is required for this database-only fix
 Apply `supabase/migrations/20261104000100_editorial_review_rules.sql` before deploying the frontend, and redeploy the `create-admin-user` Edge Function if used.
 
 - New submission/contact emails, supplied comment emails, and new or changed account/profile emails must use exactly `@uic.edu.ph` (case insensitive). Subdomains and lookalike suffixes are rejected. Existing accounts and unchanged historical emails are retained; domain validation does not itself prove mailbox ownership. The Auth trigger also covers account creation through direct APIs and OAuth.
-- Active admins and superadmins must provide rejection remarks (up to 3,000 characters); remarks are saved with the rejected status. Existing rejected submissions can receive edited remarks. Remarks are included in notification requests, but delivery still requires the previously unconfigured email provider. Access to stored remarks follows existing submission read policies.
+- Active admins and superadmins must provide rejection remarks (up to 3,000 characters); remarks are saved with the rejected status. Existing rejected submissions can receive edited remarks. Remarks are included in notification requests, but delivery requires the Resend configuration described below. Access to stored remarks follows existing submission read policies.
 - “Publication due” means 72 hours after the original submission timestamp, displayed in Asia/Manila time. This is a reminder, not an automatic rejection or publication job. The database assigns submission timestamps and prevents changing them.
 - New/edited comments are censored in the database, covering both `text` and `comment_text` columns. Public rendering also censors historical comment text without rewriting stored history. The filter uses whole words and common English/Filipino curses with a few spelling variants; it cannot recognize every evasion or interpret context. Human moderation remains available.
 
 Verification includes local PostgreSQL-compatible checks for domain restrictions, permissions on reviewer remarks, timestamp integrity, and both comment schemas. Hosted migrations and Edge Function deployment are not performed by these source changes.
+
+
+## Gmail decision drafts
+
+After accepting or rejecting a submission, click **Open Gmail draft** in its row. Gmail opens in a new tab with the saved recipient, subject, decision, and rejection remarks filled in. Choose your school Gmail account, review the draft, and click **Send**. The website does not send the email or track whether you sent it. Reopening the link opens another compose window.
+
+No API key, app password, new database migration, or Edge Function deployment is required for this manual workflow. Deploy the updated frontend. Existing database migrations for saved rejection remarks remain necessary.
+
+## Optional Resend backend (not used by the dashboard)
+
+The optional server sender uses the saved submission recipient and decision. Rejection emails include saved reviewer remarks. Only authenticated, active admins/superadmins can invoke the sender. The browser cannot supply arbitrary recipients, subjects, or message bodies.
+
+### Production setup
+
+1. In [Resend](https://resend.com/docs/dashboard/domains/introduction), add and verify a sender domain you control using its required DNS records. Sending from `@uic.edu.ph` requires permission to manage the school's DNS; the sender may use a different verified domain while recipients remain UIC addresses. A Vercel subdomain does not give you control of its email DNS. Resend's test sender is not sufficient for emailing arbitrary student recipients.
+2. Create a Resend sending API key. In **Supabase → Edge Functions → Secrets**, set:
+   - `RESEND_API_KEY`: the server-side Resend key.
+   - `NOTIFICATION_FROM_EMAIL`: for example `Vibe Magazine <notifications@your-verified-domain.com>`.
+   Do not put these in Vite variables, Git, or client code. Supabase provides `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` to the deployed function.
+3. Run `supabase/migrations/20261104000200_submission_email_receipts.sql` in the project's SQL Editor.
+4. Deploy the function:
+   ```sh
+   npx supabase functions deploy send-notification --project-ref rthdgwflkehqkjsnmbiu
+   ```
+   Authenticate the Supabase CLI first if necessary. Keep JWT verification enabled.
+5. To adopt automatic email later, reconnect the frontend to the function; the current dashboard intentionally opens manual Gmail drafts. Test with your own UIC mailbox and check the Resend dashboard before enabling automated delivery.
+
+“Email queued for delivery” means Resend accepted the request, not guaranteed inbox delivery. Bounces and delivery events must be inspected in Resend; delivery webhooks are not configured. Mailbox policies and spam filtering can affect delivery.
+
+Successful provider responses are recorded in a private receipts table. The same submission/message is not resent when retried; changed remarks produce a new message. Resend's idempotency key also protects simultaneous requests and retries for 24 hours. If the provider accepted a message but the receipt could not be saved, check provider logs before retrying after that period. A server timeout can also leave delivery uncertain. The UI reports configuration/provider errors and keeps the saved submission decision.
+
+This integration covers submission decision emails. Supabase Auth confirmation and password-reset emails use Supabase's separate Auth SMTP configuration.
+
+Validation: mocked-provider tests cover authorization, saved recipients, acceptance/rejection templates, remarks, stale decisions, unavailable configuration, duplicate prevention, provider rejection, timeouts, and receipt failure. No real emails were sent and no hosted secrets/function deployment were changed during implementation.
+
+Provider reference: [Send Email API](https://resend.com/docs/api-reference/emails/send-email), [24-hour idempotency](https://resend.com/docs/dashboard/emails/idempotency-keys).

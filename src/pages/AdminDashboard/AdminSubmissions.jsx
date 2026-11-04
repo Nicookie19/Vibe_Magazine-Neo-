@@ -1,3 +1,4 @@
+import { gmailDraftUrl } from "../../utils/gmailDraft";
 import { formatDeadline } from "../../utils/editorialRules";
 import React, { useEffect, useState, useCallback } from "react";
 import { supabase } from "../../supabaseClient";
@@ -124,95 +125,6 @@ const AdminSubmissions = () => {
     );
   }
 
-  // Helper to send notification email
-  const sendNotificationEmail = async (submission, status) => {
-    try {
-      console.log(`📧 Sending ${status} notification to ${submission.student_email}...`);
-      
-      const emailSubject = status === "Accepted" 
-        ? `🎉 Congratulations! Your submission "${submission.title_of_work}" has been accepted`
-        : `📝 Update on your submission "${submission.title_of_work}"`;
-      
-      const emailBody = status === "Accepted"
-        ? `
-Dear ${submission.full_name},
-
-Congratulations! We're excited to inform you that your submission "${submission.title_of_work}" has been accepted for publication in Vibe Magazine.
-
-Submission Details:
-- Title: ${submission.title_of_work}
-- Category: ${submission.category}
-- Submitted: ${new Date(submission.submitted_at).toLocaleDateString()}
-
-Your work will be featured in our upcoming publication. We'll keep you updated on the publication timeline.
-
-Thank you for your creative contribution to Vibe Magazine!
-
-Best regards,
-The Vibe Magazine Editorial Team
-        `
-        : `
-Dear ${submission.full_name},
-
-Thank you for your submission "${submission.title_of_work}" to Vibe Magazine.
-
-After careful review, your submission has not been selected for this publication cycle.
-
-Reviewer remarks:
-${submission.rejection_remarks || "Please contact the editorial team for details."}
-
-Submission Details:
-- Title: ${submission.title_of_work}
-- Category: ${submission.category}
-- Submitted: ${new Date(submission.submitted_at).toLocaleDateString()}
-
-Please don't be discouraged! We encourage you to continue creating and consider submitting to future publications. Each submission is an opportunity to grow as an artist/writer.
-
-Thank you for sharing your work with us.
-
-Best regards,
-The Vibe Magazine Editorial Team
-        `;
-
-      // Method 1: Try Edge Function approach
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (session) {
-          const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-notification`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${session.access_token}`
-            },
-            body: JSON.stringify({
-              to: submission.student_email,
-              subject: emailSubject,
-              body: emailBody,
-              submission_id: submission.id,
-              status: status
-            })
-          });
-
-          if (response.ok) {
-            const result = await response.json();
-            return result.success === true && result.delivery_status === "sent";
-          } else {
-            const errorText = await response.text();
-            console.warn(`⚠️ Edge Function failed: ${response.status} - ${errorText}`);
-          }
-        }
-      } catch (edgeError) {
-        console.warn(`⚠️ Edge Function error: ${edgeError.message}`);
-      }
-
-      return false;
-    } catch (error) {
-      console.error(`❌ Failed to send notification email:`, error);
-      return false;
-    }
-  };
-
   // Helper to handle button async action with error handling & disabling
   const handleAccept = async (id) => {
     setProcessingIds((ids) => [...ids, id]);
@@ -244,24 +156,7 @@ The Vibe Magazine Editorial Team
         subs.map((sub) => (sub.id === id ? updatedSubmission : sub))
       );
 
-      // Send notification email
-      console.log(`🎉 Submission accepted! Sending notification to ${submission.student_email}...`);
-      const emailSent = await sendNotificationEmail(submission, "Accepted");
-
-      if (emailSent) {
-        toast.success(`✅ Submission accepted and notification sent to ${submission.student_email}!`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-
-      } else {
-        toast.warn("Submission accepted, but the notification email was not sent.");
-      }
-      // Publication must not depend on email delivery being configured.
+      toast.success("Submission accepted. Open the Gmail draft to notify the contributor.");
       await publishMagazine(updatedSubmission);
     } catch (err) {
       console.error("Accept submission error:", err);
@@ -321,22 +216,7 @@ The Vibe Magazine Editorial Team
 
       setRejectTarget(null);
       setRemarks("");
-      // Send notification email
-      console.log(`📝 Submission rejected. Sending notification to ${submission.student_email}...`);
-      const emailSent = await sendNotificationEmail({ ...submission, rejection_remarks: remarks.trim() }, "Rejected");
-
-      if (emailSent) {
-        toast.success(`📝 Submission rejected and notification sent to ${submission.student_email}.`, {
-          position: "bottom-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-      } else {
-        toast.warn("Submission rejected, but the notification email was not sent.");
-      }
+      toast.success("Submission rejected and remarks saved. Open the Gmail draft to notify the contributor.");
     } catch (err) {
       setRejectionError(err.message || "Could not save rejection. Please try again.");
       console.error("Reject submission error:", err);
@@ -608,6 +488,14 @@ The Vibe Magazine Editorial Team
                         <div>
                           <div className="text-sm font-semibold text-white mb-2">{submission.title_of_work}</div>
                           {submission.rejection_remarks && <p className="text-sm text-red-200 whitespace-pre-wrap break-words max-w-sm mb-2">Rejection remarks: {submission.rejection_remarks}</p>}
+                          {submission.status === "Rejected" && (
+                            <button type="button" title="Edit rejection remarks"
+                              disabled={processingIds.includes(submission.id)}
+                              onClick={() => { setRejectTarget(submission); setRemarks(submission.rejection_remarks || ""); setRejectionError(""); }}
+                              className="text-xs text-brand-200 underline mb-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                              Edit remarks
+                            </button>
+                          )}
                           <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-brand-600/20 to-pink-600/20 text-brand-200 border border-brand-500/30">
                             {submission.category}
                           </span>
@@ -678,6 +566,17 @@ The Vibe Magazine Editorial Team
                             {submission.status || "Pending"}
                           </span>
                         </div>
+                        {["Accepted", "Rejected"].includes(submission.status) && (
+                          <div className="mt-3 max-w-xs">
+                            {gmailDraftUrl(submission) ? (
+                              <a href={gmailDraftUrl(submission)} target="_blank" rel="noopener noreferrer"
+                                className="text-xs text-brand-200 underline">
+                                Open Gmail draft
+                              </a>
+                            ) : <p className="text-xs text-yellow-200">A valid recipient email is needed to open a draft.</p>}
+                            <p className="text-xs text-gray-400 mt-1">Review in your school Gmail account, then click Send.</p>
+                          </div>
+                        )}
                       </td>
                       <td className="px-6 py-6">
                         <div className="flex items-center justify-center space-x-2">
@@ -700,9 +599,9 @@ The Vibe Magazine Editorial Team
                           </button>
                           <button
                             onClick={() => { setRejectTarget(submission); setRemarks(submission.rejection_remarks || ""); setRejectionError(""); }}
-                            disabled={submission.status === "Accepted" || processingIds.includes(submission.id)}
+                            disabled={submission.status === "Accepted" || submission.status === "Rejected" || processingIds.includes(submission.id)}
                             className="inline-flex items-center px-3 py-2 text-xs font-semibold rounded-lg text-white bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg group-hover:shadow-xl"
-                            title={submission.status === "Rejected" ? "Edit rejection remarks" : "Reject submission"}
+                            title="Reject submission"
                           >
                             {processingIds.includes(submission.id) ? (
                               <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
@@ -746,14 +645,14 @@ The Vibe Magazine Editorial Team
       {rejectTarget && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <form role="dialog" aria-modal="true" aria-labelledby="reject-heading" onSubmit={e => { e.preventDefault(); handleReject(rejectTarget.id); }} className="vibe-panel bg-[#193237] p-6 rounded-xl w-full max-w-lg">
-            <h2 id="reject-heading" className="text-xl font-bold text-white">Reject “{rejectTarget.title_of_work}”</h2>
+            <h2 id="reject-heading" className="text-xl font-bold text-white">{rejectTarget.status === "Rejected" ? "Edit remarks for" : "Reject"} “{rejectTarget.title_of_work}”</h2>
             <label htmlFor="rejection-remarks" className="block text-gray-200 mt-4 mb-2">Reviewer remarks</label>
             <textarea autoFocus id="rejection-remarks" required maxLength={3000} value={remarks} onChange={e => setRemarks(e.target.value)} disabled={processingIds.includes(rejectTarget.id)} className="w-full min-h-32 bg-black/30 text-white border rounded p-3" />
             <p className="text-xs text-gray-400">Explain what needs to change. Remarks are saved with the submission.</p>
             {rejectionError && <p role="alert" className="text-red-300 mt-2">{rejectionError}</p>}
             <div className="flex justify-end gap-3 mt-4">
               <button type="button" disabled={processingIds.includes(rejectTarget.id)} onClick={() => setRejectTarget(null)} className="text-gray-200 px-4 py-2">Cancel</button>
-              <button type="submit" disabled={processingIds.includes(rejectTarget.id)} className="bg-red-600 text-white rounded px-4 py-2">{processingIds.includes(rejectTarget.id) ? "Saving…" : "Save rejection"}</button>
+              <button type="submit" disabled={processingIds.includes(rejectTarget.id)} className="bg-red-600 text-white rounded px-4 py-2">{processingIds.includes(rejectTarget.id) ? "Saving…" : rejectTarget.status === "Rejected" ? "Save remarks" : "Save rejection"}</button>
             </div>
           </form>
         </div>

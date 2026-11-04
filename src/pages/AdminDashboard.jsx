@@ -35,6 +35,7 @@ const AdminDashboard = () => {
   const [formData, setFormData] = useState({
     title: "",
     subtitle: "",
+    author: "",
     cover: "",
     template: "default",
     pages: [],
