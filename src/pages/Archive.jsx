@@ -153,8 +153,10 @@ const Archive = () => {
                   <div className="p-5 bg-[#112326] bg-opacity-90 border-t border-brand-500/30">
                     <h2 className="text-xl font-bold mb-1 text-gray-100">
                       {mag.title}
-                      <p className="text-gray-400 text-sm">By {mag.author}</p>
                     </h2>
+                    {mag.author?.trim() && !/^by\s/i.test(mag.subtitle?.trim() || "") && (
+                      <p className="text-gray-400 text-sm mb-1">By {mag.author.replace(/^by\s+/i, "").trim()}</p>
+                    )}
                     {mag.subtitle && (
                       <p className="text-gray-300 text-sm mb-2 italic">
                         {mag.subtitle}
@@ -976,7 +978,9 @@ const MagazineModal = ({ mag, onClose, navigate }) => {
               <h2 className="text-3xl font-bold mb-2 text-gray-100">
                 {mag.title}
               </h2>
-              <p className="text-gray-400 text-lg mb-1">By {mag.author}</p>
+              {mag.author?.trim() && !/^by\s/i.test(mag.subtitle?.trim() || "") && (
+                <p className="text-gray-400 text-lg mb-1">By {mag.author.replace(/^by\s+/i, "").trim()}</p>
+              )}
               {mag.subtitle && (
                 <p className="text-gray-300 text-xl mb-3 italic font-light">
                   {mag.subtitle}
