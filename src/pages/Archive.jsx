@@ -104,7 +104,7 @@ const Archive = () => {
   }, [magazines]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#090d0f] via-[#0e1b1e] to-[#0b1417] text-gray-200 pt-20">
+    <div className="min-h-screen bg-transparent text-gray-200 pt-20">
       {/* Header */}
       <header className="py-16 text-center px-6">
         <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-4 text-gray-100">

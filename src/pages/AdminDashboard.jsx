@@ -137,7 +137,7 @@ const AdminDashboard = () => {
   // If not admin, show loading or redirect message
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#090d0f] via-[#0e1b1e] to-[#0b1417] flex items-center justify-center">
+      <div className="min-h-screen bg-transparent flex items-center justify-center">
         <div className="text-white text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
           <p>Checking authentication...</p>
@@ -147,7 +147,7 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#090d0f] via-[#0e1b1e] to-[#0b1417] flex flex-col">
+    <div className="min-h-screen bg-transparent flex flex-col">
       <AdminNavbar activeTab={activeTab} setActiveTab={setActiveTab} />
       
       {/* Admin Role Badge - Positioned below navbar */}

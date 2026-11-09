@@ -170,7 +170,7 @@ const ResetPassword = () => {
   // Show loading state while checking token
   if (isValidToken === null) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#090d0f] via-[#0e1b1e] to-[#0b1417] flex items-center justify-center px-6">
+      <div className="min-h-screen bg-transparent flex items-center justify-center px-6">
         <div className="relative z-10 w-full max-w-lg">
           <div className="vibe-panel bg-gradient-to-br from-[#14282c]/80 via-[#0e1b1e]/70 to-[#0b1619]/80 backdrop-blur-xl rounded-2xl border border-brand-500/30 shadow-2xl p-8 text-center">
             <div className="w-8 h-8 border-2 border-brand-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
@@ -184,7 +184,7 @@ const ResetPassword = () => {
   // Show error if token is invalid
   if (isValidToken === false) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#090d0f] via-[#0e1b1e] to-[#0b1417] flex items-center justify-center px-6">
+      <div className="min-h-screen bg-transparent flex items-center justify-center px-6">
         <div className="relative z-10 w-full max-w-lg">
           <div className="vibe-panel bg-gradient-to-br from-[#14282c]/80 via-[#0e1b1e]/70 to-[#0b1619]/80 backdrop-blur-xl rounded-2xl border border-brand-500/30 shadow-2xl p-8">
             <div className="text-center mb-6">
@@ -215,7 +215,7 @@ const ResetPassword = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#090d0f] via-[#0e1b1e] to-[#0b1417] flex items-center justify-center px-6">
+    <div className="min-h-screen bg-transparent flex items-center justify-center px-6">
       {/* Background Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-72 h-72 bg-brand-500/10 rounded-full blur-3xl"></div>

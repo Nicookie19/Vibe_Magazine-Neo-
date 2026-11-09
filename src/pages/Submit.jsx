@@ -111,7 +111,7 @@ const Submit = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#090d0f] via-[#0e1b1e] to-[#0b1417] text-gray-200 pt-20">
+    <div className="min-h-screen bg-transparent text-gray-200 pt-20">
       {/* Error Popup Modal */}
       {showErrorPopup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn">

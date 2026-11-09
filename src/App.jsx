@@ -30,6 +30,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminAccessButton from "./components/AdminAccessButton";
+import SiteBackgroundVideo from "./components/SiteBackgroundVideo";
 import AccessDenied from "./pages/AccessDenied";
 
 // ────────────────────────────────
@@ -75,20 +76,23 @@ const Layout = ({ children }) => {
   }, [navigate]);
 
   return (
-    <div className="vibe-app min-h-screen flex flex-col bg-gradient-to-br from-[#090d0f] via-[#0e1b1e] to-[#0b1417] text-gray-100">
-      <ScrollToTop />
+    <div className="vibe-app min-h-screen flex flex-col text-gray-100">
+      <SiteBackgroundVideo />
 
-      {/* Navbar - show only on public pages */}
-      {!isAuthPage && !isAdminPage && !isMagazineReaderPage && <Navbar />}
+      <div className="relative z-10 flex min-h-screen flex-col bg-[#090d0f]/25">
+        <ScrollToTop />
 
-      {/* Main */}
-      <main className={`flex-grow ${!isAuthPage && !isAdminPage && !isMagazineReaderPage ? "pt-20" : ""}`}>
-        {children}
-      </main>
+        {/* Navbar - show only on public pages */}
+        {!isAuthPage && !isAdminPage && !isMagazineReaderPage && <Navbar />}
 
-      {/* Footer - only on public pages */}
-      {!isAuthPage && !isAdminPage && !isMagazineReaderPage && <Footer />}
+        {/* Main */}
+        <main className={`flex-grow ${!isAuthPage && !isAdminPage && !isMagazineReaderPage ? "pt-20" : ""}`}>
+          {children}
+        </main>
 
+        {/* Footer - only on public pages */}
+        {!isAuthPage && !isAdminPage && !isMagazineReaderPage && <Footer />}
+      </div>
     </div>
   );
 };

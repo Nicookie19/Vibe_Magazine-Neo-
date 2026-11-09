@@ -35,7 +35,7 @@ const Footer = () => {
                 University of the Immaculate Conception
               </h3>
               <p className="text-gray-400 text-sm mb-2">
-                Department of Digital Innovation
+              Virtual Initiative For Building Engagement
               </p>
               <p className="text-gray-500 text-xs">
                 © {new Date().getFullYear()} All Rights Reserved

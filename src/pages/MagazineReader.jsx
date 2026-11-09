@@ -971,7 +971,7 @@ const renderPdfPages = async () => {
     }
 
     return (
-        <div className="fixed inset-0 bg-gradient-to-br from-[#090d0f] via-[#0e1b1e] to-[#0b1417] z-50 flex flex-col">
+        <div className="fixed inset-0 bg-[#090d0f]/75 z-50 flex flex-col">
             {/* Header with Logo and Close Button */}
             <div className="flex items-center justify-between p-3 md:p-4 border-b border-brand-500/20 bg-black/30 backdrop-blur-sm">
                 {/* Logo and Title Section */}

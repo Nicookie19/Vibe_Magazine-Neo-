@@ -46,7 +46,7 @@ const About = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#090d0f] via-[#0e1b1e] to-[#0b1417] text-gray-200">
+    <div className="min-h-screen bg-transparent text-gray-200">
       {/* Background Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-72 h-72 bg-brand-500/10 rounded-full blur-3xl animate-pulse"></div>
@@ -63,7 +63,7 @@ const About = () => {
             </svg>
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white mb-3 sm:mb-4">
-            About <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 via-brand-400 to-pink-400">Campus Insights</span>
+            About <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 via-brand-400 to-pink-400">Digital Magazine</span>
           </h1>
           <p className="text-lg sm:text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto">
             The VIBE Club Information Hub
@@ -75,7 +75,7 @@ const About = () => {
         <div className="mb-12 sm:mb-16">
           <div className="vibe-panel bg-black/30 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-brand-500/30 shadow-xl sm:shadow-2xl p-6 sm:p-8 md:p-12 hover:border-brand-500/50 transition-all duration-500">
             <p className="text-gray-300 leading-relaxed text-base sm:text-lg md:text-xl">
-              <strong className="text-white font-semibold">Campus Insights</strong> highlights the role of emerging digital technologies in shaping how The VIBE Club connects with its audience. As a content creation group at the University of the Immaculate Conception (UIC), The VIBE Club faces challenges in maintaining a consistent online presence and staying current with digital trends.
+              <strong className="text-white font-semibold">Digital Magazine</strong> highlights the role of emerging digital technologies in shaping how The VIBE Club connects with its audience. As a content creation group at the University of the Immaculate Conception (UIC), The VIBE Club faces challenges in maintaining a consistent online presence and staying current with digital trends.
             </p>
           </div>
         </div>

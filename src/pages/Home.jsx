@@ -51,10 +51,9 @@ const Home = () => {
   return (
     <div className="vibe-home min-h-screen text-gray-200">
       <section className="vibe-hero" aria-labelledby="home-title">
-        <div className="vibe-hero-grid" aria-hidden="true" />
         <div className="vibe-hero-content">
-          <p className="vibe-eyebrow"><span /> Student voices. Full color.</p>
-          <h1 id="home-title" className="sr-only">Vibe Magazine</h1>
+          <p className="vibe-eyebrow"><span /> Students Ideas in Full color.</p>
+          <h1 id="home-title" className="sr-only">Vibe Digital Magazine</h1>
           <AnimatedVibeLogo />
           <p className="vibe-hero-tagline">Virtual Initiative For Building Engagement</p>
           <p className="vibe-hero-description">Tune into campus stories, fresh perspectives, and a community of creative minds.</p>
@@ -343,7 +342,7 @@ const Home = () => {
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-100 mb-4">
-              Why Join VibeMagazine?
+              Why Join The Vibe Digital Magazine?
             </h2>
             <div className="w-16 sm:w-20 h-1 bg-gradient-to-r from-brand-500 to-brand-600 mx-auto rounded-full"></div>
             <p className="text-gray-400 mt-4 text-base sm:text-lg max-w-2xl mx-auto">
@@ -423,7 +422,7 @@ const Home = () => {
 
 
       {/* Join the Vibe Section */}
-      <section className="px-4 sm:px-6 py-24 sm:py-32 bg-gradient-to-br from-[#101e20] via-[#0a1011] to-[#101416] text-white border-t border-brand-500/20 relative overflow-hidden">
+      <section className="px-4 sm:px-6 py-24 sm:py-32 bg-gradient-to-br from-[#101e20]/80 via-[#0a1011]/80 to-[#101416]/80 text-white border-t border-brand-500/20 relative overflow-hidden">
         {/* Animated Background */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-10 right-10 w-72 h-72 bg-pink-500/10 rounded-full blur-3xl animate-pulse"></div>
@@ -443,7 +442,7 @@ const Home = () => {
           </h2>
           
           <p className="text-lg sm:text-xl md:text-2xl text-gray-300 mb-12 sm:mb-16 max-w-3xl mx-auto leading-relaxed">
-            We meet every <span className="text-brand-400 font-semibold">Friday</span>. Come with your creative ideas, articles, or features to share.
+            We meet every <span className="text-brand-400 font-semibold">Wednesday</span>. Come with your creative ideas, articles, or features to share.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">

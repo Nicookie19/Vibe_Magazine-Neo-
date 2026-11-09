@@ -56,7 +56,7 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#090d0f] via-[#0e1b1e] to-[#0b1417] text-gray-200 pt-20">
+    <div className="min-h-screen bg-transparent text-gray-200 pt-20">
       {/* Background Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl animate-pulse"></div>
@@ -100,7 +100,7 @@ const Contact = () => {
             <div className="vibe-panel bg-brand-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 text-center border border-brand-500/20 hover:border-brand-500/40 hover:scale-105 hover:shadow-xl hover:shadow-brand-500/20 transition-all duration-500 group">
               <div className="relative mb-4 sm:mb-6">
                 <img
-                  src="https://ui-avatars.com/api/?name=Alan+Reyes&size=128&background=6366f1&color=fff&rounded=true&bold=true"
+                  src="https://ui-avatars.com/api/?name=Cris+Maneros&size=128&background=6366f1&color=fff&rounded=true&bold=true"
                   alt="Dr. Alan Reyes"
                   className="w-24 sm:w-28 h-24 sm:h-28 rounded-full object-cover mx-auto border-4 border-brand-500 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-brand-500/50"
                 />
@@ -111,9 +111,9 @@ const Contact = () => {
                   </svg>
                 </div>
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">N/A</h3>
-              <p className="text-brand-300 font-semibold mb-2">Faculty Advisor</p>
-              <p className="text-gray-400 mb-4">Department of Computer Science</p>
+              <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Cris John David Manero, MIT</h3>
+              <p className="text-brand-300 font-semibold mb-2">Club Moderator</p>
+              <p className="text-gray-400 mb-4">College of Computer Studies</p>
               <a
                 href="mailto:alan.reyes@university.edu"
                 className="inline-flex items-center space-x-2 text-brand-400 hover:text-brand-300 font-medium transition-colors duration-200 group/link">
@@ -128,7 +128,7 @@ const Contact = () => {
             <div className="vibe-panel bg-brand-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 text-center border border-brand-500/20 hover:border-brand-500/40 hover:scale-105 hover:shadow-xl hover:shadow-brand-500/20 transition-all duration-500 group">
               <div className="relative mb-4 sm:mb-6">
                 <img
-                  src="https://ui-avatars.com/api/?name=Sophia+Kim&size=128&background=ec4899&color=fff&rounded=true&bold=true"
+                  src="https://ui-avatars.com/api/?name=Franzen+Perin&size=128&background=ec4899&color=fff&rounded=true&bold=true"
                   alt="Sophia Kim"
                   className="w-24 sm:w-28 h-24 sm:h-28 rounded-full object-cover mx-auto border-4 border-pink-500 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-pink-500/50"
                 />
@@ -138,9 +138,9 @@ const Contact = () => {
                   </svg>
                 </div>
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">N/A</h3>
+              <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Franzen Kristel Perin</h3>
               <p className="text-brand-300 font-semibold mb-2">Editor-in-Chief</p>
-              <p className="text-gray-400 mb-4">Class of 2025</p>
+              <p className="text-gray-400 mb-4">BS Psychology</p>
               <a
                 href="mailto:sophia.kim@university.edu"
                 className="inline-flex items-center space-x-2 text-brand-400 hover:text-brand-300 font-medium transition-colors duration-200 group/link"
@@ -174,7 +174,7 @@ const Contact = () => {
                 </svg>
               </div>
               <div className="flex-1 text-center sm:text-left">
-                <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">Department of Digital Innovation</h3>
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">Vibe Club</h3>
                 <p 
                   className="text-gray-300 text-base sm:text-lg leading-relaxed cursor-pointer hover:text-white transition-colors duration-200"
                   onClick={() => {
@@ -234,8 +234,8 @@ const Contact = () => {
                 <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">Office Hours</h3>
                 <p className="text-gray-300 text-base sm:text-lg leading-relaxed">
                   <strong className="text-white">Monday–Friday</strong><br />
-                  9:00 AM – 4:00 PM<br />
-                  <span className="text-gray-400 text-sm sm:text-base italic">Drop-in at Innovation Lab, Room 305</span>
+                  7:00 AM – 5:00 PM<br />
+                  <span className="text-gray-400 text-sm sm:text-base italic">Drop in at the 3rd Floor, ICTDU</span>
                 </p>
               </div>
             </div>
