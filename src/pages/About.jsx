@@ -219,6 +219,46 @@ const About = () => {
             </div>
           </div>
         </div>
+
+        {/* Developers Section */}
+        <div className="mt-12 sm:mt-16">
+          <div className="text-center mb-8 sm:mb-12">
+            <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+              <div className="w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-br from-brand-500 to-pink-500 rounded-lg flex items-center justify-center shadow-lg shadow-brand-500/30">
+                <svg className="w-5 sm:w-6 h-5 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 18l6-6-6-6M8 6l-6 6 6 6m6-14l-4 16" />
+                </svg>
+              </div>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">Developers</h2>
+            </div>
+            <div className="w-12 sm:w-16 h-1 bg-gradient-to-r from-brand-500 to-brand-600 mx-auto rounded-full"></div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto">
+            {[
+              { name: "Nico Mahipus", role: "Lead Developer", accent: "blue", background: "3b82f6", icon: "M8 9l3 3-3 3m5 0h3M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5V5a2 2 0 012-2z" },
+              { name: "Joshua Carl Mendoza", role: "QA Tester & Documentation", accent: "pink", background: "ec4899", icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" },
+              { name: "Bobby Malaga", role: "QA Tester & Documentation", accent: "green", background: "10b981", icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" },
+            ].map((developer) => (
+              <div key={developer.name} className={`vibe-panel group bg-black/30 backdrop-blur-sm rounded-2xl border border-brand-500/30 hover:border-brand-500/50 transition-all duration-500 p-6 text-center hover:shadow-2xl hover:scale-105 ${developer.accent === "blue" ? "hover:shadow-blue-500/20" : developer.accent === "pink" ? "hover:shadow-pink-500/20" : "hover:shadow-green-500/20"}`}>
+                <div className="relative mb-5 inline-block">
+                  <img
+                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(developer.name)}&size=128&background=${developer.background}&color=fff&rounded=true&bold=true`}
+                    alt={`${developer.name} avatar`}
+                    className={`w-24 h-24 rounded-full object-cover mx-auto border-4 transition-all duration-300 shadow-xl ${developer.accent === "blue" ? "border-blue-500 group-hover:border-blue-400" : developer.accent === "pink" ? "border-pink-500 group-hover:border-pink-400" : "border-green-500 group-hover:border-green-400"}`}
+                  />
+                  <div className={`absolute -bottom-2 -right-2 w-10 h-10 rounded-full flex items-center justify-center shadow-lg ${developer.accent === "blue" ? "bg-gradient-to-br from-blue-500 to-blue-600" : developer.accent === "pink" ? "bg-gradient-to-br from-pink-500 to-pink-600" : "bg-gradient-to-br from-green-500 to-green-600"}`}>
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={developer.icon} />
+                    </svg>
+                  </div>
+                </div>
+                <h3 className={`text-white font-bold text-lg mb-2 transition-colors duration-300 ${developer.accent === "blue" ? "group-hover:text-blue-300" : developer.accent === "pink" ? "group-hover:text-pink-300" : "group-hover:text-green-300"}`}>{developer.name}</h3>
+                <p className={`text-sm font-semibold ${developer.accent === "blue" ? "text-blue-400" : developer.accent === "pink" ? "text-pink-400" : "text-green-400"}`}>{developer.role}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
