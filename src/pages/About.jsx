@@ -141,7 +141,7 @@ const About = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {/* Dr. Alan Reyes */}
+            {/* Franzen Kristel Perin */}
             <div className="vibe-panel group bg-black/30 backdrop-blur-sm rounded-2xl border border-brand-500/30 hover:border-brand-500/50 transition-all duration-500 p-6 text-center hover:shadow-2xl hover:shadow-brand-500/20 hover:scale-105">
               <div className="relative mb-5 inline-block">
                 <img
@@ -161,7 +161,7 @@ const About = () => {
               <p className="text-gray-500 text-xs">BS in Psycology</p>
             </div>
 
-            {/* Sophia Kim */}
+            {/* Cris John David Manero */}
             <div className="vibe-panel group bg-black/30 backdrop-blur-sm rounded-2xl border border-brand-500/30 hover:border-brand-500/50 transition-all duration-500 p-6 text-center hover:shadow-2xl hover:shadow-pink-500/20 hover:scale-105">
               <div className="relative mb-5 inline-block">
                 <img
@@ -236,7 +236,7 @@ const About = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto">
             {[
-              { name: "Nico Mahipus", role: "Lead Developer", accent: "blue", background: "3b82f6", icon: "M8 9l3 3-3 3m5 0h3M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5V5a2 2 0 012-2z" },
+              { name: "Nico Mahipus", role: "Lead Developer & UI/UX Designer", accent: "blue", background: "3b82f6", icon: "M8 9l3 3-3 3m5 0h3M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5V5a2 2 0 012-2z" },
               { name: "Joshua Carl Mendoza", role: "QA Tester & Documentation", accent: "pink", background: "ec4899", icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" },
               { name: "Bobby Malaga", role: "QA Tester & Documentation", accent: "green", background: "10b981", icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" },
             ].map((developer) => (
