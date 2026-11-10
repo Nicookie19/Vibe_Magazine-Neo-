@@ -85,7 +85,7 @@ const Navbar = () => {
               <h1 className="text-xl font-bold text-white">
                 Vibe Digital Magazine
               </h1>
-              <p className="text-xs text-brand-300 font-medium">Campus Insights</p>
+              <p className="text-xs text-brand-300 font-medium">Dashboard</p>
             </div>
           </Link>
 
