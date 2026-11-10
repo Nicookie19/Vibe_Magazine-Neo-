@@ -146,17 +146,17 @@ const ViberonChatbot = () => {
       <button
         type="button"
         onClick={() => setIsOpen((open) => !open)}
-        className="ml-auto flex items-center gap-2 rounded-full border border-brand-200/40 bg-gradient-to-r from-brand-400 to-brand-300 px-4 py-3 font-bold text-[#071013] shadow-xl shadow-brand-950/40 transition hover:-translate-y-0.5 hover:shadow-brand-500/30 focus:outline-none focus:ring-4 focus:ring-brand-300/40"
+        className="ml-auto flex h-14 w-14 items-center justify-center rounded-full border border-brand-200/50 bg-[#0b1012] p-2 shadow-xl shadow-brand-950/50 transition hover:-translate-y-0.5 hover:scale-105 hover:shadow-brand-500/40 focus:outline-none focus:ring-4 focus:ring-brand-300/40"
         aria-expanded={isOpen}
         aria-controls="viberon-chat-window"
         aria-label={isOpen ? "Close Viberon chat" : "Chat with Viberon"}
+        title={isOpen ? "Close Viberon chat" : "Chat with Viberon"}
       >
         {isOpen ? (
           <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
         ) : (
-          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M21 11.5a8.5 8.5 0 01-12.1 7.7L3 21l1.8-4.7A8.5 8.5 0 1121 11.5z" /></svg>
+          <img src="/brand/vibe-tv.png" alt="" className="h-full w-full object-contain" />
         )}
-        <span>{isOpen ? "Close" : "Ask Viberon"}</span>
       </button>
     </div>
   );
