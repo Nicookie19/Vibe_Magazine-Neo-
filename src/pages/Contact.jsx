@@ -96,12 +96,12 @@ const Contact = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
-            {/* Faculty Advisor - Dr. Alan Reyes */}
+            {/* Club Moderator - Cris John David Manero*/}
             <div className="vibe-panel bg-brand-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 text-center border border-brand-500/20 hover:border-brand-500/40 hover:scale-105 hover:shadow-xl hover:shadow-brand-500/20 transition-all duration-500 group">
               <div className="relative mb-4 sm:mb-6">
                 <img
                   src="https://ui-avatars.com/api/?name=Cris+Maneros&size=128&background=6366f1&color=fff&rounded=true&bold=true"
-                  alt="Dr. Alan Reyes"
+                  alt="Cris John David Manero"
                   className="w-24 sm:w-28 h-24 sm:h-28 rounded-full object-cover mx-auto border-4 border-brand-500 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-brand-500/50"
                 />
                 <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 translate-y-1/2 w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-br from-brand-500 to-brand-500 rounded-full flex items-center justify-center shadow-lg shadow-brand-500/50">
@@ -115,7 +115,7 @@ const Contact = () => {
               <p className="text-brand-300 font-semibold mb-2">Club Moderator</p>
               <p className="text-gray-400 mb-4">College of Computer Studies</p>
               <a
-                href="mailto:alan.reyes@university.edu"
+                href="mailto:cmanero@uic.edu.ph"
                 className="inline-flex items-center space-x-2 text-brand-400 hover:text-brand-300 font-medium transition-colors duration-200 group/link">
                 <svg className="w-4 sm:w-5 h-4 sm:h-5 group-hover/link:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
@@ -124,7 +124,7 @@ const Contact = () => {
               </a>
             </div>
 
-            {/* Student Editor - Sophia Kim */}
+            {/* Club Mayor - Franzen Kristel Perin */}
             <div className="vibe-panel bg-brand-900/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 text-center border border-brand-500/20 hover:border-brand-500/40 hover:scale-105 hover:shadow-xl hover:shadow-brand-500/20 transition-all duration-500 group">
               <div className="relative mb-4 sm:mb-6">
                 <img
@@ -142,7 +142,7 @@ const Contact = () => {
               <p className="text-brand-300 font-semibold mb-2">Club Mayor</p>
               <p className="text-gray-400 mb-4">BS in Psychology</p>
               <a
-                href="mailto:sophia.kim@university.edu"
+                href="mailto:fperin_240000001276@uic.edu.ph"
                 className="inline-flex items-center space-x-2 text-brand-400 hover:text-brand-300 font-medium transition-colors duration-200 group/link"
               >
                 <svg className="w-4 sm:w-5 h-4 sm:h-5 group-hover/link:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
