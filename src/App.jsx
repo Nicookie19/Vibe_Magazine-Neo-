@@ -32,6 +32,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminAccessButton from "./components/AdminAccessButton";
 import SiteBackgroundVideo from "./components/SiteBackgroundVideo";
 import AccessDenied from "./pages/AccessDenied";
+import ViberonChatbot from "./components/ViberonChatbot";
 
 // ────────────────────────────────
 // Utilities
@@ -92,6 +93,7 @@ const Layout = ({ children }) => {
 
         {/* Footer - only on public pages */}
         {!isAuthPage && !isAdminPage && !isMagazineReaderPage && <Footer />}
+        {!isAuthPage && !isAdminPage && <ViberonChatbot />}
       </div>
     </div>
   );
