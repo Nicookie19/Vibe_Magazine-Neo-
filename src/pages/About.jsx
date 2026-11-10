@@ -255,6 +255,7 @@ const About = () => {
                 </div>
                 <h3 className={`text-white font-bold text-lg mb-2 transition-colors duration-300 ${developer.accent === "blue" ? "group-hover:text-blue-300" : developer.accent === "pink" ? "group-hover:text-pink-300" : "group-hover:text-green-300"}`}>{developer.name}</h3>
                 <p className={`text-sm font-semibold ${developer.accent === "blue" ? "text-blue-400" : developer.accent === "pink" ? "text-pink-400" : "text-green-400"}`}>{developer.role}</p>
+                <p className="text-gray-500 text-xs mt-1">BS in Information Technology</p>
               </div>
             ))}
           </div>
