@@ -176,7 +176,7 @@ const About = () => {
                 </div>
               </div>
               <h3 className="text-white font-bold text-lg mb-2 group-hover:text-pink-300 transition-colors duration-300">Francis Patonial</h3>
-              <p className="text-pink-400 text-sm font-semibold mb-1">Creative Director</p>
+              <p className="text-pink-400 text-sm font-semibold mb-1">Creatives Director</p>
               <p className="text-gray-500 text-xs">BS in Information Technology</p>
             </div>
 
@@ -184,7 +184,7 @@ const About = () => {
             <div className="vibe-panel group bg-black/30 backdrop-blur-sm rounded-2xl border border-brand-500/30 hover:border-brand-500/50 transition-all duration-500 p-6 text-center hover:shadow-2xl hover:shadow-green-500/20 hover:scale-105">
               <div className="relative mb-5 inline-block">
                 <img
-                  src="https://ui-avatars.com/api/?name=Nico+Mahipust&size=128&background=10b981&color=fff&rounded=true&bold=true"
+                  src="https://ui-avatars.com/api/?name=Cris+Manerot&size=128&background=10b981&color=fff&rounded=true&bold=true"
                   alt="Jamal Wright"
                   className="w-24 h-24 rounded-full object-cover mx-auto border-4 border-green-500 group-hover:border-green-400 transition-all duration-300 shadow-xl"
                 />
@@ -194,7 +194,7 @@ const About = () => {
                   </svg>
                 </div>
               </div>
-              <h3 className="text-white font-bold text-lg mb-2 group-hover:text-green-300 transition-colors duration-300">Nico Mahipus</h3>
+              <h3 className="text-white font-bold text-lg mb-2 group-hover:text-green-300 transition-colors duration-300">Cris John David Manero, MIT</h3>
               <p className="text-green-400 text-sm font-semibold mb-1">Digital Director</p>
               <p className="text-gray-500 text-xs">BS in Information Technology</p>
             </div>
@@ -214,8 +214,8 @@ const About = () => {
                 </div>
               </div>
               <h3 className="text-white font-bold text-lg mb-2 group-hover:text-yellow-300 transition-colors duration-300">TCI Writer</h3>
-              <p className="text-yellow-400 text-sm font-semibold mb-1">Production Manager</p>
-              <p className="text-gray-500 text-xs">Teacher Education</p>
+              <p className="text-yellow-400 text-sm font-semibold mb-1">Production Director</p>
+              <p className="text-gray-500 text-xs">BS in Teacher Education</p>
             </div>
           </div>
         </div>
