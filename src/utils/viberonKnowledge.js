@@ -1,13 +1,13 @@
 const stopWords = new Set(
-  "a an and are as at be but by can do does for from get give have help how i in is it me my of on or our please tell that the this to us was we what when where which who why with you your about website site page".split(" "),
+  "a an and are as at be but by can do does for from get have help how i in is it me my of on or our please tell that the this to us was we what when where which who why with you your".split(" "),
 );
 
 const aliases = {
   magazines: "magazine", issues: "magazine", editions: "magazine", publications: "magazine",
-  submitting: "submit", submitted: "submit", submissions: "submit", contribute: "submit", contributing: "submit", upload: "submit", uploading: "submit", send: "submit", sending: "submit", turn: "submit",
-  articles: "article", stories: "story", works: "work", projects: "project", papers: "paper",
+  submitting: "submit", submitted: "submit", submissions: "submit", contribute: "submit", contributing: "submit", upload: "submit", uploading: "submit", send: "submit", sending: "submit", turn: "submit", deliver: "submit", hand: "submit", provide: "submit",
+  articles: "article", stories: "story", works: "work", projects: "project", papers: "paper", essay: "article", essays: "article", poem: "story", poems: "story", manuscript: "work", coursework: "project", assignment: "project", assignments: "project",
   browse: "archive", browsing: "archive", collection: "archive", catalog: "archive",
-  read: "reading", viewer: "reading", flipbook: "reading", book: "reading",
+  read: "reading", viewer: "reading", flipbook: "reading", book: "reading", peruse: "reading",
   comment: "comments", commenting: "comments", feedback: "contact", message: "contact", email: "contact", reach: "contact",
   rate: "rating", rated: "rating", stars: "rating", review: "rating",
   join: "joining", membership: "joining", member: "joining", register: "joining", registration: "joining",
@@ -24,6 +24,17 @@ const aliases = {
   favorite: "save", saved: "save", bookmark: "save", like: "likes", liked: "likes", reaction: "likes",
   facebook: "social", socials: "social", social: "social",
   vibe: "vibe", club: "vibe", uic: "university", university: "university",
+  describe: "purpose", explains: "purpose", means: "purpose", overview: "purpose",
+  about: "purpose", site: "website",
+  browseable: "archive", older: "past", previous: "past", back: "past",
+  submitter: "submit", contribution: "submit", application: "submit",
+  view: "reading", viewing: "reading", flip: "reading", flipping: "reading",
+  meetups: "meetings", gathering: "meetings", gatherings: "meetings",
+  critique: "comments", discuss: "comments", discussion: "comments",
+  helpdesk: "contact", support: "contact", inquiry: "contact", inquiries: "contact",
+  staffmember: "team", leaders: "team", leader: "team",
+  admission: "joining", enroll: "joining", enrol: "joining",
+  rule: "rules", guideline: "rules", guidelines: "rules",
 };
 
 const normalize = (value) => value
@@ -37,19 +48,25 @@ const normalize = (value) => value
   .trim()
   .split(/\s+/)
   .filter(Boolean)
-  .map((word) => aliases[word] || word.replace(/ies$/, "y").replace(/s$/, ""));
+  .map((word) => {
+    if (stopWords.has(word)) return word;
+    if (aliases[word]) return aliases[word];
+    if (word.length > 4 && word.endsWith("ies")) return `${word.slice(0, -3)}y`;
+    if (word.length > 4 && word.endsWith("s") && !word.endsWith("ss")) return word.slice(0, -1);
+    return word;
+  });
 
 const answer = (text, path, label) => ({ text, path, label });
 
 const topics = [
   {
-    id: "purpose", phrases: ["what is vibe", "what is vibe club", "what is the vibe digital magazine", "what is this website", "what is this site", "what is this site for", "what is the website about", "what does the website do", "what does this site do", "what is the purpose of the website", "what does vibe stand for", "what does the club do"],
-    keywords: ["purpose", "vibe", "university", "magazine", "content", "creation", "audience", "campus", "stories", "engagement", "digital"],
+    id: "purpose", phrases: ["what is vibe", "what is vibe club", "what is the vibe digital magazine", "what is this website", "what is this site", "what is this site for", "what is the website about", "what does the website do", "what does this site do", "what is the purpose of the website", "what does vibe stand for", "what does the club do", "what is the club called", "club name", "about page"],
+    keywords: ["purpose", "about", "website", "site", "vibe", "university", "magazine", "content", "creation", "audience", "campus", "stories", "engagement", "digital"],
     response: answer("VIBE stands for Virtual Initiative For Building Engagement. This UIC digital magazine hub shares campus stories, student work, fresh perspectives, and creative projects. It also supports The VIBE Club’s online presence and student community.", "/about", "Learn about VIBE"),
   },
   {
-    id: "navigation", phrases: ["where do i find", "where can i", "take me to", "what pages", "website sections", "site menu", "main pages"],
-    keywords: ["home", "archive", "about", "submit", "contact", "navigation", "menu", "pages", "sections", "website"],
+    id: "navigation", phrases: ["where do i find", "where can i", "take me to", "what pages", "website sections", "site menu", "main pages", "which page"],
+    keywords: ["home", "archive", "submit", "contact", "navigation", "menu", "page", "pages", "sections"],
     response: answer("The main pages are Home, Archive, About, Submit, Contact, and Login. Use the navigation bar to open them. Home highlights the latest issue and club information; Archive lists published magazines.", "/", "Go to Home"),
   },
   {
@@ -58,7 +75,7 @@ const topics = [
     response: answer("The Home page highlights the latest published magazine, upcoming events when available, ways to submit work, and ways to join The VIBE Club. Current issue and event details can change, so check Home or browse the Archive for what is available now. The page says the club meets every Wednesday.", "/", "Open Home"),
   },
   {
-    id: "archive", phrases: ["find old issues", "past issues", "published works", "browse magazines", "where are the magazines", "magazine archive"],
+    id: "archive", phrases: ["find old issues", "past issues", "published works", "browse magazines", "where are the magazines", "magazine archive", "archive page"],
     keywords: ["archive", "magazine", "published", "past", "browse", "issue", "student", "research", "project", "find"],
     response: answer("Open the Archive to browse published magazine issues. Select an issue to read it; the archive also shows its author, course, publication date, and available ratings. If no issues appear, there may not be any published magazines available yet.", "/archive", "Browse the Archive"),
   },
@@ -68,7 +85,7 @@ const topics = [
     response: answer("Choose a magazine in the Archive to open its reader. The reader supports page turning; on mobile, swipe or tap the page corners, and rotate your device for a side-by-side view. Zoom controls are available for closer reading.", "/archive", "Choose a magazine"),
   },
   {
-    id: "submit", phrases: ["submit my work", "send my work", "send in my work", "turn in my work", "share my work", "contribute to the magazine", "how to submit", "how do i submit", "where can i submit", "submission form"],
+    id: "submit", phrases: ["submit my work", "send my work", "send in my work", "turn in my work", "share my work", "contribute to the magazine", "how to submit", "how do i submit", "where can i submit", "where can i upload", "how can i send", "submission form", "submit page"],
     keywords: ["submit", "work", "article", "story", "project", "contribute", "upload", "submission", "publish", "creative"],
     response: answer("Go to Submit and complete the form with your name, UIC email, student ID, work title, course/program, category, abstract, and PDF. Your submission is marked Pending after it is sent, and the editorial team reviews it within one week.", "/submit", "Open Submit"),
   },
@@ -118,7 +135,7 @@ const topics = [
     response: answer("The About page lists Nico Mahipus as Lead Developer & UI/UX Designer, and Joshua Carl Mendoza and Bobby Malaga as QA Testers & Documentation. Each is listed as pursuing a BS in Information Technology.", "/about", "Meet the developers"),
   },
   {
-    id: "contact", phrases: ["contact the team", "send feedback", "where can i send feedback", "contact information", "how can i contact", "where can i contact", "email the club", "send a message"],
+    id: "contact", phrases: ["contact the team", "send feedback", "where can i send feedback", "contact information", "how can i contact", "where can i contact", "email the club", "send a message", "contact page"],
     keywords: ["contact", "feedback", "email", "message", "inquiry", "reach", "team", "urgent", "emergency", "franzen", "cris", "manero"],
     response: answer("Visit Contact to send feedback or an inquiry. The feedback form asks for your name, @uic.edu.ph email, subject, and message. The page also lists the club contacts: Cris John David Manero at cmanero@uic.edu.ph and Franzen Kristel Perin at fperin_240000001276@uic.edu.ph.", "/contact", "Open Contact"),
   },
@@ -148,7 +165,7 @@ const topics = [
     response: answer("The magazine reader has Like and Save controls for each issue. Their state is kept for your browser’s anonymous site user ID; you do not need to sign in to use the reader.", "/archive", "Browse magazines"),
   },
   {
-    id: "account", phrases: ["how do i log in", "forgot password", "admin login", "create account", "sign in", "dashboard access"],
+    id: "account", phrases: ["how do i log in", "forgot password", "admin login", "create account", "sign in", "dashboard access", "login page"],
     keywords: ["account", "login", "password", "admin", "dashboard", "sign", "access", "reset"],
     response: answer("The Login page is for authorized site accounts and the admin dashboard is protected. If you already have an account, use Login; use the password reset link if needed. Viberon can’t create accounts or provide credentials.", "/vibelogin", "Open Login"),
   },
@@ -169,14 +186,47 @@ const topics = [
   },
 ];
 
+const editDistanceAtMostOne = (left, right) => {
+  if (left === right) return true;
+  if (Math.abs(left.length - right.length) > 1) return false;
+
+  let leftIndex = 0;
+  let rightIndex = 0;
+  let differences = 0;
+  while (leftIndex < left.length && rightIndex < right.length) {
+    if (left[leftIndex] === right[rightIndex]) {
+      leftIndex += 1;
+      rightIndex += 1;
+      continue;
+    }
+    differences += 1;
+    if (differences > 1) return false;
+    if (left.length > right.length) leftIndex += 1;
+    else if (right.length > left.length) rightIndex += 1;
+    else {
+      leftIndex += 1;
+      rightIndex += 1;
+    }
+  }
+  if (leftIndex < left.length || rightIndex < right.length) differences += 1;
+  return differences <= 1;
+};
+
 const scoreTopic = (tokens, question, topic) => {
-  const tokenSet = new Set(tokens);
-  const keywordMatches = topic.keywords.reduce((total, keyword) => {
-    const normalized = normalize(keyword);
-    if (normalized.length > 1 && normalized.every((word) => tokenSet.has(word))) return total + normalized.length;
-    if (normalized.length === 1 && tokenSet.has(normalized[0])) return total + 1;
-    return total;
-  }, 0);
+  const topicWords = new Set(
+    topic.keywords.flatMap(normalize).filter((word) => !stopWords.has(word)),
+  );
+  const matchedWords = new Set();
+  for (const token of new Set(tokens.filter((word) => !stopWords.has(word)))) {
+    if (topicWords.has(token)) {
+      matchedWords.add(token);
+      continue;
+    }
+    if (token.length >= 5 && [...topicWords].some((word) => word.length >= 5 && editDistanceAtMostOne(token, word))) {
+      matchedWords.add(token);
+    }
+  }
+  const keywordMatches = matchedWords.size;
   const phraseBonus = topic.phrases.reduce((best, phrase) => {
     const normalizedPhrase = normalize(phrase).join(" ");
     if (normalizedPhrase && question.includes(normalizedPhrase)) return Math.max(best, 4 + normalizedPhrase.split(" ").length);
@@ -199,9 +249,11 @@ export function getViberonAnswer(input) {
     return topics.find((topic) => topic.id === "greeting").response;
   }
 
-  const hasClearMatch = ranked[0]?.score >= 2
-    || (tokens.length <= 1 && ranked[0]?.score >= 1 && ranked[0].score > (ranked[1]?.score || 0))
-    || ranked[0]?.score >= 6;
+  const bestScore = ranked[0]?.score || 0;
+  const nextScore = ranked[1]?.score || 0;
+  const hasClearMatch = bestScore >= 2 && bestScore > nextScore
+    || (tokens.filter((word) => !stopWords.has(word)).length <= 1 && bestScore >= 1 && bestScore > nextScore)
+    || bestScore >= 6 && bestScore > nextScore;
   if (hasClearMatch) {
     return ranked[0].topic.response;
   }
